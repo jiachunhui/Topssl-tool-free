@@ -1,0 +1,70 @@
+[package]
+name = "ssl-cert-desktop"
+version = "0.1.1"
+description = "SSL 证书助手 - Let's Encrypt 免费证书一键申请"
+authors = ["SSL Cert Desktop"]
+license = "MIT"
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "ssl_cert_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-log = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-clipboard-manager = "2"
+
+# ACME 客户端（同步 API，依赖 openssl）
+# 本地 vendor 补丁：Let's Encrypt 新增 dns-persist-01 挑战类型（无 token 字段），
+# 上游 0.14.0 的 ApiChallenge.token 必填导致解析失败，详见 vendor/acme-micro/src/api.rs
+acme-micro = "0.14"
+openssl = { version = "0.10", features = ["vendored"] }
+
+# 数据库
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# 网络
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+hickory-resolver = "0.25"
+
+# 异步运行时
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "net"] }
+async-trait = "0.1"
+
+# 序列化与错误
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+# 时间与工具
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4"] }
+base64 = "0.22"
+idna = "1"
+log = "0.4"
+psl = "2"
+
+# 密钥存储
+# 本地 vendor 补丁：原版用 CRED_PERSIST_ENTERPRISE 写入 Windows 凭据管理器，
+# 该持久化模式在此类机器上会被系统清理（写入后约 1 分钟内消失），
+# 改为 CRED_PERSIST_LOCAL_MACHINE（与 cmdkey 创建的正常凭据一致），详见 vendor/keyring/src/windows.rs
+# 注：Windows 端实际主存储为 DPAPI 加密文件（见 secret/keyring.rs），keyring 仅供 macOS/Linux 使用
+keyring = "3"
+
+# Windows DPAPI（本机密钥文件加密）
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.60", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+
+# 本地补丁依赖
+[patch.crates-io]
+acme-micro = { path = "vendor/acme-micro" }
+keyring = { path = "vendor/keyring" }
