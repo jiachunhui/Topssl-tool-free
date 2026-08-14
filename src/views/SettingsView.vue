@@ -88,6 +88,38 @@ async function saveAll() {
       </div>
 
       <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 class="text-sm font-semibold text-slate-800">系统通知</h2>
+        <p class="mt-1 text-xs text-slate-400">证书到期与续期结果将通过系统通知和应用内提示告知</p>
+        <label class="mt-3 flex cursor-pointer items-center justify-between">
+          <span class="text-sm text-slate-700">证书到期提醒</span>
+          <input
+            type="checkbox"
+            class="h-4 w-4 accent-emerald-600"
+            :checked="settingsStore.settings.notify_expiring"
+            @change="settingsStore.setKey('notify_expiring', (settingsStore.settings.notify_expiring = !settingsStore.settings.notify_expiring))"
+          />
+        </label>
+        <label class="mt-3 flex cursor-pointer items-center justify-between">
+          <span class="text-sm text-slate-700">续期成功提醒</span>
+          <input
+            type="checkbox"
+            class="h-4 w-4 accent-emerald-600"
+            :checked="settingsStore.settings.notify_renew_success"
+            @change="settingsStore.setKey('notify_renew_success', (settingsStore.settings.notify_renew_success = !settingsStore.settings.notify_renew_success))"
+          />
+        </label>
+        <label class="mt-3 flex cursor-pointer items-center justify-between">
+          <span class="text-sm text-slate-700">续期失败提醒</span>
+          <input
+            type="checkbox"
+            class="h-4 w-4 accent-emerald-600"
+            :checked="settingsStore.settings.notify_renew_failed"
+            @change="settingsStore.setKey('notify_renew_failed', (settingsStore.settings.notify_renew_failed = !settingsStore.settings.notify_renew_failed))"
+          />
+        </label>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-slate-800">证书密钥类型</h2>
         <p class="mt-1 text-xs text-slate-400">RSA 兼容性最好；ECC 更快更安全，但个别老旧平台仅支持 RSA</p>
         <div class="mt-3 flex gap-2">
@@ -118,6 +150,12 @@ async function saveAll() {
           max="65535"
           class="mt-3 w-32 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm outline-none transition focus:border-emerald-500"
         />
+        <p
+          v-if="settingsStore.settings.http01_port !== 80"
+          class="mt-2 rounded-lg bg-amber-50 p-2.5 text-xs leading-relaxed text-amber-700"
+        >
+          注意：Let's Encrypt 的 HTTP-01 验证始终访问 80 端口。当前端口非 80 时，请确保 80 端口已反向代理/转发到该端口，否则验证必然失败（B7）。
+        </p>
         <div v-if="privilegeNote" class="mt-3 rounded-lg bg-amber-50 p-3 text-xs leading-relaxed text-amber-700">
           {{ privilegeNote }}
         </div>

@@ -12,6 +12,9 @@ export const useSettingsStore = defineStore('settings', () => {
     http01_port: 80,
     default_provider_id: null,
     cert_key_type: 'rsa',
+    notify_expiring: true,
+    notify_renew_success: true,
+    notify_renew_failed: true,
   })
   const loaded = ref(false)
   const error = ref<string | null>(null)

@@ -16,9 +16,15 @@ pub struct Settings {
     pub default_provider_id: Option<i64>,
     /// 证书密钥类型：rsa（兼容性最好）| ecc（P-384，更快更安全）
     pub cert_key_type: String,
+    /// 系统通知：证书到期提醒
+    pub notify_expiring: bool,
+    /// 系统通知：续期成功
+    pub notify_renew_success: bool,
+    /// 系统通知：续期失败
+    pub notify_renew_failed: bool,
 }
 
-const DEFAULT_KEYS: [(&str, &str); 7] = [
+const DEFAULT_KEYS: [(&str, &str); 10] = [
     ("acme_directory", "staging"),
     ("contact_email", ""),
     ("auto_renew", "true"),
@@ -26,6 +32,9 @@ const DEFAULT_KEYS: [(&str, &str); 7] = [
     ("http01_port", "80"),
     ("default_provider_id", ""),
     ("cert_key_type", "rsa"),
+    ("notify_expiring", "true"),
+    ("notify_renew_success", "true"),
+    ("notify_renew_failed", "true"),
 ];
 
 fn load_settings(state: &AppState) -> Settings {
@@ -47,6 +56,9 @@ fn load_settings(state: &AppState) -> Settings {
             .and_then(|v| v.parse::<i64>().ok())
             .filter(|v| *v > 0),
         cert_key_type: get("cert_key_type").unwrap_or_else(|| "rsa".into()),
+        notify_expiring: get("notify_expiring").and_then(|v| v.parse().ok()).unwrap_or(true),
+        notify_renew_success: get("notify_renew_success").and_then(|v| v.parse().ok()).unwrap_or(true),
+        notify_renew_failed: get("notify_renew_failed").and_then(|v| v.parse().ok()).unwrap_or(true),
     }
 }
 
@@ -152,6 +164,9 @@ pub fn set_settings(
         &settings.default_provider_id.map(|v| v.to_string()).unwrap_or_default(),
     )?;
     crate::storage::settings::set(&conn, "cert_key_type", &settings.cert_key_type)?;
+    crate::storage::settings::set(&conn, "notify_expiring", &settings.notify_expiring.to_string())?;
+    crate::storage::settings::set(&conn, "notify_renew_success", &settings.notify_renew_success.to_string())?;
+    crate::storage::settings::set(&conn, "notify_renew_failed", &settings.notify_renew_failed.to_string())?;
     drop(conn);
 
     log::info!(
@@ -188,6 +203,9 @@ mod tests {
             http01_port: 80,
             default_provider_id: Some(1),
             cert_key_type: "rsa".into(),
+            notify_expiring: true,
+            notify_renew_success: false,
+            notify_renew_failed: true,
         };
         let v = serde_json::to_value(&s).unwrap();
         assert!(v.get("http01_port").is_some());

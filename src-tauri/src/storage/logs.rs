@@ -24,10 +24,13 @@ pub fn finish(conn: &Connection, id: i64, status: &str, error_code: Option<&str>
 /// 注意：不消耗 LE 验证配额的失败不计入冷却：
 ///   - DNS 传播超时（含手动模式等待超时）
 ///   - 订单请求错误（如域名冗余被拒，修正后可立即重试）
+///   - HTTP-01 监听失败（端口被占用 / 无权限，发生在发起验证前，
+///     修正端口占用或改用 DNS 验证后应可立即重试）
 pub fn last_finished_at(conn: &Connection, job_type: &str, target: &str) -> rusqlite::Result<Option<String>> {
     conn.query_row(
         "SELECT finished_at FROM job_logs WHERE job_type=?1 AND target=?2 AND status='failed' \
-         AND (error_code IS NULL OR error_code NOT IN ('ERR_DNS_PROPAGATION_TIMEOUT','ERR_ORDER_CREATE')) \
+         AND (error_code IS NULL OR error_code NOT IN \
+              ('ERR_DNS_PROPAGATION_TIMEOUT','ERR_ORDER_CREATE','ERR_HTTP01_PRIVILEGE','ERR_HTTP01_PORT_BUSY')) \
          AND finished_at IS NOT NULL ORDER BY id DESC LIMIT 1",
         rusqlite::params![job_type, target],
         |r| r.get(0),

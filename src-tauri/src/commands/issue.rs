@@ -103,20 +103,54 @@ pub fn spawn_issue_job(
     let txt_confirmed_flag = Arc::new(AtomicBool::new(false));
     state.txt_confirms.lock().unwrap_or_else(|e| e.into_inner()).insert(job_id.clone(), txt_confirmed_flag.clone());
 
-    // 预置任务状态
-    state.jobs.lock().unwrap_or_else(|e| e.into_inner()).insert(
-        job_id.clone(),
-        JobStatus {
-            job_id: job_id.clone(),
-            state: JobState::Pending,
-            stage: Some(IssueStage::InputValidated),
-            percent: 2,
-            message: Some("任务已创建".into()),
-            error_code: None,
-            error_detail: None,
-            cert_id: None,
-        },
-    );
+    // 预置任务状态。续期场景在锁内完成「该证书是否已有进行中任务」检查 + 插入，
+    // 调度器与手动「立即续期」两个入口共用，消除并发重复续期竞态（B3）。
+    {
+        let mut jobs = state.jobs.lock().unwrap_or_else(|e| e.into_inner());
+        // 续期去重：该证书已有进行中任务（按 cert_id 匹配）
+        if let Some(cid) = renew_cert_id {
+            if jobs.values().any(|j| {
+                j.cert_id == Some(cid)
+                    && (j.state == JobState::Running || j.state == JobState::Pending)
+            }) {
+                drop(jobs);
+                // 回滚已插入的取消/确认标记，避免残留
+                state.cancels.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id);
+                state.txt_confirms.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id);
+                return Err(AppError::new(
+                    crate::error::ErrorCode::DuplicateCert,
+                    "该证书正在续期中，请稍候",
+                ));
+            }
+        }
+        // 同域名并发申请防护：同一域名已有进行中任务时拒绝重复发起（M12）
+        if jobs.values().any(|j| {
+            j.domain.as_deref() == Some(domain.as_str())
+                && (j.state == JobState::Running || j.state == JobState::Pending)
+        }) {
+            drop(jobs);
+            state.cancels.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id);
+            state.txt_confirms.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id);
+            return Err(AppError::new(
+                crate::error::ErrorCode::DuplicateCert,
+                "该域名已有申请/续期任务进行中，请稍候",
+            ));
+        }
+        jobs.insert(
+            job_id.clone(),
+            JobStatus {
+                job_id: job_id.clone(),
+                state: JobState::Pending,
+                stage: Some(IssueStage::InputValidated),
+                percent: 2,
+                message: Some("任务已创建".into()),
+                error_code: None,
+                error_detail: None,
+                cert_id: renew_cert_id,
+                domain: Some(domain.clone()),
+            },
+        );
+    }
 
     // 记录任务日志（失败时回滚已插入的任务标记，避免泄漏）
     let log_id = match crate::storage::logs::start(&state.db.lock(), "issue", Some(&domain)) {
@@ -142,6 +176,11 @@ pub fn spawn_issue_job(
     let secrets = state.secrets.clone();
     let jobs = state.jobs.clone();
     let certs_root = state.certs_root.clone();
+    // 任务结束后立即清理取消/确认标记（jobs 保留给前端查询，由兜底清理回收）
+    let cancel_map = state.cancels.clone();
+    let confirm_map = state.txt_confirms.clone();
+    let cancel_map2 = cancel_map.clone();
+    let confirm_map2 = confirm_map.clone();
 
     // 后台执行（整个流程在同一个 spawn_blocking 闭包内，保证 ctx 全程可用）
     let job_id_task = job_id.clone();
@@ -159,6 +198,7 @@ pub fn spawn_issue_job(
             cancel: cancel_flag.clone(),
             txt_confirmed: txt_confirmed_flag.clone(),
             provider,
+            cert_id: renew_cert_id,
         };
 
         let _ = tauri::async_runtime::spawn_blocking(move || {
@@ -174,20 +214,31 @@ pub fn spawn_issue_job(
                     );
                     match write {
                         Ok((chain, key)) => {
-                            // 生成 IIS 格式（PFX）+ 说明记事本（失败仅告警，不影响 PEM 结果）
-                            if let Some(dir) = chain.parent() {
-                                if let Err(e) = crate::cert::store::write_pfx(
+                            // 生成 IIS 格式（PFX）+ 说明记事本。
+                            // PFX 生成失败仅告警不影响 PEM 结果；此时说明文件不再写
+                            // 「cert.pfx / 密码 123456」段落，避免文件与实际不符（M11）
+                            let pfx_ok = if let Some(dir) = chain.parent() {
+                                match crate::cert::store::write_pfx(
                                     dir,
                                     &bundle.fullchain_pem,
                                     &bundle.private_key_pem,
                                     crate::cert::store::IIS_PFX_PASSWORD,
                                 ) {
-                                    log::warn!("pfx generation failed for {}: {e}", ctx.req.domain);
+                                    Ok(_) => true,
+                                    Err(e) => {
+                                        log::warn!("pfx generation failed for {}: {e}", ctx.req.domain);
+                                        false
+                                    }
                                 }
+                            } else {
+                                false
+                            };
+                            if let Some(dir) = chain.parent() {
                                 if let Err(e) = crate::cert::store::write_readme(
                                     dir,
                                     &ctx.req.domain,
                                     crate::cert::store::IIS_PFX_PASSWORD,
+                                    pfx_ok,
                                 ) {
                                     log::warn!("readme generation failed for {}: {e}", ctx.req.domain);
                                 }
@@ -196,16 +247,29 @@ pub fn spawn_issue_job(
                                 .map(|dt| (dt - chrono::Duration::days(30)).to_rfc3339());
                             let conn = db_task.lock();
                             if let Some(cid) = renew_cert_id {
-                                // 续期：更新现有记录
-                                let _ = crate::storage::certificates::update_after_renew(
+                                // 续期：更新现有记录（DB 更新失败视为任务失败，不再静默吞掉）
+                                match crate::storage::certificates::update_after_renew(
                                     &conn,
                                     cid,
                                     &chain.to_string_lossy(),
                                     &key.to_string_lossy(),
                                     &bundle.not_after,
                                     &renew_after.unwrap_or_else(|| bundle.not_after.clone()),
-                                );
-                                flow::finish_job(&ctx, JobState::Completed, None, Some(cid));
+                                ) {
+                                    Ok(_) => {
+                                        drop(conn);
+                                        flow::finish_job(&ctx, JobState::Completed, None, Some(cid));
+                                        let _ = crate::storage::logs::finish(&db_task.lock(), log_id, "completed", None, None);
+                                        // 续期成功通知（内部会再加锁读设置，需先释放上面的锁）
+                                        crate::notify::renew_success(&ctx.app, &db_task, &ctx.req.domain, &bundle.not_after);
+                                    }
+                                    Err(e) => {
+                                        let ae = AppError::from(e);
+                                        drop(conn);
+                                        let _ = crate::storage::logs::finish(&db_task.lock(), log_id, "failed", Some(ae.code.as_str()), Some(&ae.message));
+                                        flow::finish_job(&ctx, JobState::Failed, Some(&ae), None);
+                                    }
+                                }
                             } else {
                                 // 新申请：插入记录
                                 let row = crate::storage::certificates::CertRow {
@@ -224,17 +288,22 @@ pub fn spawn_issue_job(
                                     renew_after: renew_after.clone(),
                                     last_renewal_at: None,
                                     last_error: None,
+                                    fail_streak: 0,
                                     order_url: None,
+                                    contact_email: Some(ctx.req.contact_email.clone()),
                                 };
                                 match crate::storage::certificates::insert(&conn, &row) {
-                                    Ok(new_id) => flow::finish_job(&ctx, JobState::Completed, None, Some(new_id)),
+                                    Ok(new_id) => {
+                                        flow::finish_job(&ctx, JobState::Completed, None, Some(new_id));
+                                        let _ = crate::storage::logs::finish(&conn, log_id, "completed", None, None);
+                                    }
                                     Err(e) => {
                                         let ae = AppError::from(e);
                                         flow::finish_job(&ctx, JobState::Failed, Some(&ae), None);
+                                        let _ = crate::storage::logs::finish(&conn, log_id, "failed", Some(ae.code.as_str()), Some(&ae.message));
                                     }
                                 }
                             }
-                            let _ = crate::storage::logs::finish(&conn, log_id, "completed", None, None);
                         }
                         Err(e) => {
                             let _ = crate::storage::logs::finish(&db_task.lock(), log_id, "failed", Some(e.code.as_str()), Some(&e.message));
@@ -245,35 +314,72 @@ pub fn spawn_issue_job(
                 Err(e) => {
                     if e.code == crate::error::ErrorCode::Canceled {
                         let _ = crate::storage::logs::finish(&db_task.lock(), log_id, "canceled", Some(e.code.as_str()), Some(&e.message));
+                        // 取消续期任务时恢复证书状态，避免卡在 renewing（按钮隐藏 + 调度器跳过）
+                        if let Some(cid) = renew_cert_id {
+                            let conn = db_task.lock();
+                            let _ = crate::storage::certificates::update_status(
+                                &conn,
+                                cid,
+                                crate::storage::certificates::CertStatus::Issued,
+                                None,
+                            );
+                            drop(conn);
+                        }
                         flow::finish_job(&ctx, JobState::Canceled, None, None);
                     } else {
                         let conn = db_task.lock();
-                        if let Some(cid) = renew_cert_id {
+                        let fail_streak = renew_cert_id.map(|cid| {
                             let _ = crate::storage::certificates::update_status(
                                 &conn,
                                 cid,
                                 crate::storage::certificates::CertStatus::Issued,
                                 Some(&format!("{}: {}", e.code.as_str(), e.message)),
                             );
+                            crate::storage::certificates::bump_fail_streak(&conn, cid).unwrap_or(1)
+                        });
+                        drop(conn);
+                        if let Some(streak) = fail_streak {
+                            // 续期失败通知（取消的任务不通知；新申请失败由向导页展示）
+                            crate::notify::renew_failed(
+                                &ctx.app,
+                                &db_task,
+                                &ctx.req.domain,
+                                &format!("{}: {}", e.code.as_str(), e.message),
+                                Some(streak),
+                            );
                         }
-                        let _ = crate::storage::logs::finish(&conn, log_id, "failed", Some(e.code.as_str()), Some(&e.message));
+                        let _ = crate::storage::logs::finish(&db_task.lock(), log_id, "failed", Some(e.code.as_str()), Some(&e.message));
                         flow::finish_job(&ctx, JobState::Failed, Some(&e), None);
                     }
                 }
             }
         })
         .await;
+        // 任务结束（无论成败/取消），立即清理取消与确认标记，防止残留
+        cancel_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_task);
+        confirm_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_task);
     });
 
-    // 清理 cancels / txt_confirms / jobs 标记（任务超时兜底，防内存增长）
-    let cancel_map = state.cancels.clone();
-    let confirm_map = state.txt_confirms.clone();
+    // 兜底清理 jobs 等标记（防内存增长）。
+    // 长任务（手动 DNS 等待 / 多域名验证等可能超过 20 分钟）期间不清理，
+    // 仅在任务已结束时回收，避免前端进度与并发防护失效（轻微问题 5）。
     let jobs_map = state.jobs.clone();
     tauri::async_runtime::spawn(async move {
-        tokio::time::sleep(std::time::Duration::from_secs(1200)).await;
-        cancel_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
-        confirm_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
-        jobs_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
+        loop {
+            tokio::time::sleep(std::time::Duration::from_secs(1200)).await;
+            let still_running = jobs_map
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .get(&job_id_cleanup)
+                .map(|j| j.state == JobState::Running || j.state == JobState::Pending)
+                .unwrap_or(false);
+            if !still_running {
+                cancel_map2.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
+                confirm_map2.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
+                jobs_map.lock().unwrap_or_else(|e| e.into_inner()).remove(&job_id_cleanup);
+                break;
+            }
+        }
     });
 
     Ok(job_id)

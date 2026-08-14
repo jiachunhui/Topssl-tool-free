@@ -80,17 +80,25 @@ pub fn build_provider(row: &ProviderRow, secrets: &SecretStore) -> Result<Box<dy
 }
 
 /// 轮询等待 TXT 记录生效
-/// 使用 Cloudflare 公共 DNS（1.1.1.1）绕开本机/ISP 解析器缓存：
-/// 真实案例中，同一记录名下先后添加两条 TXT 时，本机解析器缓存旧答案
+/// 使用多个公共 DNS（Cloudflare 1.1.1.1 / Google 8.8.8.8 / 阿里 223.5.5.5 / 腾讯 119.29.29.29）
+/// 绕开本机/ISP 解析器缓存：真实案例中，同一记录名下先后添加两条 TXT 时，本机解析器缓存旧答案
 /// （TTL 最长 600s），导致后添加的记录已生效却检查不到、等待超时。
 /// LE 自身的验证直连权威 DNS 不受缓存影响，我们的检查也应与之保持一致。
+/// 多服务器覆盖不同网络环境（此前仅用 1.1.1.1，国内部分网络不可达导致全部假超时，B6）。
 pub async fn wait_propagation(record_name: &str, value: &str, timeout: Duration) -> Result<(), AppError> {
-    use hickory_resolver::config::ResolverConfig;
+    use hickory_resolver::config::{NameServerConfig, ResolverConfig};
     use hickory_resolver::name_server::TokioConnectionProvider;
+    use hickory_resolver::proto::xfer::Protocol;
     use hickory_resolver::TokioResolver;
+    use std::net::SocketAddr;
+
+    let mut cfg = ResolverConfig::cloudflare();
+    cfg.add_name_server(NameServerConfig::new(SocketAddr::from(([8, 8, 8, 8], 53)), Protocol::Udp));
+    cfg.add_name_server(NameServerConfig::new(SocketAddr::from(([223, 5, 5, 5], 53)), Protocol::Udp));
+    cfg.add_name_server(NameServerConfig::new(SocketAddr::from(([119, 29, 29, 29], 53)), Protocol::Udp));
 
     let resolver = TokioResolver::builder_with_config(
-        ResolverConfig::cloudflare(),
+        cfg,
         TokioConnectionProvider::default(),
     )
     .build();
@@ -101,7 +109,7 @@ pub async fn wait_propagation(record_name: &str, value: &str, timeout: Duration)
         if tokio::time::Instant::now() >= deadline {
             return Err(AppError::new(
                 ErrorCode::DnsPropagationTimeout,
-                "TXT 记录传播超时（已等待 120 秒）",
+                format!("TXT 记录传播超时（已等待 {} 秒）", timeout.as_secs()),
             ));
         }
         match resolver.txt_lookup(record_name).await {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { PortStatus } from '../../lib/types'
 import { api } from '../../lib/api'
@@ -9,6 +9,7 @@ const props = defineProps<{
   modelValue: 'http01' | 'dns01'
   providerId: number | null
   isWildcard: boolean
+  dnsManual: boolean
 }>()
 const emit = defineEmits<{
   'update:modelValue': [v: 'http01' | 'dns01']
@@ -22,9 +23,23 @@ const router = useRouter()
 const providersStore = useProvidersStore()
 
 const challenge = ref<'http01' | 'dns01'>(props.isWildcard ? 'dns01' : props.modelValue)
-const dnsManual = ref(false)
+const dnsManual = ref(props.dnsManual)
 const portStatus = ref<PortStatus | null>(null)
 const probing = ref(false)
+
+// 与父级状态保持同步：返回上一步再进入时，单选展示与实际提交值一致（轻微问题 4）
+watch(
+  () => props.modelValue,
+  (v) => {
+    challenge.value = props.isWildcard ? 'dns01' : v
+  },
+)
+watch(
+  () => props.dnsManual,
+  (v) => {
+    dnsManual.value = v
+  },
+)
 
 const providers = computed(() => providersStore.providers.filter((p) => p.enabled))
 
@@ -60,6 +75,10 @@ async function probe() {
 onMounted(async () => {
   await providersStore.fetchProviders()
   if (!props.isWildcard) probe()
+  // providerId 指向的服务商已被删除时清空，避免提交无效 id 导致后端报「服务商不存在」
+  if (props.providerId != null && !providers.value.some((p) => p.id === props.providerId)) {
+    emit('update:providerId', null)
+  }
   if (providers.value.length && props.providerId == null) {
     emit('update:providerId', providers.value[0].id)
   }

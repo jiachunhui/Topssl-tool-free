@@ -74,6 +74,14 @@ async function copy(text: string, label: string) {
               <div class="text-xs text-slate-400">验证方式</div>
               <div class="mt-0.5 font-medium text-slate-800">{{ cert.challenge_type === 'http01' ? 'HTTP-01' : 'DNS-01' }}</div>
             </div>
+            <div class="rounded-lg bg-slate-50 p-3">
+              <div class="text-xs text-slate-400">最近续期</div>
+              <div class="mt-0.5 font-medium text-slate-800">{{ cert.last_renewal_at ? cert.last_renewal_at.slice(0, 10) : '尚未续期' }}</div>
+            </div>
+            <div class="rounded-lg bg-slate-50 p-3">
+              <div class="text-xs text-slate-400">下次续期</div>
+              <div class="mt-0.5 font-medium text-slate-800">{{ cert.renew_after ? cert.renew_after.slice(0, 10) : '—' }}</div>
+            </div>
             <div class="col-span-2 rounded-lg bg-slate-50 p-3">
               <div class="text-xs text-slate-400">证书目录</div>
               <div class="mt-1 flex items-center gap-2">

@@ -25,7 +25,9 @@ pub fn check_duplicate(db: &Db, domain: &str, directory: &str) -> Result<Option<
     Ok(None)
 }
 
-/// 冷却检查：同域上次【失败】任务距今不足 10 分钟则拦截
+/// 冷却检查：同域上次【失败】任务距今不足 10 分钟则拦截。
+/// 不计入冷却的失败类型见 storage::logs::last_finished_at：不消耗 LE 验证配额的
+/// 失败（HTTP-01 监听失败 / DNS 传播超时 / 订单创建错误）修正后可立即重试。
 pub fn check_cooldown(db: &Db, domain: &str) -> Result<(), AppError> {
     let conn = db.lock();
     if let Some(finished) = crate::storage::logs::last_finished_at(&conn, "issue", domain)? {
@@ -86,7 +88,9 @@ mod tests {
             renew_after: None,
             last_renewal_at: None,
             last_error: None,
+            fail_streak: 0,
             order_url: None,
+            contact_email: None,
         };
         crate::storage::certificates::insert(&conn, &row).unwrap();
     }
@@ -116,6 +120,38 @@ mod tests {
         drop(conn);
 
         assert!(check_cooldown(&db, "example.com").is_ok());
+
+        drop(db);
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn cooldown_ignores_http01_bind_failure() {
+        // HTTP-01 监听失败（无权限/端口被占用）不消耗 LE 验证配额，
+        // 修正或改用 DNS 验证后应能立即重试，不进入冷却
+        let (db, path) = test_db();
+        let conn = db.lock();
+        for code in ["ERR_HTTP01_PRIVILEGE", "ERR_HTTP01_PORT_BUSY"] {
+            let id = crate::storage::logs::start(&conn, "issue", Some("example.com")).unwrap();
+            crate::storage::logs::finish(&conn, id, "failed", Some(code), Some("bind failed")).unwrap();
+            assert!(check_cooldown(&db, "example.com").is_ok(), "{code} 不应触发冷却");
+        }
+        drop(conn);
+
+        drop(db);
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn cooldown_blocks_validation_failure() {
+        // 真正消耗 LE 验证配额（已发起验证）的失败仍应进入冷却
+        let (db, path) = test_db();
+        let conn = db.lock();
+        let id = crate::storage::logs::start(&conn, "issue", Some("example.com")).unwrap();
+        crate::storage::logs::finish(&conn, id, "failed", Some("ERR_VALIDATION_FAILED"), None).unwrap();
+        drop(conn);
+
+        assert!(check_cooldown(&db, "example.com").is_err());
 
         drop(db);
         let _ = std::fs::remove_file(&path);

@@ -42,25 +42,41 @@ pub fn check_renewals_impl(
 
     let mut results = Vec::new();
     for cert in due {
-        // 检查是否已有正在运行的续期任务（含刚创建还未启动的 Pending）
-        let running = state
+        // 手动 DNS 模式证书无法无人值守自动续期（需要人工添加 TXT 记录），
+        // 自动检查跳过并给出明确提示（B1）；用户可到证书列表点「立即续期」走手动流程。
+        if cert.challenge_type == "dns01" && cert.provider_id.is_none() {
+            results.push(RenewalResult {
+                cert_id: cert.id,
+                domain: cert.domain.clone(),
+                ok: true,
+                message: "该证书为手动 DNS 验证，请在证书列表点击「立即续期」并手动添加 TXT 记录".into(),
+            });
+            continue;
+        }
+
+        // 该证书是否已有进行中任务（spawn_issue_job 内还会在锁内复核，双保险，B2/B3）
+        let running_for_cert = state
             .jobs
             .lock()
             .unwrap()
             .values()
-            .any(|j| {
-                j.state == crate::acme::model::JobState::Running
-                    || j.state == crate::acme::model::JobState::Pending
-            });
-        if running {
+            .any(|j| (j.state == crate::acme::model::JobState::Running || j.state == crate::acme::model::JobState::Pending) && j.cert_id == Some(cert.id));
+        if running_for_cert {
             results.push(RenewalResult {
                 cert_id: cert.id,
                 domain: cert.domain.clone(),
                 ok: false,
-                message: "已有任务进行中".into(),
+                message: "已有续期任务进行中".into(),
             });
             continue;
         }
+
+        // 续期优先复用证书申请时的邮箱（B5），为空时才回退到设置默认邮箱
+        let contact_email = cert
+            .contact_email
+            .clone()
+            .filter(|e| !e.trim().is_empty())
+            .unwrap_or_else(|| crate::storage::settings::get_string(&state.db.lock(), "contact_email", ""));
 
         let req = crate::acme::model::IssueRequest {
             domain: cert.domain.clone(),
@@ -69,8 +85,27 @@ pub fn check_renewals_impl(
             provider_id: cert.provider_id,
             dns_manual: false,
             directory: cert.directory.clone(),
-            contact_email: crate::storage::settings::get_string(&state.db.lock(), "contact_email", ""),
+            contact_email,
         };
+
+        // 标记续期中（与手动「立即续期」一致；spawn 失败回滚，避免卡在 renewing）
+        let conn = state.db.lock();
+        if let Err(e) = crate::storage::certificates::update_status(
+            &conn,
+            cert.id,
+            crate::storage::certificates::CertStatus::Renewing,
+            None,
+        ) {
+            drop(conn);
+            results.push(RenewalResult {
+                cert_id: cert.id,
+                domain: cert.domain.clone(),
+                ok: false,
+                message: e.to_string(),
+            });
+            continue;
+        }
+        drop(conn);
 
         match crate::commands::issue::spawn_issue_job(state, app.clone(), req, Some(cert.id)) {
             Ok(_) => results.push(RenewalResult {
@@ -79,12 +114,22 @@ pub fn check_renewals_impl(
                 ok: true,
                 message: "已触发续期".into(),
             }),
-            Err(e) => results.push(RenewalResult {
-                cert_id: cert.id,
-                domain: cert.domain.clone(),
-                ok: false,
-                message: e.message,
-            }),
+            Err(e) => {
+                let conn = state.db.lock();
+                let _ = crate::storage::certificates::update_status(
+                    &conn,
+                    cert.id,
+                    crate::storage::certificates::CertStatus::Issued,
+                    Some(&e.message),
+                );
+                drop(conn);
+                results.push(RenewalResult {
+                    cert_id: cert.id,
+                    domain: cert.domain.clone(),
+                    ok: false,
+                    message: e.message,
+                });
+            }
         }
     }
 

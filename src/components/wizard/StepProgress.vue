@@ -16,8 +16,18 @@ const emit = defineEmits<{ cancel: []; retry: []; back: [] }>()
 const jobStore = useJobStore()
 const confirming = ref(false)
 
-const percent = computed(() => props.progress?.percent ?? props.status?.percent ?? 0)
-const message = computed(() => props.progress?.message ?? props.status?.message ?? '正在准备…')
+// 失败/取消时保留最后一次进度，避免跳回 0%；文案按状态给出合理默认（轻微问题 1）
+const percent = computed(() => {
+  if (props.progress) return props.progress.percent
+  return props.status?.percent ?? 0
+})
+const message = computed(() => {
+  if (props.progress?.message) return props.progress.message
+  if (props.status?.message) return props.status.message
+  if (props.status?.state === 'failed') return '申请失败'
+  if (props.status?.state === 'canceled') return '任务已取消'
+  return '正在准备…'
+})
 
 const errorInfo = computed(() => {
   const code = props.status?.error_code

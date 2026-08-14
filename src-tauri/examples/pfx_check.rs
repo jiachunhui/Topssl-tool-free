@@ -31,6 +31,7 @@ fn main() {
         std::path::Path::new(&dir),
         "www.wzjs100.com",
         ssl_cert_desktop_lib::cert::store::IIS_PFX_PASSWORD,
+        true,
     ) {
         Ok(p) => println!("[pfx] 说明文件生成成功: {}", p.display()),
         Err(e) => println!("[pfx] 说明文件生成失败: {e}"),

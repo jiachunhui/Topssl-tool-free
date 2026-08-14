@@ -3,6 +3,7 @@
 pub mod certificates;
 pub mod logs;
 pub mod migrations;
+pub mod notifications;
 pub mod providers;
 pub mod settings;
 

@@ -11,13 +11,17 @@ const emit = defineEmits<{ detail: [c: CertInfo]; renew: [c: CertInfo]; remove: 
 const statusMeta = computed(() => {
   const s = props.cert.status
   if (s === 'issued') {
+    // 到期前 7 天升级为红色警戒，与系统通知的 7 天临界提醒呼应
+    if (props.cert.days_remaining <= 7) {
+      return { label: '即将到期', cls: 'bg-red-100 text-red-700 animate-pulse', bar: 'bg-red-500' }
+    }
     return props.cert.days_remaining <= 30
       ? { label: '即将到期', cls: 'bg-amber-100 text-amber-700', bar: 'bg-amber-500' }
       : { label: '有效', cls: 'bg-emerald-100 text-emerald-700', bar: 'bg-emerald-500' }
   }
   if (s === 'renewing') return { label: '续期中', cls: 'bg-sky-100 text-sky-700', bar: 'bg-sky-500' }
   if (s === 'failed') return { label: '失败', cls: 'bg-red-100 text-red-700', bar: 'bg-red-500' }
-  if (s === 'expired') return { label: '已过期', cls: 'bg-slate-200 text-slate-600', bar: 'bg-slate-400' }
+  if (s === 'expired') return { label: '已过期', cls: 'bg-red-100 text-red-700 animate-pulse', bar: 'bg-red-500' }
   return { label: '已吊销', cls: 'bg-slate-200 text-slate-600', bar: 'bg-slate-400' }
 })
 

@@ -31,6 +31,8 @@ pub struct FlowCtx {
     pub txt_confirmed: Arc<AtomicBool>,
     /// DNS-01 时的 provider（由外层构建）
     pub provider: Option<Box<dyn crate::dns::DnsProvider>>,
+    /// 续期目标证书记录 id（新申请为 None；随任务状态透出，用于并发去重与前端展示）
+    pub cert_id: Option<i64>,
 }
 
 impl FlowCtx {
@@ -64,7 +66,8 @@ pub fn report(ctx: &FlowCtx, stage: IssueStage, percent: u8, message: &str) -> R
                 message: Some(message.to_string()),
                 error_code: None,
                 error_detail: None,
-                cert_id: None,
+                cert_id: ctx.cert_id,
+                domain: Some(ctx.req.domain.clone()),
             },
         );
     }
@@ -136,6 +139,15 @@ pub fn run_order_job(ctx: &FlowCtx) -> AcmeResult<CertBundle> {
     // HTTP-01 时先启动临时服务器（同步操作）
     let http_server = if req.challenge_type == "http01" {
         report(ctx, IssueStage::ChallengePrepared, 38, "启动 80 端口验证服务…")?;
+        if http01_port != 80 {
+            // B7：HTTP-01 协议固定走 80 端口，自定义端口仅配合反向代理有效
+            report(
+                ctx,
+                IssueStage::ChallengePrepared,
+                38,
+                &format!("注意：Let's Encrypt 的 HTTP-01 验证始终访问 80 端口，当前配置监听 {http01_port} 端口，请确认 80 端口已转发到该端口（反向代理），否则验证会失败"),
+            )?;
+        }
         Some(crate::http01::server::Http01Server::start(http01_port)?)
     } else {
         None
@@ -229,14 +241,28 @@ pub fn run_order_job(ctx: &FlowCtx) -> AcmeResult<CertBundle> {
                     AppError::new(ErrorCode::ChallengeUnsupported, "该域名不支持 HTTP 验证")
                 })?;
                 let token = chall.http_token().to_string();
-                // 本机自检（模拟 LE 的验证请求）
-                server.self_check(&crate::util::domain::bare_domain(&domain), &token)?;
-                report(
-                    ctx,
-                    IssueStage::ValidationInProgress,
-                    base + 3,
-                    &format!("等待 Let's Encrypt 验证 {domain}…"),
-                )?;
+                // 本机自检（模拟 LE 的验证请求，按 LE 视角连 80 端口）。
+                // 自检失败不再硬性阻断：hairpin NAT 等环境下本机回环不通但公网可达，
+                // 降级为警告提示，继续交由 LE 验证（LE 失败会给出具体原因，B4/B7）。
+                match server.self_check(&crate::util::domain::bare_domain(&domain), &token, 80) {
+                    Ok(_) => {
+                        report(
+                            ctx,
+                            IssueStage::ValidationInProgress,
+                            base + 3,
+                            &format!("等待 Let's Encrypt 验证 {domain}…"),
+                        )?;
+                    }
+                    Err(e) => {
+                        log::warn!("http01 self-check failed for {domain}: {}", e.message);
+                        report(
+                            ctx,
+                            IssueStage::ValidationInProgress,
+                            base + 3,
+                            &format!("本机自检未通过（{}），继续等待 Let's Encrypt 验证 {domain}…", e.message),
+                        )?;
+                    }
+                }
                 chall
                     .validate(Duration::from_millis(5000))
                     .map_err(|e| map_acme_error(e, &format!("{domain} 验证失败")))?;
@@ -272,10 +298,18 @@ pub fn run_order_job(ctx: &FlowCtx) -> AcmeResult<CertBundle> {
         return Err(e);
     }
 
-    // 6. 确认校验
+    // 6. 确认校验（带总超时，避免订单长时间停留在 pending 导致任务永不结束，B8）
     report(ctx, IssueStage::Validated, 76, "确认所有域名验证结果…")?;
+    let confirm_deadline = std::time::Instant::now() + Duration::from_secs(90);
     let csr_order = loop {
         check_cancel(ctx)?;
+        if std::time::Instant::now() > confirm_deadline {
+            return Err(AppError::new(
+                ErrorCode::OrderCreate,
+                "等待订单确认超时（90 秒），请稍后重试",
+            )
+            .detail("所有域名验证已通过，但订单长时间未就绪"));
+        }
         if let Some(o) = order.confirm_validations() {
             break o;
         }
@@ -289,13 +323,19 @@ pub fn run_order_job(ctx: &FlowCtx) -> AcmeResult<CertBundle> {
     log::info!("job {} CSR key type: {key_type}", ctx.job_id);
     let cert_order = csr_order
         .finalize_pkey(key, Duration::from_millis(5000))
-        .map_err(|e| map_acme_error(e, "证书签发失败"))?;
+        .map_err(|e| {
+            log::error!("finalize error: {e}");
+            AppError::new(ErrorCode::FinalizeFailed, "证书签发失败").detail(e.to_string())
+        })?;
 
     // 8. 下载证书
     report(ctx, IssueStage::CertReady, 90, "证书签发完成，下载中…")?;
     let cert = cert_order
         .download_cert()
-        .map_err(|e| map_acme_error(e, "证书下载失败"))?;
+        .map_err(|e| {
+            log::error!("cert download error: {e}");
+            AppError::new(ErrorCode::CertDownload, "证书下载失败").detail(e.to_string())
+        })?;
     let fullchain_pem = cert.certificate().to_string();
     let private_key_pem = cert.private_key().to_string();
     report(ctx, IssueStage::CertDownloaded, 95, "证书下载完成")?;
@@ -371,6 +411,7 @@ pub fn finish_job(ctx: &FlowCtx, state: JobState, error: Option<&AppError>, cert
         error_code: code.clone(),
         error_detail: detail.clone(),
         cert_id,
+        domain: Some(ctx.req.domain.clone()),
     };
     ctx.set_status(st);
     // 事件携带完整结果（状态/证书 id/错误），前端无需回查即可展示失败原因

@@ -42,6 +42,10 @@ onMounted(async () => {
   if (step.value === 0) {
     directory.value = settingsStore.settings.acme_directory === 'production' ? 'production' : 'staging'
     email.value = settingsStore.settings.contact_email ?? ''
+    // 初始时默认选中设置里配置的默认 DNS 服务商（让 default_provider_id 设置真正生效，M7）
+    if (providerId.value == null && settingsStore.settings.default_provider_id) {
+      providerId.value = settingsStore.settings.default_provider_id
+    }
   }
   // 返回向导时根据全局任务状态恢复对应界面
   resumeJobView()
@@ -100,6 +104,8 @@ function retry() {
 /** 返回修改：清除旧任务状态，避免残留失败状态干扰后续操作 */
 function backToEdit() {
   jobStore.reset()
+  // 兜底复位提交中标记，避免失败事件丢失时「开始申请」按钮被永久禁用
+  submitting.value = false
   step.value = 2
 }
 
@@ -157,6 +163,7 @@ watch(
         :model-value="challengeType"
         :provider-id="providerId"
         :is-wildcard="isWildcard()"
+        :dns-manual="dnsManual"
         @update:model-value="(v) => (challengeType = v)"
         @update:provider-id="(v) => (providerId = v)"
         @update:dns-manual="(v) => (dnsManual = v)"

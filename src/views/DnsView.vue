@@ -63,16 +63,25 @@ async function save() {
   formErrors.value = []
   const errs: string[] = []
   if (!form.value.label.trim()) errs.push('请填写名称')
+  // 新建时必须填写密钥；编辑时密钥可选（留空保留原密钥，后端支持，M3）
+  const isEdit = !!form.value.id
   for (const f of KIND_META[form.value.kind].fields) {
     const v = form.value.config[f.key]?.trim()
-    if (!v && f.secret) errs.push(`请填写 ${f.label}`)
+    if (!v && f.secret && !isEdit) errs.push(`请填写 ${f.label}`)
   }
   if (errs.length) {
     formErrors.value = errs
     return
   }
   try {
-    await providersStore.save({ ...form.value, config: Object.fromEntries(Object.entries(form.value.config).map(([k, v]) => [k, String(v ?? '').trim()])) })
+    // 编辑时留空的密钥字段不上传，避免后端以空串覆盖旧密钥
+    const SECRET_FIELDS = new Set(['access_key_secret', 'login_token', 'api_token'])
+    const cleanConfig = Object.fromEntries(
+      Object.entries(form.value.config)
+        .map(([k, v]) => [k, String(v ?? '').trim()])
+        .filter(([k, v]) => !(SECRET_FIELDS.has(k) && v === '')),
+    )
+    await providersStore.save({ ...form.value, config: cleanConfig })
     toast.success('已保存')
     editing.value = false
   } catch (e) {
@@ -161,6 +170,7 @@ async function removeProvider(p: ProviderInfo) {
 
     <div v-else class="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
       <h2 class="text-base font-semibold text-slate-900">{{ form.id ? '编辑' : '添加' }}{{ KIND_META[form.kind].name }}</h2>
+      <p v-if="form.id" class="mt-1 text-xs text-slate-400">编辑时密钥留空将保留原值；切换服务商类型需重新填写新类型的密钥。</p>
       <div class="mt-4 space-y-4">
         <div>
           <label class="mb-1.5 block text-sm font-medium text-slate-700">名称</label>

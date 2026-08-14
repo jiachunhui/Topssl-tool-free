@@ -52,7 +52,11 @@ pub struct CertRow {
     pub renew_after: Option<String>,
     pub last_renewal_at: Option<String>,
     pub last_error: Option<String>,
+    /// 连续续期失败次数（成功后续期时清零）
+    pub fail_streak: i64,
     pub order_url: Option<String>,
+    /// 申请时使用的 ACME 账户邮箱（续期时复用原账户）
+    pub contact_email: Option<String>,
 }
 
 fn row_to_cert(r: &Row) -> rusqlite::Result<CertRow> {
@@ -74,18 +78,20 @@ fn row_to_cert(r: &Row) -> rusqlite::Result<CertRow> {
         renew_after: r.get("renew_after")?,
         last_renewal_at: r.get("last_renewal_at")?,
         last_error: r.get("last_error")?,
+        fail_streak: r.get("fail_streak")?,
         order_url: r.get("order_url")?,
+        contact_email: r.get("contact_email")?,
     })
 }
 
-const COLS: &str = "id, domain, alt_names, challenge_type, provider_id, directory, status, cert_chain_path, private_key_path, issuer, issued_at, expires_at, renew_after, last_renewal_at, last_error, order_url";
+const COLS: &str = "id, domain, alt_names, challenge_type, provider_id, directory, status, cert_chain_path, private_key_path, issuer, issued_at, expires_at, renew_after, last_renewal_at, last_error, order_url, fail_streak, contact_email";
 
-/// 插入列（不含自增 id，与 INSERT 的 15 个占位符一一对应）
-const INSERT_COLS: &str = "domain, alt_names, challenge_type, provider_id, directory, status, cert_chain_path, private_key_path, issuer, issued_at, expires_at, renew_after, last_renewal_at, last_error, order_url";
+/// 插入列（不含自增 id，与 INSERT 的 16 个占位符一一对应）
+const INSERT_COLS: &str = "domain, alt_names, challenge_type, provider_id, directory, status, cert_chain_path, private_key_path, issuer, issued_at, expires_at, renew_after, last_renewal_at, last_error, order_url, contact_email";
 
 pub fn insert(conn: &Connection, c: &CertRow) -> rusqlite::Result<i64> {
     conn.execute(
-        &format!("INSERT INTO certificates ({INSERT_COLS}) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15)"),
+        &format!("INSERT INTO certificates ({INSERT_COLS}) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16)"),
         rusqlite::params![
             c.domain,
             serde_json::to_string(&c.alt_names).unwrap_or("[]".into()),
@@ -102,6 +108,7 @@ pub fn insert(conn: &Connection, c: &CertRow) -> rusqlite::Result<i64> {
             c.last_renewal_at,
             c.last_error,
             c.order_url,
+            c.contact_email,
         ],
     )?;
     Ok(conn.last_insert_rowid())
@@ -163,10 +170,28 @@ pub fn update_after_renew(
 ) -> rusqlite::Result<()> {
     conn.execute(
         "UPDATE certificates SET cert_chain_path=?1, private_key_path=?2, expires_at=?3, renew_after=?4,
-         last_renewal_at=datetime('now'), status='issued', last_error=NULL, updated_at=datetime('now') WHERE id=?5",
-        rusqlite::params![cert_chain_path, private_key_path, expires_at, renew_after, id],
+         last_renewal_at=?5, status='issued', last_error=NULL, fail_streak=0, updated_at=datetime('now') WHERE id=?6",
+        rusqlite::params![cert_chain_path, private_key_path, expires_at, renew_after, Utc::now().to_rfc3339(), id],
     )?;
     Ok(())
+}
+
+/// 续期失败计数 +1（返回最新值，供通知展示"连续失败 N 次"）
+pub fn bump_fail_streak(conn: &Connection, id: i64) -> rusqlite::Result<i64> {
+    conn.query_row(
+        "UPDATE certificates SET fail_streak = fail_streak + 1, updated_at=datetime('now') WHERE id=?1 RETURNING fail_streak",
+        [id],
+        |r| r.get(0),
+    )
+}
+
+/// 已签发证书的最早到期时间（供调度频率动态调整；无证书时返回 None）
+pub fn min_expires_at(conn: &Connection) -> rusqlite::Result<Option<String>> {
+    conn.query_row(
+        "SELECT MIN(expires_at) FROM certificates WHERE status='issued'",
+        [],
+        |r| r.get(0),
+    )
 }
 
 pub fn delete(conn: &Connection, id: i64) -> rusqlite::Result<()> {

@@ -38,6 +38,8 @@ async function onRenew(cert: CertInfo) {
     const jobId = await certsStore.renew(cert.id)
     jobStore.restore(jobId, cert.domain)
     toast.info(`已开始为 ${cert.domain} 续期`)
+    // 跳转到向导页查看续期进度；手动 DNS 证书的续期需要在这里添加并确认 TXT 记录（B1）
+    router.push('/wizard')
     setTimeout(() => certsStore.fetchCerts(), 1000)
   } catch (e) {
     toast.error(e instanceof Error ? e.message : '续期失败')

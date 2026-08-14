@@ -226,12 +226,15 @@ impl<A> Challenge<A> {
     ///
     /// The user must first update the DNS record or HTTP web server depending
     /// on the type challenge being validated.
+    ///
+    /// 本地补丁：等待授权状态最多 120 秒（此前无总超时，LE 侧长时间停留在
+    /// pending 时调用方任务永不结束）。
     pub fn validate(&self, delay: Duration) -> Result<()> {
         let url_chall = &self.api_challenge.url;
         let res = self.inner.transport.call(url_chall, &ApiEmptyObject)?;
         let _: ApiChallenge = read_json(res)?;
 
-        let auth = wait_for_auth_status(&self.inner, &self.auth_url, delay)?;
+        let auth = wait_for_auth_status(&self.inner, &self.auth_url, delay, Duration::from_secs(120))?;
 
         if !auth.is_status_valid() {
             let error = auth
@@ -277,12 +280,17 @@ fn wait_for_auth_status(
     inner: &Arc<AccountInner>,
     auth_url: &str,
     delay: Duration,
+    max_wait: Duration,
 ) -> Result<ApiAuth> {
+    let deadline = std::time::Instant::now() + max_wait;
     let auth = loop {
         let res = inner.transport.call(auth_url, &ApiEmptyString)?;
         let auth: ApiAuth = read_json(res)?;
         if !auth.is_status_pending() {
             break auth;
+        }
+        if std::time::Instant::now() >= deadline {
+            bail!("Validation timeout: challenge stayed pending for {}s", max_wait.as_secs());
         }
         thread::sleep(delay);
     };

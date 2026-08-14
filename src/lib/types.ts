@@ -32,6 +32,9 @@ export interface Settings {
   http01_port: number
   default_provider_id: number | null
   cert_key_type: string // 'rsa' | 'ecc'
+  notify_expiring: boolean // 系统通知：证书到期提醒
+  notify_renew_success: boolean // 系统通知：续期成功
+  notify_renew_failed: boolean // 系统通知：续期失败
 }
 
 /** DNS Provider 配置（展示用，不含机密） */
@@ -140,6 +143,8 @@ export interface JobStatus {
   error_code: string | null
   error_detail: string | null
   cert_id: number | null
+  /** 任务目标域名（续期去重 / 悬浮条展示） */
+  domain?: string | null
 }
 
 /** 进度事件 payload */
@@ -167,6 +172,34 @@ export interface RenewalResult {
   domain: string
   ok: boolean
   message: string
+}
+
+/** 续期失败事件 payload */
+export interface RenewalFailedPayload {
+  domain: string
+  message: string
+  streak: number | null
+}
+
+/** 续期成功事件 payload */
+export interface RenewalRenewedPayload {
+  domain: string
+  expires_at: string
+}
+
+/** 到期提醒事件 payload */
+export interface RenewalExpiringPayload {
+  level: '30' | '7' | '1' | 'expired'
+  count: number
+  domains: string[]
+}
+
+/** 手动检查续期完成事件 payload */
+export interface RenewalCheckDonePayload {
+  summary: string
+  triggered: number
+  failed: number
+  skipped: number
 }
 
 /** 错误码映射项 */

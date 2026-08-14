@@ -32,8 +32,13 @@ pub struct CertInfo {
 impl From<CertRow> for CertInfo {
     fn from(c: CertRow) -> Self {
         let days = parser::days_remaining(&c.expires_at);
-        // 到期后以 expired 展示（数据库仍为 issued，调度器按 expires_at 判断续期）
-        let status = if c.status == CertStatus::Issued && days <= 0 {
+        // 到期后以 expired 展示（数据库仍为 issued，调度器按 expires_at 判断续期）。
+        // 仅当日期可解析且确实已过期时才标 expired；
+        // 解析失败（days_remaining 返回 0）不再误标，避免有效证书显示为已过期（轻微问题 2）
+        let expired = c.status == CertStatus::Issued
+            && days <= 0
+            && chrono::DateTime::parse_from_rfc3339(&c.expires_at).is_ok();
+        let status = if expired {
             CertStatus::Expired
         } else {
             c.status
@@ -130,15 +135,23 @@ pub fn renew_now(id: i64, state: tauri::State<'_, AppState>, app: tauri::AppHand
         return Err(AppError::new(crate::error::ErrorCode::DuplicateCert, "该证书正在续期中，请稍候"));
     }
 
-    // 构建续期请求（沿用原挑战方式与 provider）
+    // 构建续期请求（沿用原挑战方式与 provider）。
+    // 手动 DNS 证书（无 provider）：续期走手动模式，等待用户在向导页添加并确认 TXT 记录（B1）。
+    // 续期邮箱优先复用证书申请时的邮箱（B5），为空时回退到设置默认邮箱。
+    let dns_manual = cert.challenge_type == "dns01" && cert.provider_id.is_none();
+    let contact_email = cert
+        .contact_email
+        .clone()
+        .filter(|e| !e.trim().is_empty())
+        .unwrap_or_else(|| crate::storage::settings::get_string(&conn, "contact_email", ""));
     let req = crate::acme::model::IssueRequest {
         domain: cert.domain.clone(),
         alt_names: cert.alt_names.clone(),
         challenge_type: cert.challenge_type.clone(),
-        provider_id: cert.provider_id,
-        dns_manual: false,
+        provider_id: if dns_manual { None } else { cert.provider_id },
+        dns_manual,
         directory: cert.directory.clone(),
-        contact_email: crate::storage::settings::get_string(&conn, "contact_email", ""),
+        contact_email,
     };
     drop(conn);
 
@@ -186,7 +199,9 @@ mod tests {
             renew_after: None,
             last_renewal_at: None,
             last_error: None,
+            fail_streak: 0,
             order_url: None,
+            contact_email: None,
         };
         let info = CertInfo::from(row);
         let v = serde_json::to_value(&info).unwrap();

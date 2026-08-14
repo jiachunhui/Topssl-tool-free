@@ -39,7 +39,8 @@ fn stage_pem(path: &Path, content: &str) -> Result<PathBuf, AppError> {
 }
 
 /// 写证书 bundle：两个文件先落临时文件，再连续 rename，
-/// 尽量缩小"证书链与私钥不匹配"的崩溃窗口（续期时尤其重要）
+/// 尽量缩小"证书链与私钥不匹配"的崩溃窗口（续期时尤其重要）。
+/// 任一 rename 失败时清理已落盘的临时文件，避免残留 .pem.tmp。
 pub fn write_bundle(
     certs_root: &Path,
     domain: &str,
@@ -51,13 +52,15 @@ pub fn write_bundle(
     let key_path = dir.join("privkey.pem");
     let chain_tmp = stage_pem(&chain_path, fullchain_pem)?;
     let key_tmp = stage_pem(&key_path, private_key_pem)?;
-    // 先提交私钥，再提交证书链
-    std::fs::rename(&key_tmp, &key_path).map_err(|e| {
-        AppError::new(ErrorCode::CertWrite, "无法保存私钥文件").detail(e.to_string())
-    })?;
-    std::fs::rename(&chain_tmp, &chain_path).map_err(|e| {
-        AppError::new(ErrorCode::CertWrite, "无法保存证书文件").detail(e.to_string())
-    })?;
+    if let Err(e) = std::fs::rename(&chain_tmp, &chain_path) {
+        let _ = std::fs::remove_file(&chain_tmp);
+        let _ = std::fs::remove_file(&key_tmp);
+        return Err(AppError::new(ErrorCode::CertWrite, "无法保存证书文件").detail(e.to_string()));
+    }
+    if let Err(e) = std::fs::rename(&key_tmp, &key_path) {
+        let _ = std::fs::remove_file(&key_tmp);
+        return Err(AppError::new(ErrorCode::CertWrite, "无法保存私钥文件").detail(e.to_string()));
+    }
     Ok((chain_path, key_path))
 }
 
@@ -115,9 +118,10 @@ pub fn write_pfx(
     Ok(pfx_path)
 }
 
-/// 生成证书说明文本（记事本可读，UTF-8 带 BOM 保证中文正常显示）
-pub fn write_readme(dir: &Path, domain: &str, pfx_password: &str) -> Result<PathBuf, AppError> {
-    let content = format!(
+/// 生成证书说明文本（记事本可读，UTF-8 带 BOM 保证中文正常显示）。
+/// `pfx_ok`：cert.pfx 是否成功生成，失败时说明文件不再写「密码 123456」段落，避免文件与实际不符。
+pub fn write_readme(dir: &Path, domain: &str, pfx_password: &str, pfx_ok: bool) -> Result<PathBuf, AppError> {
+    let mut content = format!(
         "SSL 证书说明\r\n\
          ================\r\n\
          \r\n\
@@ -125,16 +129,24 @@ pub fn write_readme(dir: &Path, domain: &str, pfx_password: &str) -> Result<Path
          \r\n\
          文件清单:\r\n\
           1. fullchain.pem  证书链（PEM 格式，nginx / Apache 用）\r\n\
-          2. privkey.pem    私钥（PEM 格式）\r\n\
-          3. cert.pfx       IIS 格式证书（PKCS#12，密码: {pfx_password}）\r\n\
-         \r\n\
-         IIS 导入方法:\r\n\
-          打开 IIS 管理器 → 服务器证书 → 导入 → 选择 cert.pfx →\r\n\
-          输入密码 {pfx_password} → 确定，然后在站点绑定中选择该证书。\r\n\
-         \r\n\
+          2. privkey.pem    私钥（PEM 格式）\r\n"
+    );
+    if pfx_ok {
+        content.push_str(&format!(
+            "  3. cert.pfx       IIS 格式证书（PKCS#12，密码: {pfx_password}）\r\n\
+             \r\n\
+             IIS 导入方法:\r\n\
+              打开 IIS 管理器 → 服务器证书 → 导入 → 选择 cert.pfx →\r\n\
+              输入密码 {pfx_password} → 确定，然后在站点绑定中选择该证书。\r\n"
+        ));
+    } else {
+        content.push_str("  3. cert.pfx       本机未能生成（不影响 PEM 证书使用）\r\n");
+    }
+    content.push_str(&format!(
+        "\r\n\
          注意: 证书每 90 天自动续期，续期后会同步更新上述文件；\r\n\
          在 IIS 中更新证书时请重新导入 cert.pfx。\r\n"
-    );
+    ));
     let path = dir.join("证书说明.txt");
     let mut bytes = vec![0xEF, 0xBB, 0xBF]; // UTF-8 BOM
     bytes.extend_from_slice(content.as_bytes());

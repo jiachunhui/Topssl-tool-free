@@ -8,6 +8,14 @@ pub fn run(conn: &Connection) -> rusqlite::Result<()> {
         conn.execute_batch(V1)?;
         conn.pragma_update(None, "user_version", 1)?;
     }
+    if version < 2 {
+        conn.execute_batch(V2)?;
+        conn.pragma_update(None, "user_version", 2)?;
+    }
+    if version < 3 {
+        conn.execute_batch(V3)?;
+        conn.pragma_update(None, "user_version", 3)?;
+    }
     Ok(())
 }
 
@@ -65,4 +73,24 @@ CREATE TABLE IF NOT EXISTS job_logs (
   finished_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_logs ON job_logs(job_type, started_at);
+"#;
+
+/// V2：续期失败计数（连续失败升级提醒）+ 通知去重记录表
+const V2: &str = r#"
+ALTER TABLE certificates ADD COLUMN fail_streak INTEGER NOT NULL DEFAULT 0;
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,
+  cert_id INTEGER,
+  level TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_notifications_kind_cert ON notifications(kind, cert_id, created_at);
+"#;
+
+/// V3：证书记录保存申请邮箱，续期时复用原 ACME 账户（修复续期邮箱为空/不一致导致
+/// 重新注册账户甚至以 mailto: 空联系注册失败的问题）
+const V3: &str = r#"
+ALTER TABLE certificates ADD COLUMN contact_email TEXT;
 "#;

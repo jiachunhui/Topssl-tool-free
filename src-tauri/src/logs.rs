@@ -98,7 +98,11 @@ pub fn clear() {
     logger().buf.lock().unwrap().clear();
     if let Ok(mut file) = logger().file.lock() {
         if let Some(f) = file.as_mut() {
+            use std::io::{Seek, SeekFrom};
             let _ = f.set_len(0);
+            // 截断文件后游标仍停留在原偏移，需重置回文件头，
+            // 否则后续写入会从旧偏移开始、文件开头留下一段 NUL 空洞（M6）
+            let _ = f.seek(SeekFrom::Start(0));
             let _ = f.flush();
         }
     }

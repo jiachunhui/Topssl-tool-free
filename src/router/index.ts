@@ -1,7 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  // Tauri 生产环境按自定义协议加载静态文件、无服务端 SPA fallback，
+  // 用 hash 历史避免深链/刷新子路由白屏（轻微问题 8）
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',

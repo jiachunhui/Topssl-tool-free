@@ -7,6 +7,7 @@ pub mod dns;
 pub mod error;
 pub mod http01;
 pub mod logs;
+pub mod notify;
 pub mod scheduler;
 pub mod secret;
 pub mod state;
@@ -127,7 +128,6 @@ fn setup_autostart(app: &tauri::App) {
 fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
     use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
     use tauri::tray::{TrayIconBuilder, TrayIconEvent};
-    use tauri::Emitter;
 
     let show_i = MenuItem::with_id(app, "show", "打开 SSL 证书助手", true, None::<&str>)?;
     let check_i = MenuItem::with_id(app, "check", "立即检查续期", true, None::<&str>)?;
@@ -152,9 +152,16 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
                 }
             }
             "check" => {
-                let _ = app.emit("renewal://manual", ());
+                // 立即检查续期：窗口可见 → 前端 toast；窗口隐藏 → 系统通知
+                let visible = app
+                    .get_webview_window("main")
+                    .and_then(|w| w.is_visible().ok())
+                    .unwrap_or(false);
                 if let Some(state) = app.try_state::<state::AppState>() {
-                    let _ = crate::commands::renewal::check_renewals_impl(true, &state, app.clone());
+                    match crate::commands::renewal::check_renewals_impl(true, &state, app.clone()) {
+                        Ok(results) => crate::notify::manual_check_summary(app, &results, visible),
+                        Err(e) => crate::notify::manual_check_error(app, &e.message, visible),
+                    }
                 }
             }
             "quit" => {

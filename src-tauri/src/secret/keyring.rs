@@ -67,10 +67,17 @@ impl SecretStore {
     #[cfg(windows)]
     fn load_encrypted_map(&self) -> serde_json::Map<String, serde_json::Value> {
         let Some(path) = &self.file_path else { return serde_json::Map::new() };
-        std::fs::read_to_string(path)
-            .ok()
-            .and_then(|s| serde_json::from_str(&s).ok())
-            .unwrap_or_default()
+        match std::fs::read_to_string(path) {
+            Ok(s) => serde_json::from_str(&s).unwrap_or_else(|e| {
+                // 密钥文件损坏：先备份原文件再返回空 map，
+                // 避免后续 save 用「只剩新密钥」的内容覆盖、丢失全部既有密钥（轻微问题 13）
+                log::error!("secrets file corrupted, backing up before overwrite: {e}");
+                let backup = path.with_extension("bin.corrupt");
+                let _ = std::fs::copy(path, &backup);
+                serde_json::Map::new()
+            }),
+            Err(_) => serde_json::Map::new(),
+        }
     }
 
     #[cfg(windows)]

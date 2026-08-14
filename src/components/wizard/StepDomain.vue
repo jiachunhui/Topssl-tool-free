@@ -17,7 +17,9 @@ const altNamesText = ref(props.altNames.join(', '))
 const checking = ref(false)
 const duplicate = ref<{ duplicate: boolean; certId?: number } | null>(null)
 
-const DOMAIN_RE = /^(?:\*\.)?(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/i
+// 支持 Unicode 字母/数字（IDN，与后端 idna 转 punycode 一致，轻微问题 3），
+// 其余校验（标签长度、TLD 规则、非法字符）交给后端兜底
+const DOMAIN_RE = /^(?:\*\.)?(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?\.)+[\p{L}]{2,63}$/iu
 
 const domainValid = computed(() => DOMAIN_RE.test(domain.value.trim()))
 const altNamesList = computed(() =>

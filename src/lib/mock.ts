@@ -77,6 +77,9 @@ const DEFAULT_SETTINGS: Settings = {
   http01_port: 80,
   default_provider_id: null,
   cert_key_type: 'rsa',
+  notify_expiring: true,
+  notify_renew_success: true,
+  notify_renew_failed: true,
 }
 
 function loadSettings(): Settings {
@@ -295,6 +298,9 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
       else if (key === 'http01_port') s.http01_port = parseInt(value, 10) || 80
       else if (key === 'default_provider_id') s.default_provider_id = value ? parseInt(value, 10) : null
       else if (key === 'cert_key_type') s.cert_key_type = value === 'ecc' ? 'ecc' : 'rsa'
+      else if (key === 'notify_expiring') s.notify_expiring = value === 'true'
+      else if (key === 'notify_renew_success') s.notify_renew_success = value === 'true'
+      else if (key === 'notify_renew_failed') s.notify_renew_failed = value === 'true'
       saveSettings(s)
       log('INFO', '设置项变更：' + key + '=' + value)
       return undefined as T
@@ -377,6 +383,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     case 'start_issue': {
       const job_id = 'mock-job-' + nextId()
       lsSet('txt-confirmed:' + job_id, 'false')
+      const req = a.req as IssueRequest
       const jobStatus: JobStatus = {
         job_id,
         state: 'running',
@@ -386,9 +393,9 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
         error_code: null,
         error_detail: null,
         cert_id: null,
+        domain: req?.domain ?? null,
       }
       lsSetJSON('job-status:' + job_id, jobStatus)
-      const req = a.req as IssueRequest
       log('INFO', '开始申请（Mock）：' + (req.domain ?? '?') + ' [' + (req.challenge_type ?? '?') + ']')
       console.log('[mock] start_issue:', job_id, req)
       simulateJob(req, job_id)

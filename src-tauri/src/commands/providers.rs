@@ -64,12 +64,16 @@ pub fn save_provider(cfg: ProviderInput, state: tauri::State<'_, AppState>) -> A
         }
     };
 
-    // 分离机密字段
+    // 分离机密字段（空字符串视为未填写，避免编辑时误覆盖旧密钥为空，M3）
     let mut non_secret = serde_json::Map::new();
     let mut secret = serde_json::Map::new();
     for (k, v) in &cfg.config {
         if SECRET_KEYS.contains(&k.as_str()) {
-            secret.insert(k.clone(), v.clone());
+            if let Some(s) = v.as_str() {
+                if !s.trim().is_empty() {
+                    secret.insert(k.clone(), v.clone());
+                }
+            }
         } else {
             non_secret.insert(k.clone(), v.clone());
         }
@@ -83,6 +87,14 @@ pub fn save_provider(cfg: ProviderInput, state: tauri::State<'_, AppState>) -> A
             let existing = crate::storage::providers::get(&conn, id)?.ok_or_else(|| {
                 AppError::new(crate::error::ErrorCode::Db, "Provider 不存在")
             })?;
+            // 切换服务商类型时必须重新填写新类型的密钥：
+            // 旧密钥属于旧类型，保留会因密钥键不匹配导致后续调用静默失败（M4）
+            if existing.kind != kind && secret.is_empty() {
+                return Err(AppError::new(
+                    crate::error::ErrorCode::InvalidSetting,
+                    "切换 DNS 服务商类型时必须重新填写新类型的密钥",
+                ));
+            }
             if !secret.is_empty() {
                 state.secrets.save(&existing.secret_ref, &serde_json::to_string(&secret)?)?;
                 crate::storage::providers::update(&conn, id, &kind, &cfg.label, &config_json, Some(&existing.secret_ref))?;

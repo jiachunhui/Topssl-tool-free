@@ -82,6 +82,9 @@ pub struct JobStatus {
     pub error_detail: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cert_id: Option<i64>,
+    /// 任务目标域名（续期去重 / 前端悬浮条展示）
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub domain: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]

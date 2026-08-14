@@ -75,8 +75,11 @@ impl Http01Server {
         }
     }
 
-    /// 本机自检：模拟 Let's Encrypt 的验证请求，确认挑战文件可达
-    pub fn self_check(&self, domain: &str, token: &str) -> Result<(), AppError> {
+    /// 本机自检：模拟 Let's Encrypt 的验证请求，确认挑战文件可达。
+    /// `port` 为验证方视角的端口：LE 的 HTTP-01 始终访问 80 端口，
+    /// 因此即便本机监听的是自定义端口（配合反向代理），自检也应连 80，
+    /// 与 LE 行为一致，避免「自定义端口自检通过、LE 验证必然失败」的假阳性。
+    pub fn self_check(&self, domain: &str, token: &str, port: u16) -> Result<(), AppError> {
         let proof = self
             .registry
             .lock()
@@ -85,18 +88,17 @@ impl Http01Server {
             .cloned()
             .ok_or_else(|| AppError::new(ErrorCode::Internal, "挑战 token 未注册"))?;
 
-        let host = format!("{domain}:{}", self.port);
+        let host = format!("{domain}:{port}");
         let path = format!("/.well-known/acme-challenge/{token}");
         let request = format!(
             "GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\nUser-Agent: ssl-cert-desktop/0.1\r\n\r\n"
         );
 
-        let mut stream = TcpStream::connect((domain, self.port)).map_err(|e| {
+        let mut stream = TcpStream::connect((domain, port)).map_err(|e| {
             AppError::new(
                 ErrorCode::Http01Unreachable,
                 format!(
-                    "无法连接本机 {host}：请确认域名解析到本机公网 IP、路由器/防火墙放行 {} 端口（部分 NAT 环境本机回环不通属正常现象）",
-                    self.port
+                    "无法连接本机 {host}：请确认域名解析到本机公网 IP、路由器/防火墙放行 80 端口（部分 NAT 环境本机回环不通属正常现象）",
                 ),
             )
             .detail(e.to_string())
