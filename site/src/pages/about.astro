@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { SITE, TOPSSL, GITHUB } from '../config'
+
+const title = '关于与开源：TopSSL免费证书助手 - MIT开源SSL证书工具'
+const description =
+  '关于TopSSL免费证书助手：由TopSSL出品的开源免费SSL证书申请与自动续期工具，基于Tauri构建，MIT协议开源，代码公开可审计，密钥本地加密存储。'
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <span class="hero-badge">关于项目</span>
+      <h1 style="margin-top:1rem">关于 TopSSL 免费证书助手</h1>
+      <p class="lead" style="margin-top:.8rem">
+        TopSSL 免费证书助手是一款由 <a href={TOPSSL.home} target="_blank" rel="noopener">TopSSL</a>
+        出品的<strong>开源跨平台桌面工具</strong>：输入域名即可免费申请 Let's Encrypt SSL 证书，
+        自动安装到本机并到期自动续期。免费工具部分完全开源（MIT 协议），代码公开可审计。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">项目信息</span>
+        <h2>项目信息</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">项目</th>
+              <th>信息</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">当前版本</th>
+              <td>v{SITE.version}</td>
+            </tr>
+            <tr>
+              <th class="col-feature">开源协议</th>
+              <td>MIT License（<a href={GITHUB + '/blob/main/LICENSE'} target="_blank" rel="noopener">查看许可证</a>）</td>
+            </tr>
+            <tr>
+              <th class="col-feature">技术栈</th>
+              <td>Tauri 2 + Rust + Vue（桌面端），Astro SSG（本站）</td>
+            </tr>
+            <tr>
+              <th class="col-feature">源码仓库</th>
+              <td><a href={GITHUB} target="_blank" rel="noopener">github.com/jiachunhui/Topssl-tool-free</a></td>
+            </tr>
+            <tr>
+              <th class="col-feature">支持平台</th>
+              <td>Windows 10/11 · macOS 12+ · Linux 主流发行版</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">安全设计</span>
+        <h2>安全与隐私</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>DNS API 密钥保存在<strong>操作系统安全存储</strong>（Windows DPAPI / macOS 钥匙串 / Linux Secret Service），不会上传到任何服务器；</li>
+        <li>证书私钥文件权限 0600，仅本机用户可读；</li>
+        <li>代码完全开源，安全相关实现（密钥存储、ACME 流程）可随时审计；</li>
+        <li>本工具与 Let's Encrypt 无隶属关系，仅调用其公开的免费签发服务。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">支持与反馈</span>
+        <h2>获取支持</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>免费工具问题：查看<a href="/docs/quickstart/">使用教程</a>，或在
+          <a href={GITHUB + '/issues'} target="_blank" rel="noopener">GitHub Issues</a> 提交反馈；</li>
+        <li>企业级证书（DV / OV / EV）、自动化部署与专业技术支持：
+          <a href={TOPSSL.url('landing-about')} target="_blank" rel="noopener">访问 TopSSL 官网</a>。</li>
+      </ul>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">免费下载</a>
+        <a class="btn btn-ghost" href="/changelog/">查看更新日志</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

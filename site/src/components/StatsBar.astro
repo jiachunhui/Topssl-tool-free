@@ -7,12 +7,14 @@ const stats = [
 ]
 ---
 <div class="stats">
-  <div class="container grid">
-    {stats.map((s) => (
-      <div class="cell">
-        <div class="num">{s.num}<small style="font-size:1rem">{s.unit}</small></div>
-        <div class="label">{s.label}</div>
-      </div>
-    ))}
+  <div class="container">
+    <div class="card reveal in">
+      {stats.map((s) => (
+        <div class="cell">
+          <div class="num">{s.num}<small>{s.unit}</small></div>
+          <div class="label">{s.label}</div>
+        </div>
+      ))}
+    </div>
   </div>
 </div>

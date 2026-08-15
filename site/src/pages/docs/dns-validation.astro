@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const title = 'DNS验证申请SSL证书教程：通配符证书与TXT记录 - TopSSL免费证书助手'
+const description =
+  'DNS验证申请SSL证书教程：介绍DNS-01验证原理、适用场景与通配符证书申请，内置阿里云DNS、DNSPod、Cloudflare API自动验证配置方法，无需80端口。'
+
+const providers = [
+  { name: '阿里云 DNS', cred: 'AccessKey ID + AccessKey Secret', where: '阿里云 RAM 访问控制 → 创建子用户', perm: 'AliyunDNSFullAccess' },
+  { name: 'DNSPod / 腾讯云', cred: 'API Token（ID + Token）', where: 'DNSPod 控制台 → 密钥管理（dnsapi.cn Token）', perm: '域名解析读写' },
+  { name: 'Cloudflare', cred: 'API Token', where: 'Cloudflare 控制台 → My Profile → API Tokens', perm: 'Zone:DNS:Edit' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <span class="hero-badge">使用教程 · DNS 验证</span>
+      <h1 style="margin-top:1rem">DNS 验证申请 SSL 证书：通配符证书与 TXT 记录</h1>
+      <p class="lead" style="margin-top:.8rem">
+        DNS-01 是 Let's Encrypt 的另一种域名验证方式：通过添加一条 TXT 解析记录证明域名控制权。
+        它不依赖 80 端口，也是<strong>通配符证书</strong>唯一可用的验证方式。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">适用场景</span>
+        <h2>什么时候应该用 DNS 验证</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>申请<strong>通配符证书</strong>（<code>*.example.com</code>）—— 仅 DNS 验证支持；</li>
+        <li>服务器 <strong>80 端口不可公网访问</strong>（内网服务器、CDN 前置、运营商封锁）；</li>
+        <li>域名解析不在本机、不希望改动 A 记录指向。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">验证原理</span>
+        <h2>DNS-01 是怎么工作的</h2>
+      </div>
+      <p>
+        应用调用 DNS 服务商 API，为 <code>_acme-challenge.&#123;域名&#125;</code> 自动添加一条 TXT 验证记录；
+        Let's Encrypt 查询该记录完成验证后，应用自动清理记录。全程无需人工干预。
+        若不想提供 API 密钥，也可选择<strong>手动添加解析</strong>：应用给出主机记录与记录值，
+        到服务商后台添加、生效后点击「继续」。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">服务商配置</span>
+        <h2>内置的 DNS 服务商与所需凭证</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">服务商</th>
+              <th>所需凭证</th>
+              <th>获取位置</th>
+              <th>最小权限</th>
+            </tr>
+          </thead>
+          <tbody>
+            {providers.map((p) => (
+              <tr>
+                <th class="col-feature">{p.name}</th>
+                <td>{p.cred}</td>
+                <td>{p.where}</td>
+                <td>{p.perm}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem">
+        密钥仅保存在本机系统安全存储（Windows DPAPI / macOS 钥匙串 / Linux Secret Service），
+        仅在申请与续期时用于添加 / 删除 TXT 记录，不会上传到任何服务器。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">通配符证书</span>
+        <h2>通配符证书怎么申请</h2>
+      </div>
+      <p>
+        在「申请证书」页的主域名处输入 <code>*.example.com</code> 即可，一张证书同时覆盖
+        主域名及所有子域名。注意：<strong>通配符证书必须使用 DNS 验证</strong>，且测试环境
+        与正式环境建议先各验证一次流程。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">常见问题</span>
+        <h2>DNS 验证失败排查</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li><strong>验证超时</strong>：API 密钥无权限或已过期；或记录传播较慢，可稍后重试；</li>
+        <li><strong>密钥不生效</strong>：确认已按上表授予最小权限（阿里云 <code>AliyunDNSFullAccess</code>、Cloudflare <code>Zone:DNS:Edit</code>）；</li>
+        <li><strong>申请被拒（正式环境）</strong>：触发 Let's Encrypt 速率限制（每域每周 50 张），可先用测试环境验证流程。</li>
+      </ul>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-ghost" href="/docs/quickstart/">← 上一篇：快速开始</a>
+        <a class="btn btn-primary" href="/docs/auto-renewal/">下一篇：自动续期设置 →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

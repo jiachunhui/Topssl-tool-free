@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800" font-family="'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3cc5e2"/><stop offset="1" stop-color="#0085a1"/>
+    </linearGradient>
+  </defs>
+  <!-- 窗口背景 -->
+  <rect width="1280" height="800" fill="#f8fafb"/>
+  <!-- 侧边栏 -->
+  <rect width="216" height="800" fill="#ffffff"/>
+  <rect x="215.5" width="0.5" height="800" fill="#e4eaee"/>
+  <!-- Logo -->
+  <rect x="24" y="24" width="36" height="36" rx="9" fill="url(#brand)"/>
+  <path d="M33 37.5V32a5.25 5.25 0 1 0-10.5 0v5.5m-0.9 6h12.3a2.63 2.63 0 0 0 2.62-2.62V30.6a2.63 2.63 0 0 0-2.63-2.63H27.6a2.63 2.63 0 0 0-2.63 2.63v10.28a2.63 2.63 0 0 0 2.63 2.62Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="70" y="38" font-size="14.5" font-weight="700" fill="#0f172a">TopSSL</text>
+  <text x="70" y="56" font-size="12.5" font-weight="700" fill="#0f172a">免费证书助手</text>
+  <text x="70" y="72" font-size="10" fill="#94a3b8">Let's Encrypt 免费证书</text>
+  <!-- 导航项 -->
+  <g font-size="13" font-weight="500">
+    <rect x="14" y="96" width="188" height="34" rx="8" fill="#eef7fa"/>
+    <rect x="28" y="106" width="16" height="16" rx="3" fill="none" stroke="#0085a1" stroke-width="1.5"/>
+    <text x="54" y="118" fill="#036b81">我的证书</text>
+    <g fill="#64748b">
+      <rect x="28" y="142" width="16" height="16" rx="3" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="54" y="154">申请证书</text>
+      <rect x="28" y="178" width="16" height="16" rx="3" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="54" y="190">DNS 配置</text>
+      <rect x="28" y="214" width="16" height="16" rx="3" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="54" y="226">设置</text>
+      <rect x="28" y="250" width="16" height="16" rx="3" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="54" y="262">应用日志</text>
+      <rect x="28" y="286" width="16" height="16" rx="3" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="54" y="298">关于</text>
+    </g>
+  </g>
+  <text x="24" y="768" font-size="10.5" fill="#94a3b8">证书有效期 90 天，到期前 30 天自动续期</text>
+  <!-- 主区域 -->
+  <text x="252" y="44" font-size="19" font-weight="700" fill="#0f172a">我的证书</text>
+  <text x="252" y="64" font-size="12.5" fill="#64748b">管理您申请到的 SSL 证书，到期前会自动续期</text>
+  <rect x="1004" y="28" width="128" height="34" rx="8" fill="#0085a1"/>
+  <path d="M1048 40v14m-7-7h14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  <text x="1038" y="50" font-size="12.5" font-weight="600" fill="#fff" text-anchor="middle" transform="translate(38,0)">一键申请证书</text>
+  <!-- 企业证书 promo 卡片 -->
+  <g>
+    <rect x="252" y="84" width="316" height="62" rx="12" fill="#fff" stroke="#e4eaee"/>
+    <text x="270" y="110" font-size="13" font-weight="600" fill="#1e293b">单域名证书</text>
+    <text x="538" y="110" font-size="11.5" fill="#0085a1" text-anchor="end">了解详情 ›</text>
+    <text x="270" y="132" font-size="11" fill="#64748b">价格更实惠，低至 ¥45/年，一次购买多年免去频繁续期</text>
+    <rect x="588" y="84" width="316" height="62" rx="12" fill="#fff" stroke="#e4eaee"/>
+    <text x="606" y="110" font-size="13" font-weight="600" fill="#1e293b">通配符证书</text>
+    <text x="606" y="132" font-size="11" fill="#64748b">一张证书覆盖所有子域名，部署更省心</text>
+    <rect x="924" y="84" width="316" height="62" rx="12" fill="#fff" stroke="#e4eaee"/>
+    <text x="942" y="110" font-size="13" font-weight="600" fill="#1e293b">企业证书（OV/EV）</text>
+    <text x="942" y="132" font-size="11" fill="#64748b">地址栏显示企业身份，客户更信任</text>
+  </g>
+  <!-- 筛选胶囊 -->
+  <g font-size="11.5" font-weight="500">
+    <rect x="252" y="166" width="64" height="28" rx="14" fill="#0085a1"/>
+    <text x="284" y="184" fill="#fff" text-anchor="middle">全部 (3)</text>
+    <rect x="324" y="166" width="78" height="28" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <text x="363" y="184" fill="#475569" text-anchor="middle">有效 (1)</text>
+    <rect x="410" y="166" width="96" height="28" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <text x="458" y="184" fill="#475569" text-anchor="middle">即将到期 (1)</text>
+    <rect x="514" y="166" width="78" height="28" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <text x="553" y="184" fill="#475569" text-anchor="middle">已失效 (1)</text>
+  </g>
+  <!-- 证书卡片 1: 有效 -->
+  <g>
+    <rect x="252" y="214" width="486" height="140" rx="14" fill="#fff" stroke="#e4eaee"/>
+    <text x="272" y="244" font-size="14" font-weight="600" fill="#0f172a" font-family="'Consolas','Courier New',monospace">example.com</text>
+    <rect x="396" y="230" width="48" height="20" rx="10" fill="#d9f0e8"/><text x="420" y="244" font-size="10.5" fill="#0a7a54" text-anchor="middle">有效</text>
+    <text x="272" y="266" font-size="11" fill="#94a3b8" font-family="'Consolas','Courier New',monospace">www.example.com · api.example.com</text>
+    <text x="272" y="302" font-size="11" fill="#64748b">剩余 82 天</text>
+    <text x="720" y="302" font-size="11" fill="#64748b">2025-08-14 到期</text>
+    <rect x="272" y="312" width="446" height="6" rx="3" fill="#f1f5f9"/>
+    <rect x="272" y="312" width="407" height="6" rx="3" fill="#10b981"/>
+    <text x="272" y="340" font-size="10.5" fill="#94a3b8">HTTP 验证</text>
+    <rect x="336" y="326" width="62" height="20" rx="5" fill="#f1f5f9"/><text x="367" y="340" font-size="10" fill="#64748b" text-anchor="middle">Let's Encrypt</text>
+  </g>
+  <!-- 证书卡片 2: 即将到期 -->
+  <g>
+    <rect x="758" y="214" width="486" height="140" rx="14" fill="#fff" stroke="#e4eaee"/>
+    <text x="778" y="244" font-size="14" font-weight="600" fill="#0f172a" font-family="'Consolas','Courier New',monospace">*.example.com</text>
+    <rect x="912" y="230" width="64" height="20" rx="10" fill="#fef3c7"/><text x="944" y="244" font-size="10.5" fill="#b45309" text-anchor="middle">即将到期</text>
+    <text x="778" y="266" font-size="11" fill="#94a3b8" font-family="'Consolas','Courier New',monospace">通配符证书</text>
+    <text x="778" y="302" font-size="11" fill="#64748b">剩余 21 天</text>
+    <text x="1226" y="302" font-size="11" fill="#64748b">2025-06-12 到期</text>
+    <rect x="778" y="312" width="446" height="6" rx="3" fill="#f1f5f9"/>
+    <rect x="778" y="312" width="116" height="6" rx="3" fill="#f59e0b"/>
+    <text x="778" y="340" font-size="10.5" fill="#94a3b8">DNS 验证</text>
+    <rect x="842" y="326" width="62" height="20" rx="5" fill="#f1f5f9"/><text x="873" y="340" font-size="10" fill="#64748b" text-anchor="middle">Let's Encrypt</text>
+    <text x="1194" y="340" font-size="11" fill="#0085a1" text-anchor="end">立即续期</text>
+  </g>
+  <!-- 证书卡片 3: 已过期（虚线边框） -->
+  <g>
+    <rect x="252" y="374" width="486" height="140" rx="14" fill="#fff" stroke="#e4eaee" stroke-dasharray="6 5"/>
+    <text x="272" y="404" font-size="14" font-weight="600" fill="#0f172a" font-family="'Consolas','Courier New',monospace">old-blog.example.com</text>
+    <rect x="500" y="390" width="44" height="20" rx="10" fill="#fce7e7"/><text x="522" y="404" font-size="10.5" fill="#b91c1c" text-anchor="middle">已过期</text>
+    <rect x="550" y="390" width="64" height="20" rx="5" fill="#fef3c7"/><text x="582" y="404" font-size="10" fill="#b45309" text-anchor="middle">测试证书</text>
+    <text x="272" y="462" font-size="11" fill="#64748b">已过期</text>
+    <text x="720" y="462" font-size="11" fill="#64748b">2025-03-01 到期</text>
+    <rect x="272" y="472" width="446" height="6" rx="3" fill="#f1f5f9"/>
+    <rect x="272" y="472" width="0" height="6" rx="3" fill="#ef4444"/>
+    <text x="272" y="500" font-size="10.5" fill="#94a3b8">DNS 验证</text>
+    <rect x="336" y="486" width="62" height="20" rx="5" fill="#f1f5f9"/><text x="367" y="500" font-size="10" fill="#64748b" text-anchor="middle">Let's Encrypt</text>
+    <text x="704" y="500" font-size="11" fill="#0085a1" text-anchor="end">重新申请</text>
+  </g>
+  <!-- 底部提示 -->
+  <rect x="252" y="700" width="992" height="62" rx="12" fill="#f1f8fb" stroke="#dcecf2"/>
+  <text x="276" y="726" font-size="12.5" font-weight="600" fill="#036b81">💡 提示</text>
+  <text x="276" y="746" font-size="11.5" fill="#475569">证书到期前 30 天会自动续期，请保持应用在系统托盘运行（建议开启开机自启）</text>
+</svg>

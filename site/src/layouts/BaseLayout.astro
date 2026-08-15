@@ -9,14 +9,21 @@ interface Props {
   description?: string
   canonical?: string
   ogImage?: string
+  /** 设为 true 时输出 noindex（用于 404 等不应被收录的页面） */
+  noindex?: boolean
 }
 
 const {
   title = SITE.name,
   description = SITE.description,
-  canonical = SITE.url,
+  // 默认 canonical = 当前页面路径 + 站点域名，保证每个页面指向自身
+  canonical = new URL(Astro.url.pathname, SITE.url).href,
   ogImage = '/og-image.png',
+  noindex = false,
 } = Astro.props
+
+const canonicalUrl = new URL(canonical, SITE.url).href
+const ogImageUrl = new URL(ogImage, SITE.url).href
 
 const softwareJsonLd = {
   '@context': 'https://schema.org',
@@ -26,15 +33,18 @@ const softwareJsonLd = {
   description,
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Windows, macOS, Linux',
-  softwareVersion: '0.1.3',
-  url: canonical,
+  softwareVersion: SITE.version,
+  url: canonicalUrl,
+  downloadUrl: SITE.downloadUrl,
+  releaseNotes: new URL(SITE.releaseNotes, SITE.url).href,
+  screenshot: SITE.screenshots.map((s) => new URL(s, SITE.url).href),
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
   publisher: {
     '@type': 'Organization',
     name: 'TopSSL',
     url: 'https://www.topssl.cn',
   },
-  sameAs: GITHUB,
+  sameAs: SITE.sameAs,
   featureList: [
     "Let's Encrypt 免费证书一键申请",
     '到期前 30 天自动续期',
@@ -43,36 +53,66 @@ const softwareJsonLd = {
     '多域名 SAN 证书',
   ],
 }
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'TopSSL',
+  alternateName: 'TopSSL 免费证书助手',
+  url: 'https://www.topssl.cn',
+  logo: new URL(SITE.logo, SITE.url).href,
+  sameAs: SITE.sameAs,
+}
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.url,
+  inLanguage: 'zh-CN',
+  publisher: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+}
 ---
 <!doctype html>
 <html lang={SITE.lang}>
   <head>
     <meta charset="utf-8" />
+    <script>document.documentElement.classList.add('js')</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
     <meta name="author" content="TopSSL" />
-    <meta name="keywords" content="免费SSL证书,SSL证书申请,Let's Encrypt,证书自动续期,HTTPS,通配符证书,TopSSL,SSL证书助手" />
-    <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0085a1" />
+    <meta name="keywords" content="免费SSL证书,免费SSL证书申请,SSL证书自动续期,Let's Encrypt证书,免费HTTPS证书,通配符证书,DNS验证证书,TopSSL免费证书助手" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="theme-color" content="#042230" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {SITE.baiduSiteVerification && <meta name="baidu-site-verification" content={SITE.baiduSiteVerification} />}
+    <!-- 预连接：下载跳转目标与品牌站点 -->
+    <link rel="preconnect" href="https://github.com" crossorigin />
+    <link rel="preconnect" href="https://www.topssl.cn" crossorigin />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={canonical + ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="TopSSL 免费证书助手 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
     <meta property="og:locale" content="zh_CN" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={canonical + ogImage} />
-    <!-- 结构化数据：SoftwareApplication -->
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="TopSSL 免费证书助手 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
+    <!-- 结构化数据 -->
     <script type="application/ld+json" set:html={JSON.stringify(softwareJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
     <slot name="head" />
   </head>
   <body>
@@ -81,5 +121,30 @@ const softwareJsonLd = {
       <slot />
     </main>
     <SiteFooter />
+    {SITE.analytics.baiduTongjiId && (
+      <script set:html={`var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?${SITE.analytics.baiduTongjiId}";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s)})();`} />
+    )}
+    <script>
+      // 滚动显现动画：.reveal 元素进入视口时添加 .in
+      const els = Array.from(document.querySelectorAll('.reveal')) as Element[]
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        els.forEach((el) => el.classList.add('in'))
+      } else if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const en of entries) {
+              if (en.isIntersecting) {
+                en.target.classList.add('in')
+                io.unobserve(en.target)
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        )
+        els.forEach((el) => io.observe(el))
+      } else {
+        els.forEach((el) => el.classList.add('in'))
+      }
+    </script>
   </body>
 </html>

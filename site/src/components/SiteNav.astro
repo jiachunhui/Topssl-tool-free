@@ -1,26 +1,89 @@
 ---
 import { SITE, GITHUB } from '../config'
+// 首页顶部为深色 Hero，导航初始透明悬浮；子页面顶部为浅色背景，
+// 导航常驻 solid（实心玻璃）样式保证始终清晰可见。
+const isHome = Astro.url.pathname === '/'
+const pages = [
+  { href: '/download/', label: '下载' },
+  { href: '/docs/quickstart/', label: '教程' },
+]
+// 首页栏目锚点：首页直接 #xxx；子页面这些栏目只在首页存在，
+// 链接自动加 "/" 前缀跳回首页对应区块，保证任何页面都能点过去
 const links = [
   { href: '#features', label: '功能' },
   { href: '#how', label: '工作流程' },
   { href: '#compare', label: '证书对比' },
   { href: '#topssl', label: 'TopSSL' },
   { href: '#faq', label: '常见问题' },
-]
+].map((l) => (isHome ? l : { ...l, href: '/' + l.href }))
 ---
-<header class="site-nav">
-  <div class="container inner">
-    <a class="brand-mark" href="#top">
+<header class={'site-nav' + (isHome ? '' : ' solid')} id="site-nav">
+  <div class="container nav-shell">
+    <a class="brand-mark" href="/">
       <span class="brand-logo">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
         </svg>
       </span>
       <span>{SITE.name}</span>
     </a>
     <nav class="nav-links" aria-label="主导航">
-      {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      <a href={GITHUB} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">GitHub</a>
+      {pages.map((l) => <a class="nav-item" href={l.href}>{l.label}</a>)}
+      {links.map((l) => <a class="nav-item" href={l.href} data-target={isHome ? l.href : undefined}>{l.label}</a>)}
     </nav>
+    <div class="nav-cta">
+      <a href={GITHUB} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">免费下载</a>
+      <button class="nav-burger" id="nav-burger" aria-label="打开菜单" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
   </div>
 </header>
+<div class="mobile-menu" id="mobile-menu">
+  {pages.map((l) => <a href={l.href}>{l.label}</a>)}
+  {links.map((l) => <a href={l.href}>{l.label}</a>)}
+  <a href={GITHUB} target="_blank" rel="noopener noreferrer" class="btn btn-primary">免费下载</a>
+</div>
+<script>
+  const nav = document.getElementById('site-nav')
+  const burger = document.getElementById('nav-burger')
+  const menu = document.getElementById('mobile-menu')
+  // 子页面头部常驻 solid 样式，无需滚动切换；仅首页需要滚动效果
+  const isSolid = nav?.classList.contains('solid') ?? false
+  const navItems = Array.from(document.querySelectorAll('.nav-item'))
+  // 仅处理带锚点的导航项（下载/教程等页面链接没有 data-target，
+  // 直接 querySelector('') 会抛 SyntaxError 导致整个脚本中断）
+  const sections = navItems
+    .filter((a) => a.dataset.target)
+    .map((a) => document.querySelector(a.dataset.target as string))
+    .filter(Boolean) as Element[]
+
+  const onScroll = () => {
+    const y = window.scrollY
+    if (!isSolid) nav?.classList.toggle('scrolled', y > 24)
+
+    // 区块高亮（滚动经过的当前章节，仅首页有锚点导航）
+    if (isSolid || y < 120) {
+      navItems.forEach((a) => a.classList.remove('active'))
+      return
+    }
+    let current: string | null = null
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= 140) current = '#' + s.id
+    }
+    navItems.forEach((a) => a.classList.toggle('active', current === a.dataset.target))
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
+
+  burger?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('open') ?? false
+    burger.setAttribute('aria-expanded', String(open))
+  })
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.classList.remove('open')
+      burger?.setAttribute('aria-expanded', 'false')
+    }),
+  )
+</script>

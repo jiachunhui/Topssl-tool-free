@@ -44,14 +44,14 @@ const features = [
 ---
 <section class="section" id="features">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="kicker">功能特性</span>
       <h2>为「免费证书」而生的桌面工具</h2>
       <p>不收费、不开后门、全开源 —— 覆盖证书从申请到续期的完整生命周期</p>
     </div>
     <div class="features-grid">
-      {features.map((f) => (
-        <div class="feature-card">
+      {features.map((f, i) => (
+        <div class="feature-card reveal" style={"--reveal-delay:" + (i % 4) * 0.08 + "s"}>
           <div class="icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={f.icon} /></svg>
           </div>

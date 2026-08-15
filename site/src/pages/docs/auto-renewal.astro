@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const title = 'SSL证书自动续期教程：到期前30天自动续签设置 - TopSSL免费证书助手'
+const description =
+  'SSL证书自动续期教程：Let&rsquo;s Encrypt证书有效期90天，TopSSL免费证书助手在到期前30天自动续期。了解自动续期原理、开机自启与托盘设置、续期失败排查方法。'
+
+const issues = [
+  { problem: '80 端口检测失败', cause: '端口被占用或未放行；检查防火墙 / 安全组，或改用 DNS 验证' },
+  { problem: 'HTTP 验证超时', cause: '域名未解析到本机公网 IP，或运营商封锁 80 端口' },
+  { problem: 'DNS 验证超时', cause: 'API 密钥无权限 / 已过期；记录传播较慢，可稍后重试或手动添加' },
+  { problem: '申请被拒（正式环境）', cause: '触发 Let&rsquo;s Encrypt 速率限制（每域每周 50 张），可先用测试环境' },
+  { problem: '续期失败', cause: '密钥过期、端口被占、域名解析变更；打开「日志」页定位' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <span class="hero-badge">使用教程 · 自动续期</span>
+      <h1 style="margin-top:1rem">SSL 证书自动续期：到期前 30 天自动续签</h1>
+      <p class="lead" style="margin-top:.8rem">
+        Let's Encrypt 证书有效期 90 天，手动续期容易遗忘。TopSSL 免费证书助手在
+        <strong>到期前 30 天自动发起续期</strong>，重新验证、重新签发，证书长期有效不中断。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">续期原理</span>
+        <h2>自动续期是如何工作的</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>证书到期前 30 天，应用自动按原配置（同样的域名、验证方式、服务商）重新完成验证与签发；</li>
+        <li>续期结果通过<strong>系统通知</strong>提示，可在「我的证书」页查看下次续期时间与续期记录；</li>
+        <li>续期失败不会影响现有证书，证书仍可使用到原到期日，可在「日志」页排查后重试。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">关键设置</span>
+        <h2>两个开关缺一不可</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">设置项</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">开启自动续期</th>
+              <td>到期前 30 天自动续期的总开关，默认开启</td>
+            </tr>
+            <tr>
+              <th class="col-feature">开机自动启动</th>
+              <td>登录系统后自动启动并驻留托盘，保证续期任务按时执行</td>
+            </tr>
+            <tr>
+              <th class="col-feature">申请环境</th>
+              <td>正式环境签发浏览器信任的证书；测试环境（Staging）用于验证流程</td>
+            </tr>
+            <tr>
+              <th class="col-feature">邮箱</th>
+              <td>ACME 账户注册与到期通知邮箱，建议填写以便接收续期提醒</td>
+            </tr>
+            <tr>
+              <th class="col-feature">证书密钥类型</th>
+              <td>RSA / ECDSA 密钥算法可选</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem">
+        <strong>请保持程序在系统托盘运行、不要退出</strong>：程序退出后不会执行自动续期。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">排错指南</span>
+        <h2>常见问题与处理</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">现象</th>
+              <th>原因与处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((i) => (
+              <tr>
+                <th class="col-feature">{i.problem}</th>
+                <td>{i.cause}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-ghost" href="/docs/dns-validation/">← 上一篇：DNS 验证</a>
+        <a class="btn btn-primary" href="/download/">免费下载，开启自动续期</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

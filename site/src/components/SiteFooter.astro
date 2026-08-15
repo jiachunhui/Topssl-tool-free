@@ -14,16 +14,18 @@ const year = new Date().getFullYear()
       <div>
         <h4>项目</h4>
         <div style="display:grid;gap:.45rem">
-          <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
-          <a href={GITHUB + '/releases'} target="_blank" rel="noopener noreferrer">下载与更新</a>
-          <a href="#faq">常见问题</a>
+          <a href="/download/">免费下载</a>
+          <a href="/docs/quickstart/">使用教程</a>
+          <a href="/changelog/">更新日志</a>
+          <a href="/about/">关于与开源</a>
         </div>
       </div>
       <div>
         <h4>相关资源</h4>
         <div style="display:grid;gap:.45rem">
-          <a href={TOPSSL.url('landing-footer')} target="_blank" rel="noopener noreferrer">TopSSL 官网</a>
-          <a href="https://letsencrypt.org/zh-cn/" target="_blank" rel="noopener noreferrer">Let&rsquo;s Encrypt</a>
+          <a href={TOPSSL.url('landing-footer')} target="_blank" rel="noopener">TopSSL 官网</a>
+          <a href="https://letsencrypt.org/zh-cn/" target="_blank" rel="noopener">Let&rsquo;s Encrypt</a>
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
           <a href={GITHUB + '/blob/main/LICENSE'} target="_blank" rel="noopener noreferrer">MIT 许可证</a>
         </div>
       </div>

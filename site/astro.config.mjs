@@ -1,13 +1,14 @@
 import { defineConfig } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
+import { SITE } from './src/config'
 
 // ─────────────────────────────────────────────────────────────
-// 部署方式待定：上线前请把 site 改为最终部署域名/路径，例如：
-//   site: 'https://www.topssl.cn/ssl-cert-assistant'
-// sitemap.xml 与 canonical 会基于该值自动生成。
+// 站点地址统一从 src/config.ts 的 SITE.url 读取（单一配置点）。
+// 上线前只需修改 src/config.ts 一处，sitemap.xml / canonical
+// / robots.txt 会全部自动跟随。
 // ─────────────────────────────────────────────────────────────
 export default defineConfig({
-  site: 'https://topssl-cert-assistant.example.com',
+  site: SITE.url,
   output: 'static',
   integrations: [sitemap()],
 })
