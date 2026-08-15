@@ -45,7 +45,7 @@ async function saveAll() {
           </button>
           <button
             class="rounded-lg px-3 py-1.5 text-sm font-medium transition"
-            :class="settingsStore.settings.acme_directory === 'production' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+            :class="settingsStore.settings.acme_directory === 'production' ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-500'"
             @click="settingsStore.setKey('acme_directory', 'production')"
           >
             正式环境（Production）
@@ -60,7 +60,7 @@ async function saveAll() {
           v-model="settingsStore.settings.contact_email"
           type="email"
           placeholder="you@example.com"
-          class="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+          class="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
         />
       </div>
 
@@ -71,7 +71,7 @@ async function saveAll() {
           <span class="text-sm text-slate-700">开启自动续期</span>
           <input
             type="checkbox"
-            class="h-4 w-4 accent-emerald-600"
+            class="h-4 w-4 accent-brand-600"
             :checked="settingsStore.settings.auto_renew"
             @change="settingsStore.setKey('auto_renew', (settingsStore.settings.auto_renew = !settingsStore.settings.auto_renew))"
           />
@@ -80,7 +80,7 @@ async function saveAll() {
           <span class="text-sm text-slate-700">开机自动启动</span>
           <input
             type="checkbox"
-            class="h-4 w-4 accent-emerald-600"
+            class="h-4 w-4 accent-brand-600"
             :checked="settingsStore.settings.run_at_login"
             @change="settingsStore.setKey('run_at_login', (settingsStore.settings.run_at_login = !settingsStore.settings.run_at_login))"
           />
@@ -94,7 +94,7 @@ async function saveAll() {
           <span class="text-sm text-slate-700">证书到期提醒</span>
           <input
             type="checkbox"
-            class="h-4 w-4 accent-emerald-600"
+            class="h-4 w-4 accent-brand-600"
             :checked="settingsStore.settings.notify_expiring"
             @change="settingsStore.setKey('notify_expiring', (settingsStore.settings.notify_expiring = !settingsStore.settings.notify_expiring))"
           />
@@ -103,7 +103,7 @@ async function saveAll() {
           <span class="text-sm text-slate-700">续期成功提醒</span>
           <input
             type="checkbox"
-            class="h-4 w-4 accent-emerald-600"
+            class="h-4 w-4 accent-brand-600"
             :checked="settingsStore.settings.notify_renew_success"
             @change="settingsStore.setKey('notify_renew_success', (settingsStore.settings.notify_renew_success = !settingsStore.settings.notify_renew_success))"
           />
@@ -112,7 +112,7 @@ async function saveAll() {
           <span class="text-sm text-slate-700">续期失败提醒</span>
           <input
             type="checkbox"
-            class="h-4 w-4 accent-emerald-600"
+            class="h-4 w-4 accent-brand-600"
             :checked="settingsStore.settings.notify_renew_failed"
             @change="settingsStore.setKey('notify_renew_failed', (settingsStore.settings.notify_renew_failed = !settingsStore.settings.notify_renew_failed))"
           />
@@ -125,14 +125,14 @@ async function saveAll() {
         <div class="mt-3 flex gap-2">
           <button
             class="rounded-lg px-3 py-1.5 text-sm font-medium transition"
-            :class="settingsStore.settings.cert_key_type !== 'ecc' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+            :class="settingsStore.settings.cert_key_type !== 'ecc' ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-500'"
             @click="settingsStore.setKey('cert_key_type', 'rsa')"
           >
             RSA（推荐）
           </button>
           <button
             class="rounded-lg px-3 py-1.5 text-sm font-medium transition"
-            :class="settingsStore.settings.cert_key_type === 'ecc' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+            :class="settingsStore.settings.cert_key_type === 'ecc' ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-500'"
             @click="settingsStore.setKey('cert_key_type', 'ecc')"
           >
             ECC（P-384）
@@ -148,7 +148,7 @@ async function saveAll() {
           type="number"
           min="1"
           max="65535"
-          class="mt-3 w-32 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm outline-none transition focus:border-emerald-500"
+          class="mt-3 w-32 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm outline-none transition focus:border-brand-500"
         />
         <p
           v-if="settingsStore.settings.http01_port !== 80"

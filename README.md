@@ -1,10 +1,14 @@
-# SSL 证书助手（SSL Cert Desktop）
+# TopSSL 免费证书助手（TopSSL Free Cert Assistant）
 
 面向普通用户的跨平台桌面程序：输入域名 → 一键申请 **Let's Encrypt 免费 SSL 证书** → 自动安装到本机 → 到期自动续期。
+
+由 [TopSSL（topssl.cn）](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) 出品并支持，免费工具部分完全开源。
 
 技术栈：**Tauri 2**（Rust 后端）+ **Vue 3 + Vite + TypeScript + Tailwind CSS v4**（前端）+ **SQLite**（rusqlite）。
 
 > 详细使用说明见 [docs/用户手册.md](docs/用户手册.md)。
+>
+> **相关链接**：[TopSSL 官网](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [GitHub 仓库](https://github.com/jiachunhui/Topssl-tool-free) ｜ [项目宣传页]（部署地址待定）｜ [Let's Encrypt](https://letsencrypt.org/)
 
 ## 功能特性
 
@@ -25,9 +29,9 @@
 
 | 平台 | 安装包 | 说明 |
 |---|---|---|
-| Windows 10/11 x64 | `SSL-Cert-Desktop_<版本>_x64-setup.exe` | NSIS 安装程序，双击安装（当前用户，无需管理员） |
-| macOS（Apple Silicon） | `SSL-Cert-Desktop_<版本>_aarch64.dmg` | 未签名：首次打开请在 Finder 中**右键 → 打开**，或在终端执行 `xattr -cr /Applications/SSL-Cert-Desktop.app` |
-| macOS（Intel） | `SSL-Cert-Desktop_<版本>_x64.dmg` | 同上 |
+| Windows 10/11 x64 | `TopSSL-Free-Cert-Assistant_<版本>_x64-setup.exe` | NSIS 安装程序，双击安装（当前用户，无需管理员） |
+| macOS（Apple Silicon） | `TopSSL-Free-Cert-Assistant_<版本>_aarch64.dmg` | 未签名：首次打开请在 Finder 中**右键 → 打开**，或在终端执行 `xattr -cr /Applications/TopSSL-Free-Cert-Assistant.app` |
+| macOS（Intel） | `TopSSL-Free-Cert-Assistant_<版本>_x64.dmg` | 同上 |
 | Linux x64 | `.deb` / `.AppImage` / `.rpm` | Debian 系：`sudo dpkg -i xxx.deb`；AppImage：`chmod +x` 后直接运行 |
 
 ## 支持的 DNS 服务商
@@ -83,7 +87,7 @@ npm run tauri build      # 产出 NSIS（Windows）、dmg（macOS）、deb/rpm/A
 - 手动触发（Actions → Release → Run workflow）：仅构建并产出构建产物（Artifacts），不创建 Release
 
 ```bash
-git tag v0.1.2 && git push origin v0.1.2   # 触发三平台构建 + 发布
+git tag v0.1.3 && git push origin v0.1.3   # 触发三平台构建 + 发布
 ```
 
 ## Linux 的 80 端口权限
@@ -91,7 +95,7 @@ git tag v0.1.2 && git push origin v0.1.2   # 触发三平台构建 + 发布
 Linux 普通用户无法监听 1024 以下端口。使用 HTTP-01 验证前需执行一次性授权：
 
 ```bash
-sudo setcap cap_net_bind_service=+ep /path/to/ssl-cert-desktop
+sudo setcap cap_net_bind_service=+ep /path/to/topssl-free-cert-assistant
 ```
 
 或在设置中改用 DNS 验证。
@@ -134,6 +138,16 @@ docs/                   # 用户手册
 
 - **acme-micro**：Let's Encrypt 新增 `dns-persist-01` 挑战类型（无 token 字段），上游 0.14.0 的 `ApiChallenge.token` 必填导致解析失败
 - **keyring**：Windows 凭据持久化模式由 `CRED_PERSIST_ENTERPRISE`（会被系统清理）改为 `CRED_PERSIST_LOCAL_MACHINE`；注：Windows 端实际主存储为 DPAPI 加密文件，keyring 仅供 macOS/Linux 使用
+
+## 关于 TopSSL
+
+[TopSSL（topssl.cn）](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) 是专业的 SSL 证书服务平台，提供：
+
+- **企业级 SSL 证书**（DV / OV / EV）：地址栏显示企业身份，兼容旧设备，支持多年期购买
+- **证书自动化部署方案**：CDN、云服务器、负载均衡等场景的部署与更新
+- **专业技术支持**：申请、部署、续期全程人工协助
+
+本应用由 TopSSL 出品并支持，免费工具部分完全开源；企业用户可按需了解 TopSSL 付费服务。
 
 ## 安全说明
 

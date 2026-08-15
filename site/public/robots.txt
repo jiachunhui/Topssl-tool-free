@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://topssl-cert-assistant.example.com/sitemap-index.xml

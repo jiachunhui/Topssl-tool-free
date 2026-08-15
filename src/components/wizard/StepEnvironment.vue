@@ -73,14 +73,14 @@ function confirmProduction() {
         v-model="email"
         type="email"
         placeholder="例如：you@example.com"
-        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
       />
       <p v-if="email && !emailValid" class="mt-1.5 text-xs text-red-500">邮箱格式不正确</p>
     </div>
 
     <div
       class="cursor-pointer rounded-xl border-2 p-4 transition"
-      :class="directory === 'production' ? 'border-emerald-500 bg-emerald-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
+      :class="directory === 'production' ? 'border-brand-500 bg-brand-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
       @click="toggleDirectory"
     >
       <div class="flex items-center justify-between">
@@ -88,7 +88,7 @@ function confirmProduction() {
           {{ directory === 'staging' ? '测试环境（Staging）' : '正式环境（Production）' }}
         </span>
         <span v-if="directory === 'staging'" class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">当前</span>
-        <span v-else class="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-medium text-white">正式</span>
+        <span v-else class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">正式</span>
       </div>
       <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
         <template v-if="directory === 'staging'">测试证书不会被浏览器信任，仅用于验证流程。</template>

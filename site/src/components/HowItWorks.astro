@@ -1,0 +1,24 @@
+---
+const steps = [
+  { title: '输入域名', desc: '填写主域名（支持 *.example.com 通配符），可附加多个子域名。' },
+  { title: '选择验证方式', desc: 'HTTP 验证零配置；DNS 验证自动调用服务商 API 添加 TXT 记录。' },
+  { title: '自动签发与续期', desc: '证书签发后自动安装到本机，到期前 30 天自动续期，一次配置长期无忧。' },
+]
+---
+<section class="section" id="how" style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">工作流程</span>
+      <h2>三步搞定，之后什么都不用管</h2>
+      <p>全程可视化进度，从提交到签发约 1-3 分钟</p>
+    </div>
+    <div class="steps">
+      {steps.map((s) => (
+        <div class="step">
+          <h3>{s.title}</h3>
+          <p>{s.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

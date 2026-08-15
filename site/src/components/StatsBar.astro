@@ -1,0 +1,18 @@
+---
+const stats = [
+  { num: '90', unit: '天', label: '证书有效期' },
+  { num: '30', unit: '天', label: '到期前自动续期' },
+  { num: '3', unit: '平台', label: 'Windows / macOS / Linux' },
+  { num: '2', unit: '种', label: 'HTTP / DNS 验证方式' },
+]
+---
+<div class="stats">
+  <div class="container grid">
+    {stats.map((s) => (
+      <div class="cell">
+        <div class="num">{s.num}<small style="font-size:1rem">{s.unit}</small></div>
+        <div class="label">{s.label}</div>
+      </div>
+    ))}
+  </div>
+</div>

@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog.vue'
 import { useCertsStore } from '../stores/certs'
 import { useJobStore } from '../stores/job'
 import { toast } from '../lib/toast'
+import { topsslUrl, openExternal, ENTERPRISE_PRICE } from '../lib/promo'
 import type { CertInfo } from '../lib/types'
 
 const router = useRouter()
@@ -58,6 +59,25 @@ async function onRemove(cert: CertInfo) {
   }
 }
 
+/** 企业证书引导卡片（TopSSL 曝光点：我的证书页，1-3 张） */
+const promoCards = [
+  {
+    title: '单域名证书',
+    desc: `价格更实惠，低至 ¥${ENTERPRISE_PRICE}/年，一次购买多年免去频繁续期`,
+    url: topsslUrl('app-home', 'single-domain', '/ssl/one'),
+  },
+  {
+    title: '通配符证书',
+    desc: '一张证书覆盖所有子域名，部署更省心',
+    url: topsslUrl('app-home', 'wildcard', '/ssl/wildcard'),
+  },
+  {
+    title: '企业证书（OV/EV）',
+    desc: '地址栏显示企业身份，客户更信任',
+    url: topsslUrl('app-home', 'ov-ev', '/ssl/ov'),
+  },
+]
+
 const counts = {
   all: () => certsStore.certs.length,
   valid: () => certsStore.certs.filter((c) => c.status === 'issued' && c.days_remaining > 30).length,
@@ -81,12 +101,28 @@ const counts = {
       </button>
     </div>
 
+    <div class="mt-5 grid gap-3 sm:grid-cols-3">
+      <a
+        v-for="c in promoCards"
+        :key="c.title"
+        :href="c.url"
+        class="group rounded-xl border border-brand-100 bg-white p-3.5 transition hover:border-brand-300 hover:shadow-sm"
+        @click.prevent="openExternal(c.url)"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-semibold text-slate-800">{{ c.title }}</span>
+          <span class="shrink-0 text-xs font-medium text-brand-600 group-hover:underline">了解详情 ›</span>
+        </div>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ c.desc }}</p>
+      </a>
+    </div>
+
     <div class="mt-5 flex gap-1.5">
       <button
         v-for="(label, key) in { all: '全部', valid: '有效', expiring: '即将到期', expired: '已失效' }"
         :key="key"
         class="rounded-full px-3 py-1.5 text-xs font-medium transition"
-        :class="filter === key ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+        :class="filter === key ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
         @click="filter = key as typeof filter"
       >
         {{ label }} ({{ counts[key as keyof typeof counts]() }})

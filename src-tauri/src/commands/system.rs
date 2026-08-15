@@ -29,7 +29,7 @@ pub fn get_app_info() -> AppResult<AppInfo> {
         version: env!("CARGO_PKG_VERSION").to_string(),
         platform: std::env::consts::OS.to_string(),
         arch: std::env::consts::ARCH.to_string(),
-        name: "SSL 证书助手".to_string(),
+        name: "TopSSL 免费证书助手".to_string(),
     })
 }
 
@@ -55,6 +55,16 @@ pub fn open_path(path: String, app: tauri::AppHandle) -> AppResult<()> {
     use tauri_plugin_opener::OpenerExt;
     app.opener()
         .open_path(&path, None::<&str>)
+        .map_err(|e| crate::error::AppError::internal(e))?;
+    Ok(())
+}
+
+/// 打开外部链接（系统默认浏览器）
+#[tauri::command]
+pub fn open_url(url: String, app: tauri::AppHandle) -> AppResult<()> {
+    use tauri_plugin_opener::OpenerExt;
+    app.opener()
+        .open_url(&url, None::<&str>)
         .map_err(|e| crate::error::AppError::internal(e))?;
     Ok(())
 }

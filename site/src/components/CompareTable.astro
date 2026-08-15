@@ -1,0 +1,52 @@
+---
+import { TOPSSL, ENTERPRISE_PRICE } from '../config'
+const rows = [
+  { feature: '价格', free: '完全免费', ent: `低至 ¥${ENTERPRISE_PRICE}/年`, entBold: true },
+  { feature: '有效期', free: '90 天，到期自动续期', ent: '可选 1-3 年，无需频繁续期' },
+  { feature: '地址栏身份', free: '仅显示安全锁', ent: 'OV/EV 显示企业名称，客户更信任' },
+  { feature: '设备兼容性', free: '面向现代浏览器', ent: '兼容更老旧的设备与系统' },
+  { feature: '自动化部署', free: '手动配置服务', ent: '平台提供部署与更新方案' },
+  { feature: '技术支持', free: '开源社区 / 文档', ent: '专业技术支持服务' },
+]
+---
+<section class="section" id="compare">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">证书对比</span>
+      <h2>免费证书够用，企业证书更省心</h2>
+      <p>个人网站选免费工具即可；企业或对信任度有要求的场景，推荐 TopSSL 企业证书</p>
+    </div>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th class="col-feature">对比项</th>
+            <th class="col-free">免费证书<span class="tag free">本工具</span></th>
+            <th class="col-enterprise">企业证书<span class="tag top">TopSSL</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr>
+              <th class="col-feature">{r.feature}</th>
+              <td class="col-free">{r.free}</td>
+              <td class="col-enterprise">{r.entBold ? <b>{r.ent}</b> : r.ent}</td>
+            </tr>
+          ))}
+          <tr>
+            <th class="col-feature">适合人群</th>
+            <td class="col-free">个人网站 / 博客 / 测试</td>
+            <td class="col-enterprise">企业官网 / 电商 / 政务 / 金融</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1.6rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-primary" href="#top">免费开始使用</a>
+      <a class="btn btn-ghost" href={TOPSSL.url('landing-compare')} target="_blank" rel="noopener noreferrer">
+        了解企业证书
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+      </a>
+    </div>
+  </div>
+</section>

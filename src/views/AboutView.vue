@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppStore } from '../stores/app'
+import { topsslUrl, openExternal, GITHUB_REPO } from '../lib/promo'
 
 const appStore = useAppStore()
 
@@ -32,6 +33,22 @@ const faqs = [
     q: '申请失败常见原因？',
     a: '最常见的是：1) HTTP 验证时 80 端口公网不可达（建议改用 DNS 验证）；2) DNS 验证时 API 密钥权限不足；3) 域名解析未生效。错误提示会给出具体建议。',
   },
+  {
+    q: 'TopSSL 是什么？',
+    a: 'TopSSL（topssl.cn）是专业的 SSL 证书服务平台，提供企业级 SSL 证书（DV / OV / EV）、证书自动化部署方案与专业技术支持。本应用由 TopSSL 出品并支持，免费工具部分完全开源。',
+  },
+  {
+    q: '免费证书和企业证书有什么区别？',
+    a: '免费证书（本应用）有效期 90 天，到期自动续期，适合个人网站与测试用途；企业证书（OV/EV）地址栏直接显示企业身份，客户信任度更高，可购买多年期省去频繁续期，且兼容更老旧的设备与系统。',
+  },
+  {
+    q: 'TopSSL 平台提供自动化部署方案吗？',
+    a: '提供。TopSSL 平台支持证书在 CDN、云服务器、负载均衡等场景的自动化部署与更新方案，适合批量证书管理的企业用户，可访问官网了解详情。',
+  },
+  {
+    q: '遇到申请或部署问题怎么办？',
+    a: '免费工具遇到问题可先查看应用内错误提示、用户手册或开源仓库提交 Issue；需要即时人工协助时，TopSSL 平台提供专业技术支持服务（免费工具申请渠道所不具备的）。',
+  },
 ]
 </script>
 
@@ -40,7 +57,7 @@ const faqs = [
     <h1 class="text-xl font-bold text-slate-900">关于</h1>
 
     <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 text-center">
-      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-white">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6">
           <path
             stroke-linecap="round"
@@ -49,11 +66,36 @@ const faqs = [
           />
         </svg>
       </div>
-      <h2 class="mt-3 text-base font-bold text-slate-900">SSL 证书助手</h2>
+      <h2 class="mt-3 text-base font-bold text-slate-900">TopSSL 免费证书助手</h2>
       <p class="mt-0.5 text-xs text-slate-400">v{{ appStore.appInfo?.version ?? '—' }} · {{ appStore.appInfo?.platform ?? '' }} {{ appStore.appInfo?.arch ?? '' }}</p>
       <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
         为您的域名免费申请 Let's Encrypt SSL 证书，安装到本机并自动续期。支持 HTTP 与 DNS 两种验证方式、通配符证书、多域名证书。
       </p>
+      <p class="mt-3 text-xs text-slate-400">
+        技术支持由
+        <button class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800" @click="openExternal(topsslUrl('app-about', 'home'))">
+          TopSSL（topssl.cn）
+        </button>
+        提供
+      </p>
+    </div>
+
+    <div class="mt-6 rounded-xl border border-slate-200 bg-white px-4 py-3.5">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <div class="text-sm font-semibold text-slate-800">开源项目</div>
+          <p class="mt-0.5 text-xs text-slate-500">本项目基于 MIT 协议开源，最新版本与更新记录见 GitHub 仓库</p>
+        </div>
+        <button
+          class="btn-secondary !px-3 !py-1.5 text-xs"
+          @click="openExternal(GITHUB_REPO)"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" class="mr-1 inline h-3.5 w-3.5 align-[-2px]">
+            <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.25 10.25 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z" />
+          </svg>
+          GitHub
+        </button>
+      </div>
     </div>
 
     <div class="mt-6 space-y-3">
@@ -63,7 +105,7 @@ const faqs = [
         :key="f.q"
         class="group rounded-xl border border-slate-200 bg-white px-4 py-3 open:shadow-sm"
       >
-        <summary class="cursor-pointer list-none text-sm font-medium text-slate-800 group-open:text-emerald-700">
+        <summary class="cursor-pointer list-none text-sm font-medium text-slate-800 group-open:text-brand-700">
           {{ f.q }}
         </summary>
         <p class="mt-2 text-sm leading-relaxed text-slate-500">{{ f.a }}</p>

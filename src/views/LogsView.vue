@@ -96,7 +96,7 @@ onUnmounted(() => {
         v-for="(label, key) in { all: '全部', INFO: '信息', WARN: '警告', ERROR: '错误' }"
         :key="key"
         class="rounded-full px-3 py-1 text-xs font-medium transition"
-        :class="levelFilter === key ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200'"
+        :class="levelFilter === key ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border border-slate-200'"
         @click="levelFilter = key as typeof levelFilter"
       >
         {{ label }}

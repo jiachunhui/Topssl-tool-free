@@ -1,0 +1,36 @@
+---
+import { SITE, TOPSSL, GITHUB } from '../config'
+const year = new Date().getFullYear()
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="grid">
+      <div>
+        <div class="brand-mark" style="color:#fff">{SITE.name}</div>
+        <p style="margin-top:.7rem;max-width:26rem">
+          {SITE.description}
+        </p>
+      </div>
+      <div>
+        <h4>项目</h4>
+        <div style="display:grid;gap:.45rem">
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+          <a href={GITHUB + '/releases'} target="_blank" rel="noopener noreferrer">下载与更新</a>
+          <a href="#faq">常见问题</a>
+        </div>
+      </div>
+      <div>
+        <h4>相关资源</h4>
+        <div style="display:grid;gap:.45rem">
+          <a href={TOPSSL.url('landing-footer')} target="_blank" rel="noopener noreferrer">TopSSL 官网</a>
+          <a href="https://letsencrypt.org/zh-cn/" target="_blank" rel="noopener noreferrer">Let&rsquo;s Encrypt</a>
+          <a href={GITHUB + '/blob/main/LICENSE'} target="_blank" rel="noopener noreferrer">MIT 许可证</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© {year} {SITE.name} · 由 TopSSL 出品并支持 · 基于 MIT 协议开源</span>
+      <span>本站为开源项目宣传页，与 Let&rsquo;s Encrypt 无隶属关系</span>
+    </div>
+  </div>
+</footer>

@@ -38,8 +38,8 @@ async function copy(text: string, label: string) {
 <template>
   <div v-if="cert" class="space-y-5 fade-in">
     <div class="flex flex-col items-center pt-4 text-center">
-      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="h-7 w-7 text-emerald-600">
+      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="h-7 w-7 text-brand-600">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
       </div>
@@ -69,7 +69,7 @@ async function copy(text: string, label: string) {
     <div v-if="guide" class="rounded-xl border border-slate-200 bg-white p-4">
       <div class="mb-2 flex items-center justify-between">
         <span class="text-sm font-medium text-slate-700">在您的服务中引用</span>
-        <button class="text-xs font-medium text-emerald-600 hover:underline" @click="copy(guide, '指引')">复制全文</button>
+        <button class="text-xs font-medium text-brand-600 hover:underline" @click="copy(guide, '指引')">复制全文</button>
       </div>
       <pre class="code-block whitespace-pre-wrap">{{ guide }}</pre>
     </div>

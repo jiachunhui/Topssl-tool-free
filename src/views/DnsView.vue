@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import ConfirmDialog from '../components/ui/ConfirmDialog.vue'
 import { useProvidersStore } from '../stores/providers'
 import { toast } from '../lib/toast'
+import { topsslUrl, openExternal } from '../lib/promo'
 import type { ProviderInfo, ProviderInput } from '../lib/types'
 
 const providersStore = useProvidersStore()
@@ -151,7 +152,7 @@ async function removeProvider(p: ProviderInfo) {
         <button class="btn-danger !px-2.5 !py-1.5 text-xs" @click="removeProvider(p)">删除</button>
       </div>
 
-      <div v-if="testResult" class="rounded-lg p-3 text-sm" :class="testResult.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'">
+      <div v-if="testResult" class="rounded-lg p-3 text-sm" :class="testResult.ok ? 'bg-brand-50 text-brand-700' : 'bg-red-50 text-red-700'">
         {{ testResult.message }}
       </div>
 
@@ -159,7 +160,7 @@ async function removeProvider(p: ProviderInfo) {
         <button
           v-for="(meta, kind) in KIND_META"
           :key="kind"
-          class="rounded-xl border-2 border-dashed border-slate-300 bg-white px-4 py-4 text-left transition hover:border-emerald-400 hover:bg-emerald-50/40"
+          class="rounded-xl border-2 border-dashed border-slate-300 bg-white px-4 py-4 text-left transition hover:border-brand-400 hover:bg-brand-50/40"
           @click="startCreate(kind as 'aliyun' | 'dnspod' | 'cloudflare')"
         >
           <div class="text-sm font-bold text-slate-800">+ 添加{{ meta.name }}</div>
@@ -182,7 +183,7 @@ async function removeProvider(p: ProviderInfo) {
             v-model="form.config[f.key]"
             :type="f.secret ? 'password' : 'text'"
             :placeholder="f.placeholder ?? ''"
-            class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+            class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
             autocomplete="off"
           />
         </div>
@@ -196,6 +197,35 @@ async function removeProvider(p: ProviderInfo) {
       <div class="mt-5 flex justify-end gap-2">
         <button class="btn-secondary" @click="editing = false">取消</button>
         <button class="btn-brand" @click="save">保存</button>
+      </div>
+    </div>
+
+    <div class="mt-6 rounded-2xl border border-brand-100 bg-white p-5">
+      <div class="flex items-start gap-3">
+        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+            />
+          </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+          <h2 class="text-sm font-semibold text-slate-800">密钥安全说明</h2>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            您的 DNS API 密钥仅保存在本机系统安全存储（Windows DPAPI / macOS 钥匙串 / Linux Secret Service）中加密保存，仅在申请与续期时用于自动添加/删除 TXT 验证记录，不会上传到任何服务器，可放心使用。
+          </p>
+          <p class="mt-2 text-xs leading-relaxed text-slate-500">
+            需要证书批量自动化部署与更新？
+            <button
+              class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
+              @click="openExternal(topsslUrl('app-dns', 'deploy'))"
+            >
+              TopSSL 平台提供自动化部署方案 →
+            </button>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -219,7 +249,7 @@ async function removeProvider(p: ProviderInfo) {
   outline: none;
 }
 .input-base:focus {
-  border-color: var(--color-emerald-500);
-  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.2);
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 2px rgb(0 133 161 / 0.2);
 }
 </style>

@@ -100,19 +100,19 @@ function goProviderConfig() {
       <button
         type="button"
         class="rounded-xl border-2 p-4 text-left transition"
-        :class="challenge === 'http01' ? 'border-emerald-500 bg-emerald-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
+        :class="challenge === 'http01' ? 'border-brand-500 bg-brand-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
         @click="pick('http01')"
       >
         <div class="flex items-center justify-between">
           <span class="text-sm font-bold text-slate-900">HTTP 验证（推荐）</span>
-          <span v-if="challenge === 'http01'" class="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
+          <span v-if="challenge === 'http01'" class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
         </div>
         <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
           自动在 80 端口临时开启验证服务，无需配置 API，最快。
           <br />需要：域名解析到本机公网 IP 且 80 端口可访问。
         </p>
         <div v-if="probing" class="mt-2 text-xs text-slate-400">检测 80 端口…</div>
-        <div v-else-if="portStatus" class="mt-2 text-xs" :class="portStatus.free ? 'text-emerald-600' : 'text-amber-600'">
+        <div v-else-if="portStatus" class="mt-2 text-xs" :class="portStatus.free ? 'text-brand-600' : 'text-amber-600'">
           {{ portStatus.free ? '80 端口可用 ✓' : '80 端口不可用（' + (portStatus.detail ?? portStatus.code) + '）→ 建议 DNS 验证' }}
         </div>
       </button>
@@ -120,12 +120,12 @@ function goProviderConfig() {
       <button
         type="button"
         class="rounded-xl border-2 p-4 text-left transition"
-        :class="challenge === 'dns01' ? 'border-emerald-500 bg-emerald-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
+        :class="challenge === 'dns01' ? 'border-brand-500 bg-brand-50/60' : 'border-slate-200 bg-white hover:border-slate-300'"
         @click="pick('dns01')"
       >
         <div class="flex items-center justify-between">
           <span class="text-sm font-bold text-slate-900">DNS 验证</span>
-          <span v-if="challenge === 'dns01'" class="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
+          <span v-if="challenge === 'dns01'" class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
         </div>
         <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
           通过添加 TXT 解析记录验证，无需 80 端口，支持通配符。
@@ -134,7 +134,7 @@ function goProviderConfig() {
       </button>
     </div>
 
-    <div v-else class="rounded-xl border-2 border-emerald-500 bg-emerald-50/60 p-4">
+    <div v-else class="rounded-xl border-2 border-brand-500 bg-brand-50/60 p-4">
       <div class="text-sm font-bold text-slate-900">通配符证书 → 只能使用 DNS 验证</div>
       <p class="mt-1 text-xs text-slate-500">通配符域名（*.example.com）无法通过 HTTP 验证，请选择 DNS 验证方式。</p>
     </div>
@@ -142,7 +142,7 @@ function goProviderConfig() {
     <div v-if="challenge === 'dns01'" class="space-y-3">
       <div class="rounded-xl border border-slate-200 bg-white p-4">
         <div class="flex items-center gap-2">
-          <input id="dns-auto" type="radio" class="accent-emerald-600" :checked="!dnsManual" @change="pickManual(false)" />
+          <input id="dns-auto" type="radio" class="accent-brand-600" :checked="!dnsManual" @change="pickManual(false)" />
           <label for="dns-auto" class="text-sm font-medium text-slate-800">自动添加记录（推荐）</label>
           <span class="ml-auto rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500">需要 DNS 服务商 API</span>
         </div>
@@ -154,10 +154,10 @@ function goProviderConfig() {
             <label
               v-for="p in providers"
               :key="p.id"
-              class="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm transition hover:border-emerald-400"
-              :class="props.providerId === p.id ? 'border-emerald-500 bg-emerald-50/50' : ''"
+              class="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm transition hover:border-brand-400"
+              :class="props.providerId === p.id ? 'border-brand-500 bg-brand-50/50' : ''"
             >
-              <input type="radio" class="accent-emerald-600" :checked="props.providerId === p.id" @change="pickProvider(p.id)" />
+              <input type="radio" class="accent-brand-600" :checked="props.providerId === p.id" @change="pickProvider(p.id)" />
               <span class="font-medium text-slate-800">{{ p.label }}</span>
               <span class="ml-auto rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500">
                 {{ p.kind === 'aliyun' ? '阿里云' : p.kind === 'dnspod' ? 'DNSPod/腾讯云' : 'Cloudflare' }}
@@ -173,7 +173,7 @@ function goProviderConfig() {
 
       <div class="rounded-xl border border-slate-200 bg-white p-4">
         <div class="flex items-center gap-2">
-          <input id="dns-manual" type="radio" class="accent-emerald-600" :checked="dnsManual" @change="pickManual(true)" />
+          <input id="dns-manual" type="radio" class="accent-brand-600" :checked="dnsManual" @change="pickManual(true)" />
           <label for="dns-manual" class="text-sm font-medium text-slate-800">手动添加解析记录</label>
           <span class="ml-auto rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500">无需 API</span>
         </div>

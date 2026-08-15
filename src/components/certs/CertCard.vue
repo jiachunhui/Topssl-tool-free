@@ -17,7 +17,7 @@ const statusMeta = computed(() => {
     }
     return props.cert.days_remaining <= 30
       ? { label: '即将到期', cls: 'bg-amber-100 text-amber-700', bar: 'bg-amber-500' }
-      : { label: '有效', cls: 'bg-emerald-100 text-emerald-700', bar: 'bg-emerald-500' }
+      : { label: '有效', cls: 'bg-brand-100 text-brand-700', bar: 'bg-brand-500' }
   }
   if (s === 'renewing') return { label: '续期中', cls: 'bg-sky-100 text-sky-700', bar: 'bg-sky-500' }
   if (s === 'failed') return { label: '失败', cls: 'bg-red-100 text-red-700', bar: 'bg-red-500' }
@@ -77,7 +77,7 @@ const isStaging = computed(() => props.cert.directory === 'staging')
       </button>
       <button
         v-if="cert.status !== 'renewing'"
-        class="rounded-md px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-50"
+        class="rounded-md px-2 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50"
         @click.stop="emit('renew', cert)"
       >
         立即续期

@@ -4011,37 +4011,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ssl-cert-desktop"
-version = "0.1.2"
-dependencies = [
- "acme-micro",
- "async-trait",
- "base64 0.22.1",
- "chrono",
- "hickory-resolver",
- "idna",
- "keyring",
- "log",
- "openssl",
- "psl",
- "reqwest 0.12.28",
- "rusqlite",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-autostart",
- "tauri-plugin-clipboard-manager",
- "tauri-plugin-notification",
- "tauri-plugin-opener",
- "tauri-plugin-single-instance",
- "thiserror 2.0.20",
- "tokio",
- "uuid",
- "windows-sys 0.60.2",
-]
-
-[[package]]
 name = "stable_deref_trait"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4848,6 +4817,37 @@ name = "toml_writer"
 version = "1.1.2+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+
+[[package]]
+name = "topssl-free-cert-assistant"
+version = "0.1.3"
+dependencies = [
+ "acme-micro",
+ "async-trait",
+ "base64 0.22.1",
+ "chrono",
+ "hickory-resolver",
+ "idna",
+ "keyring",
+ "log",
+ "openssl",
+ "psl",
+ "reqwest 0.12.28",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-autostart",
+ "tauri-plugin-clipboard-manager",
+ "tauri-plugin-notification",
+ "tauri-plugin-opener",
+ "tauri-plugin-single-instance",
+ "thiserror 2.0.20",
+ "tokio",
+ "uuid",
+ "windows-sys 0.60.2",
+]
 
 [[package]]
 name = "tower"

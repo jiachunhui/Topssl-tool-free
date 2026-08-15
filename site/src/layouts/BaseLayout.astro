@@ -1,0 +1,85 @@
+---
+import '../styles/global.css'
+import SiteNav from '../components/SiteNav.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+import { SITE, GITHUB } from '../config'
+
+interface Props {
+  title?: string
+  description?: string
+  canonical?: string
+  ogImage?: string
+}
+
+const {
+  title = SITE.name,
+  description = SITE.description,
+  canonical = SITE.url,
+  ogImage = '/og-image.png',
+} = Astro.props
+
+const softwareJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: SITE.name,
+  alternateName: 'TopSSL Free Cert Assistant',
+  description,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Windows, macOS, Linux',
+  softwareVersion: '0.1.3',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'TopSSL',
+    url: 'https://www.topssl.cn',
+  },
+  sameAs: GITHUB,
+  featureList: [
+    "Let's Encrypt 免费证书一键申请",
+    '到期前 30 天自动续期',
+    'HTTP-01 / DNS-01 验证',
+    '通配符证书',
+    '多域名 SAN 证书',
+  ],
+}
+---
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="TopSSL" />
+    <meta name="keywords" content="免费SSL证书,SSL证书申请,Let's Encrypt,证书自动续期,HTTPS,通配符证书,TopSSL,SSL证书助手" />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0085a1" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={canonical + ogImage} />
+    <meta property="og:locale" content="zh_CN" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={canonical + ogImage} />
+    <!-- 结构化数据：SoftwareApplication -->
+    <script type="application/ld+json" set:html={JSON.stringify(softwareJsonLd)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <SiteNav />
+    <main>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

@@ -21,6 +21,7 @@ export const api = {
   getPlatformInfo: () => invoke<PlatformInfo>('get_platform_info'),
   probePort80: () => invoke<PortStatus>('probe_port80'),
   openPath: (path: string) => invoke<void>('open_path', { path }),
+  openUrl: (url: string) => invoke<void>('open_url', { url }),
   copyToClipboard: (text: string) => invoke<void>('copy_to_clipboard', { text }),
   getLogs: (limit?: number) => invoke<LogEntry[]>('get_logs', { limit: limit ?? 300 }),
   clearLogs: () => invoke<void>('clear_logs'),

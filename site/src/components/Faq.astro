@@ -1,0 +1,19 @@
+---
+import { FAQS } from '../config'
+---
+<section class="section" id="faq" style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">常见问题</span>
+      <h2>你可能想知道</h2>
+    </div>
+    <div class="faq-list">
+      {FAQS.map((f) => (
+        <details class="faq-item">
+          <summary>{f.q}</summary>
+          <div class="answer">{f.a}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

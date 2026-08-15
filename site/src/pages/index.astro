@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import StatsBar from '../components/StatsBar.astro'
+import Features from '../components/Features.astro'
+import HowItWorks from '../components/HowItWorks.astro'
+import CompareTable from '../components/CompareTable.astro'
+import TopsslBand from '../components/TopsslBand.astro'
+import Faq from '../components/Faq.astro'
+import CtaBand from '../components/CtaBand.astro'
+import { SITE, TOPSSL, FAQS } from '../config'
+
+const title = '免费 SSL 证书一键申请与自动续期工具 - TopSSL 免费证书助手'
+const description =
+  "TopSSL 免费证书助手：免费申请 Let's Encrypt SSL 证书并自动续期。支持 HTTP/DNS 验证、通配符证书、多域名证书，Windows/macOS/Linux 全平台，由 TopSSL 出品，MIT 开源。"
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}
+---
+<BaseLayout title={title} description={description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  <Hero />
+  <StatsBar />
+  <Features />
+  <HowItWorks />
+  <CompareTable />
+  <TopsslBand />
+  <Faq />
+  <CtaBand />
+</BaseLayout>

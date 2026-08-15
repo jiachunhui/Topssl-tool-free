@@ -1,0 +1,59 @@
+---
+import { TOPSSL } from '../config'
+const points = [
+  'DV / OV / EV 全系企业证书，价格透明',
+  '证书自动化部署与更新方案，适合批量管理',
+  '专业技术支持，申请部署问题有人协助',
+  '支持多年期证书购买，省去频繁续期',
+]
+const cards = [
+  {
+    title: '企业 SSL 证书',
+    desc: 'DV / OV / EV 全系产品，地址栏显示企业身份，提升客户信任。',
+    link: TOPSSL.url('landing-topssl-certs'),
+    label: '查看证书产品 →',
+  },
+  {
+    title: '自动化部署方案',
+    desc: 'CDN、云服务器、负载均衡等场景的证书部署与自动更新方案。',
+    link: TOPSSL.url('landing-topssl-deploy'),
+    label: '了解部署方案 →',
+  },
+  {
+    title: '专业技术支持',
+    desc: '从申请到部署全流程人工协助，企业用户专属服务通道。',
+    link: TOPSSL.url('landing-topssl-support'),
+    label: '获取支持 →',
+  },
+]
+---
+<section class="topssl-band" id="topssl">
+  <div class="container inner">
+    <div>
+      <span class="hero-badge">TOPSSL · 专业 SSL 证书平台</span>
+      <h2 style="margin-top:1rem">更多证书需求？交给 TopSSL</h2>
+      <p class="lead">
+        TopSSL（topssl.cn）是专业的 SSL 证书服务平台，为个人与企业提供企业级证书、
+        自动化部署方案与专业技术支持。本工具由 TopSSL 出品并支持。
+      </p>
+      <ul class="topssl-points">
+        {points.map((p) => (
+          <li><span class="dot">✓</span>{p}</li>
+        ))}
+      </ul>
+      <a class="btn btn-primary" style="margin-top:1.6rem" href={TOPSSL.url('landing-topssl-main')} target="_blank" rel="noopener noreferrer">
+        访问 TopSSL 官网
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+      </a>
+    </div>
+    <div class="topssl-cards">
+      {cards.map((c) => (
+        <div class="topssl-card">
+          <h3>{c.title}</h3>
+          <p>{c.desc}</p>
+          <a href={c.link} target="_blank" rel="noopener noreferrer">{c.label}</a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

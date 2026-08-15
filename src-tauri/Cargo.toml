@@ -1,14 +1,14 @@
 [package]
-name = "ssl-cert-desktop"
-version = "0.1.2"
-description = "SSL 证书助手 - Let's Encrypt 免费证书一键申请"
+name = "topssl-free-cert-assistant"
+version = "0.1.3"
+description = "TopSSL 免费证书助手 - Let's Encrypt 免费证书一键申请"
 authors = ["SSL Cert Desktop"]
 license = "MIT"
 edition = "2021"
 rust-version = "1.77.2"
 
 [lib]
-name = "ssl_cert_desktop_lib"
+name = "topssl_free_cert_assistant_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

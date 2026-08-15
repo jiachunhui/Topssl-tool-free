@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { topsslUrl, openExternal } from '../../lib/promo'
+
 const navs = [
   { to: '/', label: '我的证书', icon: 'M3.75 9.75l8.25-6.75 8.25 6.75M4.5 9v9.75a.75.75 0 0 0 .75.75h13.5a.75.75 0 0 0 .75-.75V9' },
   {
@@ -28,7 +30,7 @@ const navs = [
 <template>
   <aside class="flex w-52 shrink-0 flex-col border-r border-slate-200 bg-white">
     <div class="flex items-center gap-2.5 px-5 pt-5 pb-4">
-      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
           <path
             stroke-linecap="round"
@@ -38,8 +40,11 @@ const navs = [
         </svg>
       </div>
       <div>
-        <div class="text-sm font-bold text-slate-900">SSL 证书助手</div>
-        <div class="text-[11px] text-slate-400">Let's Encrypt 免费证书</div>
+        <div class="text-sm leading-tight font-bold text-slate-900">
+          <span class="block">TopSSL</span>
+          <span class="block">免费证书助手</span>
+        </div>
+        <div class="mt-0.5 text-[11px] text-slate-400">Let's Encrypt 免费证书</div>
       </div>
     </div>
     <nav class="flex flex-col gap-1 px-3 pt-2">
@@ -48,13 +53,30 @@ const navs = [
         :key="n.to"
         :to="n.to"
         class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-        active-class="!bg-emerald-50 !text-emerald-700"
+        active-class="!bg-brand-50 !text-brand-700"
       >
         <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
           <path stroke-linecap="round" stroke-linejoin="round" :d="n.icon" />
         </svg>
         {{ n.label }}
       </RouterLink>
+      <button
+        class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        title="访问 TopSSL 官网"
+        @click="openExternal(topsslUrl('app-sidebar', 'home'))"
+      >
+        <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+          />
+        </svg>
+        TopSSL
+        <svg class="ml-auto h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+        </svg>
+      </button>
     </nav>
     <div class="mt-auto px-5 pb-4 text-[11px] leading-relaxed text-slate-400">
       证书有效期 90 天，本应用会自动在到期前 30 天为您续期

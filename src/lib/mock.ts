@@ -254,14 +254,14 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
   switch (cmd) {
     case 'get_app_info':
-      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'SSL 证书助手' } as T
+      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'TopSSL 免费证书助手' } as T
 
     case 'get_platform_info':
       return {
         platform: 'browser',
         arch: 'x64',
         http01PrivilegeNote: '浏览器 Mock 模式：HTTP-01 验证为模拟行为，不会真实监听 80 端口',
-        certsDirTemplate: '%APPDATA%/SSL-Cert-Desktop/certs',
+        certsDirTemplate: '%APPDATA%/TopSSL-Free-Cert-Assistant/certs',
       } as T
 
     case 'probe_port80':
@@ -269,6 +269,10 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
     case 'open_path':
       console.log('[mock] open_path', a.path)
+      return undefined as T
+
+    case 'open_url':
+      console.log('[mock] open_url', a.url)
       return undefined as T
 
     case 'copy_to_clipboard':

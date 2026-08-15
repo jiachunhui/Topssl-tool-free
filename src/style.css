@@ -1,5 +1,20 @@
 @import 'tailwindcss';
 
+/* TopSSL 品牌色板（主色 #0085a1） */
+@theme {
+  --color-brand-50: #f0fafd;
+  --color-brand-100: #def5fa;
+  --color-brand-200: #c2ecf4;
+  --color-brand-300: #a1e0ed;
+  --color-brand-400: #73cfe2;
+  --color-brand-500: #3cc5e2;
+  --color-brand-600: #0085a1;
+  --color-brand-700: #036b81;
+  --color-brand-800: #045262;
+  --color-brand-900: #053c48;
+  --color-brand-950: #04272f;
+}
+
 :root {
   font-family:
     system-ui,
@@ -48,7 +63,7 @@ body {
 
 /* 渐变品牌按钮 */
 .btn-brand {
-  @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-secondary {

@@ -113,10 +113,10 @@ async function confirmAdded() {
     <div class="rounded-xl border border-slate-200 bg-white p-5">
       <div class="flex items-center justify-between">
         <span class="text-sm font-medium text-slate-700">{{ message }}</span>
-        <span class="text-sm font-bold text-emerald-600">{{ percent }}%</span>
+        <span class="text-sm font-bold text-brand-600">{{ percent }}%</span>
       </div>
       <div class="mt-2.5 h-2 overflow-hidden rounded-full bg-slate-100">
-        <div class="h-full rounded-full bg-emerald-500 transition-all duration-500" :style="{ width: percent + '%' }"></div>
+        <div class="h-full rounded-full bg-brand-500 transition-all duration-500" :style="{ width: percent + '%' }"></div>
       </div>
 
       <div v-if="isFailed && errorInfo" class="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">

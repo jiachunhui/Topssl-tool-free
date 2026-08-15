@@ -3,6 +3,6 @@
 
 fn main() {
     // 最早初始化日志系统（全局 logger）
-    ssl_cert_desktop_lib::logs::init();
-    ssl_cert_desktop_lib::run();
+    topssl_free_cert_assistant_lib::logs::init();
+    topssl_free_cert_assistant_lib::run();
 }

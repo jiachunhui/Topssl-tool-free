@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { api } from '../../lib/api'
+import { topsslUrl, openExternal, ENTERPRISE_PRICE } from '../../lib/promo'
 
 const props = defineProps<{
   domain: string
@@ -80,7 +81,7 @@ async function checkDuplicate() {
         v-model="domain"
         type="text"
         placeholder="例如：example.com 或 *.example.com"
-        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
         @blur="checkDuplicate"
       />
       <div class="mt-1.5 flex items-start gap-1.5 text-xs text-slate-400">
@@ -93,6 +94,21 @@ async function checkDuplicate() {
         </span>
       </div>
       <p v-if="domain && !domainValid" class="mt-1.5 text-xs text-red-500">域名格式不正确</p>
+      <div class="mt-2.5 flex items-start gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-xs leading-relaxed text-brand-800">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mt-0.5 h-3.5 w-3.5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+        </svg>
+        <span>
+          免费证书适合个人网站；需要显示企业身份、兼容旧设备的企业证书（OV/EV），TopSSL 低至
+          <strong>¥{{ ENTERPRISE_PRICE }}/年</strong>，
+          <button
+            class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
+            @click="openExternal(topsslUrl('app-wizard-domain', 'enterprise-cert'))"
+          >
+            了解详情 →
+          </button>
+        </span>
+      </div>
       <div v-if="checking" class="mt-1.5 text-xs text-slate-400">检查中…</div>
       <div v-else-if="duplicate?.duplicate" class="mt-1.5 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
         该域名已有有效证书（<RouterLink :to="'/'">查看详情</RouterLink>），可直接对现有证书续期
@@ -105,7 +121,7 @@ async function checkDuplicate() {
         v-model="altNamesText"
         type="text"
         placeholder="用逗号分隔，例如：www.example.com, api.example.com"
-        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
       />
       <p v-if="redundantAlt" class="mt-1.5 text-xs text-red-500">
         {{ redundantAlt }} 已被通配符 *.{{ wildcardBase }} 覆盖，无需重复添加

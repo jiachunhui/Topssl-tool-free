@@ -8,7 +8,7 @@ const icons = {
   warn: 'M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z',
 }
 const colors = {
-  success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+  success: 'bg-brand-50 border-brand-200 text-brand-800',
   error: 'bg-red-50 border-red-200 text-red-800',
   info: 'bg-sky-50 border-sky-200 text-sky-800',
   warn: 'bg-amber-50 border-amber-200 text-amber-800',
