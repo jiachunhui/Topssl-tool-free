@@ -4,9 +4,11 @@ import { useRouter } from 'vue-router'
 import SideNav from './components/layout/SideNav.vue'
 import ToastHost from './components/ui/ToastHost.vue'
 import RunningJobBanner from './components/ui/RunningJobBanner.vue'
+import UpdatePrompt from './components/ui/UpdatePrompt.vue'
 import { useAppStore } from './stores/app'
 import { useCertsStore } from './stores/certs'
 import { useSettingsStore } from './stores/settings'
+import { useUpdateStore } from './stores/update'
 import {
   onCertsChanged,
   onRenewalCheckDone,
@@ -19,6 +21,7 @@ import { toast } from './lib/toast'
 const appStore = useAppStore()
 const certsStore = useCertsStore()
 const settingsStore = useSettingsStore()
+const updateStore = useUpdateStore()
 const router = useRouter()
 
 onMounted(async () => {
@@ -52,6 +55,10 @@ onMounted(async () => {
     toast.info(p.summary)
     certsStore.fetchCerts().catch(() => {})
   })
+
+  // 更新：启动静默检查（6 小时节流 + 「稍后」版本不弹窗）；失败静默不打扰
+  updateStore.init().catch(() => {})
+  updateStore.check(false).catch(() => {})
 })
 </script>
 
@@ -62,6 +69,7 @@ onMounted(async () => {
       <RouterView />
     </main>
     <RunningJobBanner />
+    <UpdatePrompt />
     <ToastHost />
   </div>
 </template>

@@ -36,6 +36,19 @@ src-tauri/gen/
 # 本地发布产物
 release/
 
+# 更新清单（本地生成，上传到更新服务器，不入库）
+updates/
+
 # AI 助手本地工作目录
 .workbuddy/
 .zcode/
+
+# 本地品牌资源临时目录
+.tmp-brand/
+
+# 本地构建出的安装包（发布产物由 CI 产出并从 GitHub Release 下载）
+TopSSL-Free-Cert-Assistant_*.exe
+TopSSL-Free-Cert-Assistant_*.dmg
+TopSSL-Free-Cert-Assistant_*.deb
+TopSSL-Free-Cert-Assistant_*.rpm
+TopSSL-Free-Cert-Assistant_*.AppImage

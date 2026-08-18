@@ -122,6 +122,18 @@ const ERROR_MAP: Record<string, Omit<ErrorInfo, 'code'>> = {
     suggestion: '请 10 分钟后再试；手动 DNS 模式等待超时不受此限制',
     level: 'warn',
   },
+  ERR_UPDATE_CHECK: {
+    title: '检查更新失败',
+    message: '无法连接更新服务器',
+    suggestion: '请检查网络后重试；也可前往 GitHub Releases 页面手动下载',
+    level: 'warn',
+  },
+  ERR_UPDATE_DOWNLOAD: {
+    title: '下载更新失败',
+    message: '安装包下载失败',
+    suggestion: '请检查网络后重试，或前往 GitHub Releases 页面手动下载',
+    level: 'error',
+  },
   ERR_INVALID_SETTING: {
     title: '设置项无效',
     message: '提供的设置值不合法',

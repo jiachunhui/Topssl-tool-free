@@ -26,6 +26,8 @@ pub enum ErrorCode {
     Canceled,
     CoolDown,
     InvalidSetting,
+    UpdateCheck,
+    UpdateDownload,
     Db,
     Internal,
 }
@@ -54,6 +56,8 @@ impl ErrorCode {
             ErrorCode::Canceled => "ERR_CANCELED",
             ErrorCode::CoolDown => "ERR_COOL_DOWN",
             ErrorCode::InvalidSetting => "ERR_INVALID_SETTING",
+            ErrorCode::UpdateCheck => "ERR_UPDATE_CHECK",
+            ErrorCode::UpdateDownload => "ERR_UPDATE_DOWNLOAD",
             ErrorCode::Db => "ERR_DB",
             ErrorCode::Internal => "ERR_INTERNAL",
         }

@@ -18,6 +18,8 @@ pub struct AppState {
     pub cancels: Arc<Mutex<HashMap<String, Arc<AtomicBool>>>>,
     /// DNS 手动模式：用户确认已添加 TXT 记录
     pub txt_confirms: Arc<Mutex<HashMap<String, Arc<AtomicBool>>>>,
+    /// 更新下载的取消标记
+    pub update_cancel: Arc<AtomicBool>,
     /// 应用数据目录
     pub app_data_dir: PathBuf,
     /// 证书根目录
@@ -44,6 +46,7 @@ impl AppState {
             jobs: Arc::new(Mutex::new(HashMap::new())),
             cancels: Arc::new(Mutex::new(HashMap::new())),
             txt_confirms: Arc::new(Mutex::new(HashMap::new())),
+            update_cancel: Arc::new(AtomicBool::new(false)),
             app_data_dir,
             certs_root,
             platform,

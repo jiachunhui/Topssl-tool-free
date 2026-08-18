@@ -12,6 +12,7 @@ pub mod scheduler;
 pub mod secret;
 pub mod state;
 pub mod storage;
+pub mod updater;
 pub mod util;
 
 use tauri::Manager;
@@ -94,6 +95,13 @@ pub fn run() {
             commands::system::get_logs,
             commands::system::clear_logs,
             commands::system::frontend_log,
+            updater::check_update,
+            updater::download_update,
+            updater::cancel_update_download,
+            updater::install_update,
+            updater::dismiss_update,
+            updater::get_dismissed_update_version,
+            updater::open_release_page,
         ]);
 
     let app = builder

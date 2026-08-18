@@ -22,10 +22,11 @@
 - ✅ 测试环境（Staging）与正式环境切换，规避速率限制
 - ✅ 跨平台：Windows / macOS / Linux
 - ✅ 密钥安全存储：Windows DPAPI / macOS Keychain / Linux Secret Service
+- ✅ **应用内检查更新**：启动静默检查新版本（国内源优先 + GitHub Releases 兜底），一键下载安装包并自动运行安装（Windows）
 
 ## 下载与安装
 
-各平台安装包发布在 [GitHub Releases](https://github.com/jiachunhui/Topssl-tool-free/releases)（私有仓库，需仓库协作者权限方可下载）。
+各平台安装包发布在 [GitHub Releases](https://github.com/jiachunhui/Topssl-tool-free/releases)（现已开源）。应用内也会自动检查更新：启动时静默检查（国内更新源优先，不可用时自动回退 GitHub），发现新版本弹窗提示，点击「立即更新」即自动下载安装包并启动安装程序；也可在「关于」页手动检查。
 
 | 平台 | 安装包 | 说明 |
 |---|---|---|
@@ -83,12 +84,30 @@ npm run tauri build      # 产出 NSIS（Windows）、dmg（macOS）、deb/rpm/A
 
 仓库内置 `.github/workflows/release.yml` 三平台构建流水线：
 
-- 推送 `v*` 标签：自动构建 Windows（NSIS）、macOS（ARM + Intel dmg）、Linux（deb/AppImage/rpm）并创建 GitHub Release 挂载全部安装包
+- 推送 `v*` 标签：自动构建 Windows（NSIS）、macOS（ARM + Intel dmg）、Linux（deb/AppImage/rpm）并创建 GitHub Release 挂载全部安装包；发布前先校验 tag 版本与代码内版本号一致（不一致直接失败）
 - 手动触发（Actions → Release → Run workflow）：仅构建并产出构建产物（Artifacts），不创建 Release
 
+### 发版流程（版本号与 GitHub Releases 同步）
+
+版本号统一由脚本同步（`package.json` / `tauri.conf.json` / `Cargo.toml` / `Cargo.lock` / 宣传页配置 / 用户手册六处），**不要手工修改**：
+
 ```bash
-git tag v0.1.3 && git push origin v0.1.3   # 触发三平台构建 + 发布
+# 1. 一键同步版本号（如 0.1.4）
+npm run version:set -- 0.1.4
+
+# 2. 提交代码后打 tag 推送，触发三平台构建 + 自动创建 GitHub Release
+git tag v0.1.4 && git push origin v0.1.4
+
+# 3. 构建产物下载后，生成国内更新清单（应用内「检查更新」的数据源）
+npm run update:manifest -- --base-url https://你的域名/download \
+  --win src-tauri/target/release/bundle/nsis/TopSSL-Free-Cert-Assistant_0.1.4_x64-setup.exe \
+  --notes-file CHANGELOG.md
+
+# 4. 把 updates/latest.json 上传到虚拟主机 /updates/，安装包上传到 /download/；
+#    域名确定后在 src-tauri/src/updater/mod.rs 填入 UPDATE_MANIFEST_URL 即可启用国内源
 ```
+
+> 国内源未配置时应用自动使用 GitHub API 作为更新源；配置后国内清单优先、失败自动回退 GitHub。
 
 ## Linux 的 80 端口权限
 
@@ -126,9 +145,11 @@ src-tauri/              # Rust 后端
   src/cert/             # 证书落盘 / 解析 / 使用指引
   src/secret/           # keyring 机密存储 + Windows DPAPI
   src/scheduler/        # 自动续期调度
+  src/updater/           # 应用内更新（检查/下载/安装）
   src/commands/         # Tauri IPC commands
   vendor/               # 本地补丁依赖（acme-micro / keyring）
-.github/workflows/      # 三平台自动构建 + Release
+.github/workflows/      # 三平台自动构建 + Release（含版本一致性校验）
+scripts/                # 版本同步 / 更新清单生成脚本
 docs/                   # 用户手册
 ```
 

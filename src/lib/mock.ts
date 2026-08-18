@@ -420,6 +420,78 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
       return undefined as T
     }
 
+    // ---------- update ----------
+    // 浏览器预览更新弹窗：
+    // localStorage.setItem('mock:update-simulate', JSON.stringify({ version: '9.9.9', notes: '测试更新说明' }))
+    case 'check_update': {
+      const simulated = lsGetJSON<{ version: string; notes?: string } | null>('update-simulate', null)
+      const current = '0.1.4'
+      if (a.force) await new Promise((r) => setTimeout(r, 500)) // 模拟网络延迟
+      if (simulated) {
+        const asset = {
+          name: 'TopSSL-Free-Cert-Assistant_' + simulated.version + '_x64-setup.exe',
+          url: 'https://example.com/download/setup.exe',
+          size: 6291456,
+          sha256: null,
+        }
+        return {
+          available: true,
+          currentVersion: current,
+          latestVersion: simulated.version,
+          tagName: 'v' + simulated.version,
+          notes: simulated.notes ?? '（Mock 更新说明）本次更新：\n- 新增 xxx 功能\n- 修复若干问题',
+          publishedAt: null,
+          asset,
+          releasePage: 'https://github.com/jiachunhui/Topssl-tool-free/releases',
+          source: 'domestic',
+        } as T
+      }
+      return {
+        available: false,
+        currentVersion: current,
+        latestVersion: current,
+        tagName: null,
+        notes: null,
+        publishedAt: null,
+        asset: null,
+        releasePage: 'https://github.com/jiachunhui/Topssl-tool-free/releases',
+        source: 'github',
+      } as T
+    }
+
+    case 'dismiss_update':
+      lsSet('update-dismissed', String(a.version ?? ''))
+      return undefined as T
+
+    case 'get_dismissed_update_version':
+      return (lsGet('update-dismissed') ?? null) as T
+
+    case 'download_update': {
+      // 模拟下载：约 2 秒推完进度
+      const total = 6291456
+      let received = 0
+      const timer = setInterval(() => {
+        received = Math.min(total, received + 400000)
+        mockEvents.emit('update://progress', { received, total })
+        if (received >= total) clearInterval(timer)
+      }, 120)
+      await new Promise((r) => setTimeout(r, 2300))
+      clearInterval(timer)
+      mockEvents.emit('update://progress', { received: total, total })
+      return 'mock/downloads/TopSSL-Free-Cert-Assistant_setup.exe' as T
+    }
+
+    case 'cancel_update_download':
+      return undefined as T
+
+    case 'install_update':
+      console.log('[mock] install_update', a.path)
+      return undefined as T
+
+    case 'open_release_page':
+      console.log('[mock] open_release_page')
+      return undefined as T
+
     default:
       // 命令未实现时显式抛错，避免返回 undefined 导致 UI 静默崩溃（难以排查）
       console.warn('[mock] 未实现的 command:', cmd, a)

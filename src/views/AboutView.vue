@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { useAppStore } from '../stores/app'
+import { useUpdateStore } from '../stores/update'
 import { topsslUrl, openExternal, GITHUB_REPO } from '../lib/promo'
 
 const appStore = useAppStore()
+const updateStore = useUpdateStore()
+
+/** 手动检查更新：发现新版直接弹窗（错误文案由 store 记录并展示） */
+async function checkUpdate() {
+  try {
+    await updateStore.check(true)
+  } catch {
+    /* 状态与文案已在 store 中 */
+  }
+}
 
 const faqs = [
   {
@@ -68,6 +79,21 @@ const faqs = [
       </div>
       <h2 class="mt-3 text-base font-bold text-slate-900">TopSSL 免费证书助手</h2>
       <p class="mt-0.5 text-xs text-slate-400">v{{ appStore.appInfo?.version ?? '—' }} · {{ appStore.appInfo?.platform ?? '' }} {{ appStore.appInfo?.arch ?? '' }}</p>
+      <div class="mt-2.5 flex items-center justify-center gap-2 text-xs">
+        <span v-if="updateStore.phase === 'checking'" class="text-slate-400">正在检查更新…</span>
+        <span v-else-if="updateStore.phase === 'error'" class="text-red-500">{{ updateStore.errorMessage || '检查更新失败' }}</span>
+        <span v-else-if="updateStore.info?.available" class="font-medium text-orange-600">
+          发现新版本 v{{ updateStore.info.latestVersion }}
+        </span>
+        <span v-else-if="updateStore.phase === 'up-to-date'" class="text-emerald-600">已是最新版本</span>
+        <button
+          class="btn-secondary !px-2.5 !py-1 text-xs"
+          :disabled="updateStore.phase === 'checking'"
+          @click="checkUpdate"
+        >
+          检查更新
+        </button>
+      </div>
       <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
         为您的域名免费申请 Let's Encrypt SSL 证书，安装到本机并自动续期。支持 HTTP 与 DNS 两种验证方式、通配符证书、多域名证书。
       </p>

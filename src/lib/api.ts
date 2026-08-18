@@ -13,6 +13,7 @@ import type {
   RenewalResult,
   Settings,
   JobStatus,
+  UpdateInfo,
 } from './types'
 
 // ---------- system ----------
@@ -58,4 +59,13 @@ export const api = {
       domain,
       directory: directory ?? null,
     }),
+
+  // ---------- update ----------
+  checkUpdate: (force = false) => invoke<UpdateInfo>('check_update', { force }),
+  dismissUpdate: (version: string) => invoke<void>('dismiss_update', { version }),
+  getDismissedUpdateVersion: () => invoke<string | null>('get_dismissed_update_version'),
+  downloadUpdate: () => invoke<string>('download_update'),
+  cancelUpdateDownload: () => invoke<void>('cancel_update_download'),
+  installUpdate: (path: string) => invoke<void>('install_update', { path }),
+  openReleasePage: () => invoke<void>('open_release_page'),
 }

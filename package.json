@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "version:set": "node scripts/sync-version.mjs",
+    "version:check": "node scripts/sync-version.mjs --check",
+    "update:manifest": "node scripts/gen-update-manifest.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.11.1",

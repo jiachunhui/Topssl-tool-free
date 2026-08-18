@@ -9,6 +9,7 @@ import type {
   RenewalFailedPayload,
   RenewalRenewedPayload,
   TxtNeeded,
+  UpdateProgress,
 } from './types'
 import { isTauri, mockEvents } from './mock'
 
@@ -64,4 +65,9 @@ export function onRenewalExpiring(cb: (p: RenewalExpiringPayload) => void): Prom
 /** 订阅手动"立即检查续期"完成 */
 export function onRenewalCheckDone(cb: (p: RenewalCheckDonePayload) => void): Promise<EventSubscription> {
   return subscribe<RenewalCheckDonePayload>('renewal://check-done', cb)
+}
+
+/** 订阅更新安装包下载进度 */
+export function onUpdateProgress(cb: (p: UpdateProgress) => void): Promise<EventSubscription> {
+  return subscribe<UpdateProgress>('update://progress', cb)
 }

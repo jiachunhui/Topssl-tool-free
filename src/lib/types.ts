@@ -202,6 +202,34 @@ export interface RenewalCheckDonePayload {
   skipped: number
 }
 
+/** 更新资产（安装包） */
+export interface UpdateAsset {
+  name: string
+  url: string
+  size: number
+  sha256: string | null
+}
+
+/** 更新检查结果 */
+export interface UpdateInfo {
+  available: boolean
+  currentVersion: string
+  latestVersion: string
+  tagName: string | null
+  notes: string | null
+  publishedAt: string | null
+  asset: UpdateAsset | null
+  releasePage: string
+  /** 数据来源：domestic（国内清单）| github（兜底） */
+  source: 'domestic' | 'github'
+}
+
+/** 更新下载进度事件 payload */
+export interface UpdateProgress {
+  received: number
+  total: number
+}
+
 /** 错误码映射项 */
 export interface ErrorInfo {
   code: string
