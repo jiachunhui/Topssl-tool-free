@@ -170,7 +170,18 @@ fn current_version() -> &'static str {
 fn load_cached(state: &AppState) -> Option<UpdateInfo> {
     let db = state.db.lock();
     let raw = crate::storage::settings::get(&db, KEY_INFO).ok().flatten()?;
-    serde_json::from_str::<UpdateInfo>(&raw).ok()
+    serde_json::from_str::<UpdateInfo>(&raw).ok().map(refresh_current)
+}
+
+/// 缓存可能由旧版本的应用写入（升级前检查到"有新版"并缓存）。
+/// 升级后 current_version 与 available 必须按当前二进制版本重算，
+/// 否则节流复用 / GitHub 304 复用缓存时会出现「已升级仍提示新版本」。
+fn refresh_current(mut info: UpdateInfo) -> UpdateInfo {
+    let current = parse_semver(current_version()).unwrap_or((0, 0, 0));
+    let latest = parse_semver(&info.latest_version).unwrap_or(current);
+    info.current_version = current_version().to_string();
+    info.available = latest > current;
+    info
 }
 
 fn save_cached(state: &AppState, info: &UpdateInfo) {

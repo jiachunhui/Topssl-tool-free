@@ -57,8 +57,10 @@ export const useUpdateStore = defineStore('update', () => {
     errorMessage.value = ''
     try {
       const res = await api.checkUpdate(force)
-      info.value = res
-      if (res.available) {
+      // 兜底：latestVersion 与当前版本相同时视为无更新（防旧缓存/异常数据误报）
+      const available = res.available && res.latestVersion !== res.currentVersion
+      info.value = { ...res, available }
+      if (available) {
         phase.value = 'available'
         if (force || dismissedVersion.value !== res.latestVersion) {
           promptVisible.value = true

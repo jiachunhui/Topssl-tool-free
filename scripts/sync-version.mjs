@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 一键同步全部版本号（单源写入，避免手工改漏）：
 //   package.json / src-tauri/tauri.conf.json / src-tauri/Cargo.toml
-//   src-tauri/Cargo.lock / site/src/config.ts
+//   src-tauri/Cargo.lock / site/src/config.ts / docs/用户手册.md / src/lib/mock.ts
 //
 // 用法：
 //   node scripts/sync-version.mjs 0.1.4             # 全部改为 0.1.4
@@ -74,6 +74,16 @@ const TARGETS = [
       return m[1]
     },
     set: (v) => replaceRegex(join(ROOT, 'site', 'src', 'config.ts'), /(version: ')[^']*(')/, v, (n) => `version: '${n}'`),
+  },
+  {
+    label: 'src/lib/mock.ts（浏览器预览当前版本）',
+    path: 'src/lib/mock.ts',
+    get: () => {
+      const m = readFileSync(join(ROOT, 'src', 'lib', 'mock.ts'), 'utf8').match(/const current = '([^']+)'/)
+      if (!m) throw new Error('src/lib/mock.ts 中未找到 const current 版本号')
+      return m[1]
+    },
+    set: (v) => replaceRegex(join(ROOT, 'src', 'lib', 'mock.ts'), /(const current = ')[^']*(')/, v, (n) => `const current = '${n}'`),
   },
 ]
 
