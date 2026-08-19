@@ -47,8 +47,10 @@ function normalizeError(e: unknown): AppError {
   }
   if (e && typeof e === 'object') {
     const obj = e as Record<string, unknown>
-    const code = (obj.code ?? obj.message) as string | undefined
-    if (code && typeof code === 'string' && code.startsWith('ERR_')) {
+    const raw = (obj.code ?? obj.message) as string | undefined
+    if (raw && typeof raw === 'string') {
+      // 兼容旧后端：错误码可能缺 ERR_ 前缀（如 UPDATE_DOWNLOAD → ERR_UPDATE_DOWNLOAD）
+      const code = raw.startsWith('ERR_') ? raw : /^[A-Z][A-Z0-9_]*$/.test(raw) ? `ERR_${raw}` : raw
       const detail = typeof obj.detail === 'string' ? obj.detail : null
       return new AppError(code, e, detail)
     }

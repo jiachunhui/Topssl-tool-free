@@ -64,12 +64,27 @@ impl ErrorCode {
     }
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone)]
 pub struct AppError {
     pub code: ErrorCode,
     pub message: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub detail: Option<String>,
+}
+
+// 自定义序列化：code 输出 as_str() 的 ERR_ 前缀形式（如 ERR_UPDATE_DOWNLOAD），
+// 与前端 src/lib/errors.ts 的错误码表一致；derive 会序列化成 UPDATE_DOWNLOAD（无前缀），
+// 导致前端匹配不到任何已知错误码而展示兜底文案。
+impl Serialize for AppError {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeStruct;
+        let mut st = serializer.serialize_struct("AppError", 3)?;
+        st.serialize_field("code", self.code.as_str())?;
+        st.serialize_field("message", &self.message)?;
+        if let Some(d) = &self.detail {
+            st.serialize_field("detail", d)?;
+        }
+        st.end()
+    }
 }
 
 impl AppError {

@@ -129,6 +129,18 @@ fn client() -> &'static reqwest::Client {
     })
 }
 
+/// 下载专用客户端：仅限制连接超时，不设整体超时（安装包在慢网络下可能下载超过 30 秒）
+fn download_client() -> &'static reqwest::Client {
+    static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+    CLIENT.get_or_init(|| {
+        reqwest::Client::builder()
+            .user_agent(USER_AGENT)
+            .connect_timeout(Duration::from_secs(6))
+            .build()
+            .expect("failed to build update download http client")
+    })
+}
+
 fn now_secs() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -367,6 +379,22 @@ pub async fn download_update(
     app: AppHandle,
     state: State<'_, AppState>,
 ) -> AppResult<String> {
+    let result = download_update_inner(app, state).await;
+    if let Err(e) = &result {
+        // 失败写入应用日志（此前静默失败，用户看到兜底文案无法定位问题）
+        log::error!(
+            "updater: 下载更新失败: {}（{}）",
+            e.message,
+            e.detail.as_deref().unwrap_or("无详情")
+        );
+    }
+    result
+}
+
+async fn download_update_inner(
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> AppResult<String> {
     // 优先用缓存中的可用更新；缓存缺失或不可用则强制重新检查
     let info = match load_cached(&state) {
         Some(i) if i.available => i,
@@ -394,7 +422,7 @@ pub async fn download_update(
         .to_string();
     let path = dir.join(file_name);
 
-    let resp = client()
+    let resp = download_client()
         .get(&asset.url)
         .send()
         .await
