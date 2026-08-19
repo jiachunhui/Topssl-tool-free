@@ -18,7 +18,7 @@ export const SITE = {
   /** 品牌同源链接（sameAs） */
   sameAs: ['https://github.com/jiachunhui/Topssl-tool-free'],
   /** 当前版本（与 Cargo.toml 保持一致） */
-  version: '0.1.4',
+  version: '0.1.5',
   /** 软件下载入口（GitHub Releases 页） */
   downloadUrl: 'https://github.com/jiachunhui/Topssl-tool-free/releases',
   /** 更新日志页（站内） */
