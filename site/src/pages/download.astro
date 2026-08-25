@@ -1,22 +1,34 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { SITE, GITHUB } from '../config'
+import { SITE, GITHUB, DOWNLOAD_FILES } from '../config'
 
-const title = '免费下载TopSSL免费证书助手 - Windows/macOS/Linux SSL证书工具'
+const title = '免费下载Tossl 免费SSL证书申请与自动续期工具 - Windows/macOS/Linux SSL证书工具 | Tossl'
 const description =
-  '免费下载TopSSL免费证书助手：支持Windows、macOS、Linux的免费SSL证书申请工具，一键申请Let&rsquo;s Encrypt证书并自动续期，开源免费，即下即用。'
+  '免费下载Tossl 免费SSL证书申请与自动续期工具：支持Windows、macOS、Linux的免费SSL证书申请工具，一键申请Let&rsquo;s Encrypt证书并自动续期，开源免费，即下即用。站内直链下载，无需访问GitHub。'
+
+// 站内直链：统一使用 https://www.tossl.cn/downloads/<文件名>
+const downloadUrl = (file: string) => `${SITE.url}/downloads/${file}`
 
 const platforms = [
-  { name: 'Windows', detail: 'x64 安装包（.exe）与便携版', note: 'Windows 10/11 64 位' },
-  { name: 'macOS', detail: '安装包（.dmg / .app）', note: 'macOS 12+（Apple Silicon / Intel）' },
-  { name: 'Linux', detail: 'AppImage / deb 等安装包', note: '主流发行版' },
+  { name: 'Windows', detail: 'x64 安装包（.exe）', note: 'Windows 10/11 64 位' },
+  { name: 'macOS', detail: '安装包（.dmg）', note: 'macOS 12+（Apple Silicon / Intel）' },
+  { name: 'Linux', detail: 'deb / AppImage / rpm 安装包', note: '主流发行版' },
+]
+
+const buttons = [
+  { group: 'Windows', label: 'Windows x64 安装包', file: DOWNLOAD_FILES.windows },
+  { group: 'macOS', label: 'macOS Apple Silicon 版', file: DOWNLOAD_FILES.macosArm },
+  { group: 'macOS', label: 'macOS Intel 版', file: DOWNLOAD_FILES.macosX64 },
+  { group: 'Linux', label: 'Linux deb（Debian / Ubuntu）', file: DOWNLOAD_FILES.linuxDeb },
+  { group: 'Linux', label: 'Linux AppImage（通用）', file: DOWNLOAD_FILES.linuxAppImage },
+  { group: 'Linux', label: 'Linux rpm（Fedora / CentOS）', file: DOWNLOAD_FILES.linuxRpm },
 ]
 ---
 <BaseLayout title={title} description={description}>
   <section class="section" style="padding-top:5rem">
     <div class="container" style="max-width:56rem">
       <span class="hero-badge">免费 · 开源 · 跨平台</span>
-      <h1 style="margin-top:1rem">免费下载 TopSSL 免费证书助手</h1>
+      <h1 style="margin-top:1rem">免费下载 Tossl 免费SSL证书申请与自动续期工具</h1>
       <p class="lead" style="margin-top:.8rem">
         当前版本 <strong>v{SITE.version}</strong>：输入域名即可免费申请 Let's Encrypt SSL 证书，
         到期前 30 天自动续期，支持 HTTP / DNS 验证、通配符与多域名证书。
@@ -43,9 +55,31 @@ const platforms = [
         </table>
       </div>
 
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">站内直链下载</span>
+        <h2>选择你的平台开始下载</h2>
+      </div>
+      <div class="download-grid">
+        {platforms.map((p) => (
+          <div class="download-card reveal in">
+            <h3>{p.name}</h3>
+            <p class="dl-note">{p.note}</p>
+            <div class="dl-btns">
+              {buttons.filter((b) => b.group === p.name).map((b) => (
+                <a class="btn btn-primary btn-block" href={downloadUrl(b.file)} download>{b.label}</a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="dl-hint">
+        站内文件与 GitHub Release 同源同版本，直链地址为 <code>https://www.tossl.cn/downloads/</code>；
+        浏览器可能提示「未知发布者」，属正常现象。
+      </p>
+
       <div style="margin-top:2rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
-        <a class="btn btn-primary" href={SITE.downloadUrl} target="_blank" rel="noopener">
-          前往 GitHub 下载
+        <a class="btn btn-ghost" href={SITE.downloadUrl} target="_blank" rel="noopener">
+          前往 GitHub 下载（备用）
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
         </a>
         <a class="btn btn-ghost" href="/docs/quickstart/">查看使用教程</a>
@@ -60,12 +94,18 @@ const platforms = [
           </div>
         </details>
         <details class="faq-item reveal in" style="--reveal-delay:.05s">
-          <summary>如何确认下载文件可信？</summary>
+          <summary>站内下载和 GitHub 下载一样吗？</summary>
           <div class="answer">
-            所有安装包均发布在官方 GitHub 仓库的 <a href={GITHUB + '/releases'} target="_blank" rel="noopener">Releases</a> 页面，随包提供校验信息；项目基于 MIT 协议完全开源，可自行从源码构建核对。
+            完全一样。站内直链文件与 GitHub Release 资产同源同版本，由 https://www.tossl.cn 提供，国内访问更稳定；GitHub 下载入口保留作为备用通道。
           </div>
         </details>
         <details class="faq-item reveal in" style="--reveal-delay:.1s">
+          <summary>如何确认下载文件可信？</summary>
+          <div class="answer">
+            所有安装包均发布在官方 GitHub 仓库的 <a href={GITHUB + '/releases'} target="_blank" rel="noopener">Releases</a> 页面，并同步提供站内直链下载，随包提供校验信息；项目基于 MIT 协议完全开源，可自行从源码构建核对。
+          </div>
+        </details>
+        <details class="faq-item reveal in" style="--reveal-delay:.15s">
           <summary>申请证书需要付费吗？</summary>
           <div class="answer">
             完全免费。工具调用 Let's Encrypt 免费证书签发服务，申请与自动续期全程不产生任何费用。

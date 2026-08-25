@@ -1,19 +1,18 @@
 // 站点统一配置：上线前只需修改这里
 // ─────────────────────────────────────────────────────────────
-// ★ 唯一需要替换的占位值：SITE.url（下方）。它同时驱动：
+// ★ 站点地址统一在此配置：SITE.url（下方）。它同时驱动：
 //   canonical / og:url / sitemap.xml / robots.txt / JSON-LD
-// 其余文件（astro.config.mjs、robots.txt 等）均自动引用此值，
-// 上线前无需再改任何其他文件。
+// 其余文件（astro.config.mjs、robots.txt 等）均自动引用此值。
 // ─────────────────────────────────────────────────────────────
 export const SITE = {
-  name: 'TopSSL 免费证书助手',
+  name: 'Tossl 免费SSL证书申请与自动续期工具',
   tagline: '免费 SSL 证书一键申请，到期自动续期',
   description:
-    'TopSSL 免费证书助手是一款由 TopSSL 出品的开源跨平台桌面工具：输入域名即可免费申请 Let’s Encrypt SSL 证书，自动安装到本机并到期自动续期，支持 HTTP/DNS 验证与通配符证书。',
-  // TODO: 上线前替换为最终域名（如 https://www.topssl.cn/ssl-cert-assistant 或独立域名）
-  url: 'https://topssl-cert-assistant.example.com',
+    'Tossl是一款免费的SSL证书申请工具，支持Let’s Encrypt证书一键申请、自动安装和自动续期。无需命令行，支持HTTP验证、DNS验证、通配符证书和支持Windows、macOS、Linux安装多平台安装运行。',
+  // 最终域名已确定：https://www.tossl.cn（sitemap / canonical / robots.txt / JSON-LD 均自动跟随此值）
+  url: 'https://www.tossl.cn',
   lang: 'zh-CN',
-  /** 站点 Logo（用于 Organization 结构化数据），上线前随域名一并替换 */
+  /** 站点 Logo（用于 Organization 结构化数据） */
   logo: '/apple-touch-icon.png',
   /** 品牌同源链接（sameAs） */
   sameAs: ['https://github.com/jiachunhui/Topssl-tool-free'],
@@ -41,10 +40,41 @@ export const TOPSSL = {
 
 export const GITHUB = 'https://github.com/jiachunhui/Topssl-tool-free'
 
+/**
+ * 站内直链下载文件清单：文件放在 site/public/downloads/ 下，
+ * 文件名与 GitHub Release 资产同名，版本号自动跟随 SITE.version。
+ * 实际发布资产名与此不一致时，只需修改这里的文件名。
+ * 下载页按钮链接 = SITE.url + '/downloads/' + 文件名。
+ */
+export const DOWNLOAD_FILES = {
+  windows: `TopSSL-Free-Cert-Assistant_${SITE.version}_x64-setup.exe`,
+  macosArm: `TopSSL-Free-Cert-Assistant_${SITE.version}_aarch64.dmg`,
+  macosX64: `TopSSL-Free-Cert-Assistant_${SITE.version}_x64.dmg`,
+  linuxDeb: `TopSSL-Free-Cert-Assistant_${SITE.version}_amd64.deb`,
+  linuxAppImage: `TopSSL-Free-Cert-Assistant_${SITE.version}_amd64.AppImage`,
+  linuxRpm: `TopSSL-Free-Cert-Assistant_${SITE.version}-1.x86_64.rpm`,
+}
+
 /** TopSSL 企业证书起售价（元/年），价格变动时只需修改此处 */
 export const ENTERPRISE_PRICE = 45
 
 export const FAQS = [
+  {
+    q:'Tossl申请的SSL证书安全吗？',
+    a:'安全。Tossl申请的是Let’s Encrypt签发的标准SSL证书，符合现代浏览器HTTPS安全要求。',
+  },
+  {
+    q:'免费SSL证书可以用于企业网站吗？',
+    a:'可以用于基础HTTPS加密。但如果企业网站需要展示企业身份、提升客户信任，可以选择OV或EV SSL证书。',
+  },
+  {
+    q:'SSL证书为什么需要自动续期？',
+    a:'免费SSL证书有效期较短，自动续期可以避免因忘记更新导致网站出现HTTPS错误。',
+  },
+  {
+    q:'Tossl支持哪些系统？',
+    a:'支持Windows、macOS和Linux系统。',
+  },
   {
     q: '证书是免费的吗？申请需要付费吗？',
     a: '完全免费。本工具调用 Let’s Encrypt 免费证书签发服务，输入域名即可申请，到期前自动续期，整个过程不收取任何费用。',

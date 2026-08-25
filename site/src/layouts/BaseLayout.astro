@@ -29,7 +29,7 @@ const softwareJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: SITE.name,
-  alternateName: 'TopSSL Free Cert Assistant',
+  alternateName: 'Tossl Free SSL Certificate Assistant',
   description,
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Windows, macOS, Linux',
@@ -58,7 +58,7 @@ const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'TopSSL',
-  alternateName: 'TopSSL 免费证书助手',
+  alternateName: 'Tossl',
   url: 'https://www.topssl.cn',
   logo: new URL(SITE.logo, SITE.url).href,
   sameAs: SITE.sameAs,
@@ -83,7 +83,7 @@ const websiteJsonLd = {
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
     <meta name="author" content="TopSSL" />
-    <meta name="keywords" content="免费SSL证书,免费SSL证书申请,SSL证书自动续期,Let's Encrypt证书,免费HTTPS证书,通配符证书,DNS验证证书,TopSSL免费证书助手" />
+    <meta name="keywords" content="免费SSL证书，免费SSL证书申请，SSL证书自动续期，Let's Encrypt证书，HTTPS证书申请工具，SSL证书工具，通配符SSL证书，DNS验证SSL证书" />
     <link rel="canonical" href={canonicalUrl} />
     <meta name="theme-color" content="#042230" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -101,14 +101,14 @@ const websiteJsonLd = {
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="TopSSL 免费证书助手 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
+    <meta property="og:image:alt" content="Tossl 免费SSL证书申请与自动续期工具 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
     <meta property="og:locale" content="zh_CN" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    <meta name="twitter:image:alt" content="TopSSL 免费证书助手 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
+    <meta name="twitter:image:alt" content="Tossl 免费SSL证书申请与自动续期工具 - 免费申请 Let's Encrypt SSL 证书并自动续期" />
     <!-- 结构化数据 -->
     <script type="application/ld+json" set:html={JSON.stringify(softwareJsonLd)} />
     <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />

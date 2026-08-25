@@ -1,28 +1,27 @@
 ---
 import { TOPSSL, ENTERPRISE_PRICE } from '../config'
 const rows = [
-  { feature: '价格', free: '完全免费', ent: `低至 ¥${ENTERPRISE_PRICE}/年`, entBold: true },
-  { feature: '有效期', free: '90 天，到期自动续期', ent: '可选 1-3 年，无需频繁续期' },
-  { feature: '地址栏身份', free: '仅显示安全锁', ent: 'OV/EV 显示企业名称，客户更信任' },
-  { feature: '设备兼容性', free: '面向现代浏览器', ent: '兼容更老旧的设备与系统' },
-  { feature: '自动化部署', free: '手动配置服务', ent: '平台提供部署与更新方案' },
-  { feature: '技术支持', free: '开源社区 / 文档', ent: '专业技术支持服务' },
+  { feature: '价格', free: '免费', ent: `付费`, entBold: true },
+  { feature: '验证方式', free: '域名验证', ent: '域名+企业身份' },
+  { feature: '适合网站', free: '个人网站、测试环境', ent: '企业官网、电商' },
+  { feature: '有效期', free: '90天', ent: '更长周期' },
+  { feature: '支持', free: '社区支持', ent: '专业支持' },
 ]
 ---
 <section class="section" id="compare">
   <div class="container">
     <div class="section-head reveal">
       <span class="kicker">证书对比</span>
-      <h2>免费证书够用，企业证书更省心</h2>
+      <h2>免费SSL证书和付费SSL证书有什么区别？</h2>
       <p>个人网站选免费工具即可；企业或对信任度有要求的场景，推荐 TopSSL 企业证书</p>
     </div>
     <div class="compare-wrap reveal">
       <table class="compare">
         <thead>
           <tr>
-            <th class="col-feature">对比项</th>
-            <th class="col-free">免费证书<span class="tag free">本工具</span></th>
-            <th class="col-enterprise">企业证书<span class="tag top">TopSSL</span></th>
+            <th class="col-feature">项目</th>
+            <th class="col-free">免费SSL证书</th>
+            <th class="col-enterprise">企业SSL证书</th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +39,9 @@ const rows = [
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="compare-desc reveal">
+      最后：如果只是开启HTTPS加密，免费SSL证书通常可以满足需求；如果网站涉及交易、品牌展示或企业身份认证，可以选择企业级SSL证书。
     </div>
     <div style="margin-top:1.6rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
       <a class="btn btn-primary" href="#top">免费开始使用</a>

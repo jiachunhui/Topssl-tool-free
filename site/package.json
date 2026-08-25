@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.1.0",
-  "description": "TopSSL 免费证书助手 - 宣传落地页（Astro SSG）",
+  "description": "Tossl 免费SSL证书申请与自动续期工具 - 宣传落地页（Astro SSG）",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

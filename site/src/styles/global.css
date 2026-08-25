@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   TopSSL 免费证书助手 · 宣传落地页设计系统
+   Tossl 免费SSL证书申请与自动续期工具 · 宣传落地页设计系统
    风格基调：Proton.me（深色光晕 / 玻璃拟态 / 精致卡片）
    导航：DeepSeek.com（吸顶毛玻璃 / 胶囊 hover / 滚动渐变）
    ══════════════════════════════════════════════════════════════ */
@@ -84,7 +84,7 @@ img, svg { vertical-align: middle; }
 
 /* ── 区块标题（统一精致排版） ── */
 .section-head {
-  max-width: 680px;
+  max-width: 880px;
   margin: 0 auto 3.4rem;
   text-align: center;
 }
@@ -738,6 +738,200 @@ img, svg { vertical-align: middle; }
 }
 
 /* ══════════════════════════════════════════════════════════════
+   SEO 知识区（自然有机风格：大地色背景 + 植物元素 + 折叠问答）
+   ══════════════════════════════════════════════════════════════ */
+.seo-section {
+  background:
+    radial-gradient(46rem 26rem at 92% -8rem, rgb(109 131 89 / 0.13), transparent 62%),
+    radial-gradient(38rem 22rem at -10% 112%, rgb(183 116 57 / 0.09), transparent 60%),
+    linear-gradient(168deg, #f0f3e8 0%, #f6f1e4 55%, #faf5ea 100%);
+  border-top: 1px solid #e2e6d4;
+  border-bottom: 1px solid #e6e0cd;
+  overflow: hidden;
+}
+.seo-content {
+  max-width: 56rem;
+  position: relative;
+}
+.seo-kicker {
+  color: #5f7351;
+  background: linear-gradient(180deg, #f8f9f0, #e9efdb);
+  border-color: #d3ddc0;
+}
+.seo-kicker svg { color: #6d8359; }
+
+/* 植物装饰（低透明度叶子水印） */
+.seo-deco {
+  position: absolute;
+  pointer-events: none;
+  color: rgb(99 124 75 / 0.15);
+}
+.seo-deco-a {
+  width: 300px;
+  height: 300px;
+  top: 2rem;
+  right: -70px;
+  transform: rotate(24deg);
+}
+.seo-deco-b {
+  width: 200px;
+  height: 200px;
+  bottom: 1.5rem;
+  left: -80px;
+  transform: rotate(-150deg);
+}
+
+/* 折叠问答（大地色卡片） */
+.seo-faq {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.2rem;
+}
+.seo-item {
+  background: #fdfcf4;
+  border: 1px solid #e6e1cd;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 10px 26px -20px rgb(74 88 52 / 0.5);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.seo-item:hover { border-color: #d2dbba; }
+.seo-item[open] {
+  border-color: #c2d0a4;
+  box-shadow: 0 16px 34px -20px rgb(74 88 52 / 0.55);
+}
+.seo-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.3rem;
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--ink-900);
+  transition: color 0.2s ease;
+}
+.seo-item summary:hover { color: #55683f; }
+.seo-item summary::-webkit-details-marker { display: none; }
+.seo-item-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(140deg, #eef2df, #e0e9cd);
+  color: #6d8359;
+}
+.seo-item-arrow {
+  margin-left: auto;
+  flex: none;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1;
+  color: #8a9a6b;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.seo-item[open] .seo-item-arrow { transform: rotate(135deg); }
+.seo-item-body {
+  padding: 0 1.3rem 1.25rem 4.45rem;
+}
+.seo-item-body p {
+  color: var(--ink-500);
+  line-height: 1.9;
+  margin: 0.45rem 0;
+  font-size: 0.95rem;
+}
+
+/* 对比表格块 */
+.seo-block {
+  margin-top: 2.8rem;
+}
+.seo-block h3 {
+  font-size: 1.18rem;
+  margin-bottom: 0.9rem;
+}
+.seo-block .compare-wrap {
+  margin-top: 1rem;
+}
+
+/* Tossl 行高亮 */
+.compare .tossl-row th,
+.compare .tossl-row td {
+  background: linear-gradient(90deg, #ddf1f5 0%, #eff9fb 100%);
+}
+.compare .tossl-row th {
+  color: var(--brand-800);
+  font-weight: 800;
+  border-left: 3px solid var(--brand-600);
+}
+.compare .tossl-row td {
+  color: var(--ink-700);
+  font-weight: 600;
+}
+.compare .tossl-row:hover th,
+.compare .tossl-row:hover td {
+  background: linear-gradient(90deg, #cfeaf1 0%, #e7f5f8 100%);
+}
+.tossl-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.tossl-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  .seo-deco-a { width: 170px; height: 170px; right: -50px; }
+  .seo-deco-b { width: 130px; height: 130px; left: -45px; }
+  .seo-item-body { padding-left: 1.3rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   下载页：站内直链下载卡片
+   ══════════════════════════════════════════════════════════════ */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+}
+.download-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.6rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.download-card h3 { font-size: 1.12rem; }
+.dl-note { color: var(--ink-400); font-size: 0.9rem; }
+.dl-btns { display: grid; gap: 0.6rem; margin-top: 0.4rem; }
+.btn-block { width: 100%; white-space: normal; }
+.dl-hint {
+  margin-top: 1.2rem;
+  text-align: center;
+  color: var(--ink-400);
+  font-size: 0.9rem;
+}
+@media (max-width: 860px) {
+  .download-grid { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════════════
    对比表
    ══════════════════════════════════════════════════════════════ */
 .compare-wrap {
@@ -791,6 +985,11 @@ img, svg { vertical-align: middle; }
   background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
   color: #fff;
   box-shadow: 0 4px 12px -4px rgb(8 145 173 / 0.5);
+}
+.compare-desc{
+  margin-top: 0.8rem;
+  font-size: 0.82rem;
+  color: var(--ink-500);
 }
 
 /* ══════════════════════════════════════════════════════════════

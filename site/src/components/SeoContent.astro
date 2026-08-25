@@ -1,0 +1,86 @@
+---
+// SEO 正文区（自然有机风格）：免费 SSL 证书知识内容，位于工作流程之后
+const seoItems = [
+  {
+    q: '什么是免费SSL证书？',
+    open: true,
+    body: [
+      '免费SSL证书是一种用于启用HTTPS加密的网站数字证书。它与收费SSL证书一样，可以保护浏览器和服务器之间的数据传输安全。',
+      "目前很多个人网站、博客、测试环境都会使用免费SSL证书，其中Let's Encrypt是应用较广的免费证书颁发机构，通过ACME协议实现自动化申请和续期。",
+    ],
+  },
+  {
+    q: '为什么需要SSL证书自动续期？',
+    open: false,
+    body: [
+      "SSL证书并不是永久有效。Let's Encrypt免费证书有效期通常为90天，如果到期没有及时更新，浏览器可能显示证书过期、安全警告等提示。",
+      '自动续期工具可以定期检查证书状态，在证书到期前完成重新申请，避免网站HTTPS中断。',
+    ],
+  },
+]
+
+const compareRows = [
+  { tool: 'Certbot', desc: '命令行工具，适合Linux运维', highlight: false },
+  { tool: 'acme.sh', desc: '轻量脚本，适合服务器环境', highlight: false },
+  { tool: 'Tossl', desc: '图形化工具，无需命令操作，适合个人站长和中小企业', highlight: true },
+]
+---
+<section class="section seo-section" id="seo">
+  <div class="container seo-content">
+    <svg class="seo-deco seo-deco-a" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    <svg class="seo-deco seo-deco-b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+
+    <div class="section-head reveal">
+      <span class="kicker seo-kicker">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        SSL证书知识
+      </span>
+      <h2>关于免费SSL证书，你需要了解这些</h2>
+    </div>
+
+    <div class="seo-faq">
+      {seoItems.map((it, i) => (
+        <details class="seo-item reveal" open={it.open} style={"--reveal-delay:" + i * 0.08 + "s"}>
+          <summary>
+            <span class="seo-item-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </span>
+            <span>{it.q}</span>
+            <span class="seo-item-arrow" aria-hidden="true">+</span>
+          </summary>
+          <div class="seo-item-body">
+            {it.body.map((p) => <p>{p}</p>)}
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <div class="seo-block reveal">
+      <h3>Tossl和Certbot、acme.sh有什么区别？</h3>
+      <div class="compare-wrap">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">工具</th>
+              <th>特点</th>
+            </tr>
+          </thead>
+          <tbody>
+            {compareRows.map((r) => (
+              <tr class={r.highlight ? 'tossl-row' : undefined}>
+                <th class="col-feature">
+                  {r.highlight ? (
+                    <span class="tossl-name">Tossl <span class="tossl-tag">推荐</span></span>
+                  ) : (
+                    r.tool
+                  )}
+                </th>
+                <td>{r.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
