@@ -254,7 +254,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
   switch (cmd) {
     case 'get_app_info':
-      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'TopSSL 免费证书助手' } as T
+      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'Tossl 免费SSL证书管理工具' } as T
 
     case 'get_platform_info':
       return {
@@ -373,7 +373,22 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     }
 
     case 'get_usage_guide':
-      return 'Mock 使用指南：\n1. 部署 fullchain.pem\n2. 部署 private_key.pem\n3. 重启服务' as T
+      return '（Mock）证书使用指引：nginx / Apache 配置示例见部署包。' as T
+
+    case 'export_deploy_package':
+      console.log('[mock] export_deploy_package certId=', a.id)
+      return 'Mock 下载目录/example.com-deploy-20260101' as T
+
+    case 'iis_status':
+      return {
+        supported: false,
+        installed: false,
+        elevated: false,
+        sites: [],
+      } as T
+
+    case 'iis_deploy_cert':
+      return 'Mock：IIS 部署成功' as T
 
     case 'renew_now':
       return 'mock-renew-' + nextId() as T
@@ -425,7 +440,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     // localStorage.setItem('mock:update-simulate', JSON.stringify({ version: '9.9.9', notes: '测试更新说明' }))
     case 'check_update': {
       const simulated = lsGetJSON<{ version: string; notes?: string } | null>('update-simulate', null)
-      const current = '0.1.7'
+      const current = '0.1.8'
       if (a.force) await new Promise((r) => setTimeout(r, 500)) // 模拟网络延迟
       if (simulated) {
         const asset = {

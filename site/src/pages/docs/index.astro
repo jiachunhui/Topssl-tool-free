@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const title = '使用教程：Tossl安装、申请与自动续期文档中心 - 免费SSL证书教程'
+const description =
+  'Tossl使用教程文档中心：Windows/macOS/Linux安装教程、免费SSL证书申请教程、自动续期配置教程、DNS验证与通配符证书教程，以及HTTP/DNS验证失败、证书安装失败等问题排查指南。'
+
+const groups = [
+  {
+    kicker: '安装',
+    title: '安装部署',
+    desc: 'Windows / macOS / Linux 三平台的安装与部署教程。',
+    items: [
+      { href: '/docs/install/windows/', name: 'Windows 安装 Tossl', desc: '下载、安装向导、开机自启与首次申请' },
+      { href: '/docs/install/macos/', name: 'macOS 安装 Tossl', desc: 'dmg 安装、首次打开「无法验证开发者」处理' },
+      { href: '/docs/install/linux/', name: 'Linux 部署 Tossl', desc: 'deb / AppImage / rpm 安装与 80 端口授权' },
+    ],
+  },
+  {
+    kicker: '使用',
+    title: '证书申请与续期',
+    desc: '申请第一张证书、配置自动续期、申请通配符证书。',
+    items: [
+      { href: '/docs/quickstart/', name: '如何申请 SSL 证书', desc: '3 分钟申请第一张 Let’s Encrypt 证书' },
+      { href: '/docs/auto-renewal/', name: '如何配置自动续期', desc: '到期前 30 天自动续期，两个开关缺一不可' },
+      { href: '/docs/dns-validation/', name: '如何申请泛域名证书', desc: 'DNS 验证与通配符证书，阿里云 / DNSPod / Cloudflare' },
+    ],
+  },
+  {
+    kicker: '排查',
+    title: '问题排查',
+    desc: '验证失败、证书安装失败等常见问题的原因与处理。',
+    items: [
+      { href: '/docs/troubleshooting/http-validation/', name: 'HTTP 验证失败怎么办', desc: '80 端口、解析、占用与放行排查' },
+      { href: '/docs/troubleshooting/dns-validation/', name: 'DNS 验证失败怎么办', desc: 'API 密钥、TXT 记录生效与传播排查' },
+      { href: '/docs/troubleshooting/cert-install/', name: '证书安装失败怎么办', desc: '部署报错、路径权限与私钥问题排查' },
+    ],
+  },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><span>使用教程</span>
+      </nav>
+      <span class="hero-badge">使用教程 · Docs</span>
+      <h1 style="margin-top:1rem">使用教程</h1>
+      <p class="lead" style="margin-top:.8rem">
+        从安装部署到证书申请、自动续期与问题排查，图文教程覆盖完整使用流程。
+        遇到具体问题也可以先到<a href="/blog/">知识库</a>搜索对应主题文章。
+      </p>
+
+      {groups.map((g) => (
+        <div style="margin-top:2.8rem">
+          <div class="section-head" style="text-align:left;margin:0 0 1.4rem">
+            <span class="kicker">{g.kicker}</span>
+            <h2 style="font-size:1.45rem">{g.title}</h2>
+            <p style="margin-top:.4rem">{g.desc}</p>
+          </div>
+          <div class="doc-grid">
+            {g.items.map((d) => (
+              <a class="doc-card reveal in" href={d.href}>
+                <h3>{d.name}</h3>
+                <p>{d.desc}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div style="margin-top:3rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">免费下载 Tossl</a>
+        <a class="btn btn-ghost" href="/blog/">阅读 SSL 知识库</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -13,7 +13,7 @@ use crate::state::AppState;
 use crate::storage::Db;
 
 /// 通知标题
-const APP_TITLE: &str = "TopSSL 免费证书助手";
+const APP_TITLE: &str = "Tossl 免费SSL证书管理工具";
 
 /// 到期提醒级别：剩余天数 <= 阈值时提醒（级别随时间单调递增：30 → 7 → 1 → expired）
 /// 注意按阈值升序排列，保证先命中更紧急的级别

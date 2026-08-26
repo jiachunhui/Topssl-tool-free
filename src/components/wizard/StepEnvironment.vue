@@ -17,11 +17,13 @@ const emit = defineEmits<{
 }>()
 
 const email = ref(props.email)
-const agreeProduction = ref(false)
 const showProductionWarn = ref(false)
 
 const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()))
-const formValid = computed(() => emailValid.value && (props.directory === 'staging' || agreeProduction.value))
+// 有效性只由邮箱与「已选环境」决定：切到正式环境的确认弹窗本身已是一道门槛，
+// 不再依赖本地 agreeProduction 标志（该标志在返回本页时会被重置，导致
+// directory=production 时按钮误禁用，必须点一下环境才能激活）
+const formValid = computed(() => emailValid.value)
 
 watch(email, (v) => emit('update:email', v))
 
@@ -32,13 +34,11 @@ function toggleDirectory() {
     showProductionWarn.value = true
     return
   }
-  agreeProduction.value = false
   emit('update:directory', 'staging')
 }
 
 function confirmProduction() {
   showProductionWarn.value = false
-  agreeProduction.value = true
   emit('update:directory', 'production')
 }
 </script>

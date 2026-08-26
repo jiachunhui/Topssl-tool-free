@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+
+const title = 'DNS验证失败怎么办：SSL证书TXT记录验证问题排查 - Tossl'
+const description =
+  'DNS验证失败怎么办？SSL证书申请时DNS-01验证失败的排查：API密钥权限与过期、TXT记录未生效或传播慢、CNAME冲突、速率限制，附手动添加TXT记录解决方案。'
+
+const issues = [
+  { problem: '验证超时', cause: 'API 密钥无权限或已过期；或 TXT 记录传播较慢，稍后重试' },
+  { problem: '密钥不生效', cause: '确认已授予最小权限：阿里云 AliyunDNSFullAccess、Cloudflare Zone:DNS:Edit、DNSPod 域名解析读写' },
+  { problem: '记录未生效', cause: '手动添加时主机记录写错（应为 _acme-challenge，不是 _acme-challenge.域名.域名）；修改后等待 TTL 生效' },
+  { problem: 'CNAME 冲突', cause: '同主机记录已存在 CNAME，与 TXT 冲突；删除冲突记录后重试' },
+  { problem: '申请被拒（正式环境）', cause: '触发 Let&rsquo;s Encrypt 速率限制（每域每周 50 张）；先用测试环境验证流程，稍后再申请' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>DNS 验证失败</span>
+      </nav>
+      <span class="hero-badge">问题排查 · DNS 验证</span>
+      <h1 style="margin-top:1rem">DNS 验证失败怎么办</h1>
+      <p class="lead" style="margin-top:.8rem">
+        DNS-01 验证通过 <code>_acme-challenge.&#123;域名&#125;</code> 的 TXT 记录证明域名控制权。
+        验证失败通常是记录没加上、没生效，或 API 密钥权限问题。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">排查顺序</span>
+        <h2>按下面顺序逐项检查</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">现象</th>
+              <th>原因与处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((i) => (
+              <tr>
+                <th class="col-feature">{i.problem}</th>
+                <td>{i.cause}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">兜底方案</span>
+        <h2>改用手动添加 TXT 记录</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>在申请流程中选择<strong>手动添加解析</strong>，应用会给出主机记录与记录值；</li>
+        <li>到域名服务商后台添加 TXT 记录，主机记录填 <code>_acme-challenge</code>，记录值粘贴应用给出的值；</li>
+        <li>等待解析生效（一般几分钟内，最长可能到 TTL 时间），回到应用点击「继续」。</li>
+      </ul>
+      <p>
+        API 密钥的获取与权限配置见 <a href="/docs/dns-validation/">DNS 验证教程</a>，
+        密钥仅保存在本机安全存储中，不会上传到任何服务器。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/docs/dns-validation/">返回：DNS 验证教程</a>
+        <a class="btn btn-ghost" href="/docs/quickstart/">返回：快速开始教程</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

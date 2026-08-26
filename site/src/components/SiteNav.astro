@@ -5,15 +5,14 @@ import { SITE, GITHUB } from '../config'
 const isHome = Astro.url.pathname === '/'
 const pages = [
   { href: '/download/', label: '下载' },
-  { href: '/docs/quickstart/', label: '教程' },
+  { href: '/docs/', label: '教程' },
+  { href: '/blog/', label: '博客' },
+  { href: '/changelog/', label: '更新日志' },
 ]
 // 首页栏目锚点：首页直接 #xxx；子页面这些栏目只在首页存在，
 // 链接自动加 "/" 前缀跳回首页对应区块，保证任何页面都能点过去
 const links = [
   { href: '#features', label: '功能' },
-  { href: '#how', label: '工作流程' },
-  { href: '#compare', label: '证书对比' },
-  { href: '#topssl', label: 'TopSSL' },
   { href: '#faq', label: '常见问题' },
 ].map((l) => (isHome ? l : { ...l, href: '/' + l.href }))
 ---

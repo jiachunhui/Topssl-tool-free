@@ -140,6 +140,12 @@ const ERROR_MAP: Record<string, Omit<ErrorInfo, 'code'>> = {
     suggestion: '请检查输入值（如端口范围 1-65535）',
     level: 'warn',
   },
+  ERR_DEPLOY: {
+    title: '部署失败',
+    message: '证书部署过程中出现错误',
+    suggestion: '按错误提示排查；IIS 部署需以管理员身份运行 Tossl',
+    level: 'error',
+  },
   ERR_DB: {
     title: '数据存储错误',
     message: '应用数据库读写异常',

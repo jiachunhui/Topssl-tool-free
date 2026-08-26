@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+
+const title = '证书安装失败怎么办：SSL证书部署与私钥权限排查 - Tossl'
+const description =
+  '证书安装失败怎么办？SSL证书部署到nginx/Apache报错的排查：证书文件路径错误、fullchain.pem不完整、私钥权限问题、服务重载失败，以及常见配置错误修正。'
+
+const issues = [
+  { problem: 'nginx / Apache 启动报错', cause: '证书路径写错或文件不存在；确认 fullchain.pem / privkey.pem 的绝对路径与文件名' },
+  { problem: '浏览器仍显示证书不受信任', cause: '只配置了证书不含中间证书；应使用 fullchain.pem（完整证书链），而不是仅 cert.pem' },
+  { problem: '私钥不匹配 / 权限报错', cause: 'fullchain.pem 与 privkey.pem 不是同一次签发的；Linux 下私钥权限应为 600，且服务进程可读' },
+  { problem: '配置改完不生效', cause: '修改后未重载服务：nginx -s reload 或 systemctl reload apache2；重载后硬刷新浏览器' },
+  { problem: 'Windows IIS 导入失败', cause: 'IIS 需要 PFX 格式；将 fullchain.pem 与 privkey.pem 合成 PFX 后导入，或在应用内导出 PFX' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>证书安装失败</span>
+      </nav>
+      <span class="hero-badge">问题排查 · 证书安装</span>
+      <h1 style="margin-top:1rem">证书安装失败怎么办</h1>
+      <p class="lead" style="margin-top:.8rem">
+        证书签发成功但部署到 Web 服务器后报错或不生效，通常是文件路径、证书链或私钥的问题。
+        按下面的排查表逐项处理即可。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">排查表</span>
+        <h2>常见现象与处理</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">现象</th>
+              <th>原因与处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((i) => (
+              <tr>
+                <th class="col-feature">{i.problem}</th>
+                <td>{i.cause}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">文件说明</span>
+        <h2>证书目录里的文件各是什么</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li><code>fullchain.pem</code>：完整证书链（站点证书 + 中间证书），服务器配置一律用它；</li>
+        <li><code>privkey.pem</code>：私钥，权限 0600，请勿外泄、勿提交到代码仓库；</li>
+        <li>证书目录路径见 <a href="/docs/quickstart/">快速开始教程</a> 的「证书存在哪里」表格。</li>
+      </ul>
+      <p>
+        部署配置示例可直接在应用「证书详情」页查看（nginx / Apache），一键复制引用证书文件路径。
+        仍无法解决时，可在 GitHub Issues 提交错误日志获取帮助。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/docs/quickstart/">返回：快速开始教程</a>
+        <a class="btn btn-ghost" href="/docs/auto-renewal/">查看自动续期教程</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

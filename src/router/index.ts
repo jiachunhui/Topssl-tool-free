@@ -45,7 +45,7 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  document.title = to.meta.title ? `${to.meta.title} - TopSSL 免费证书助手` : 'TopSSL 免费证书助手'
+  document.title = to.meta.title ? `${to.meta.title} - Tossl 免费SSL证书管理工具` : 'Tossl 免费SSL证书管理工具'
 })
 
 export default router

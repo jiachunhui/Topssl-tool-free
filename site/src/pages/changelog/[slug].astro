@@ -1,0 +1,78 @@
+---
+import { getCollection, render } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('changelog')
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+
+const all = (await getCollection('changelog')).sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+const idx = all.findIndex((e) => e.id === entry.id)
+const prev = idx > 0 ? all[idx - 1] : null
+const next = idx < all.length - 1 ? all[idx + 1] : null
+
+const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: entry.data.title,
+  description: entry.data.description ?? entry.data.title,
+  datePublished: fmt(entry.data.date),
+  dateModified: fmt(entry.data.date),
+  inLanguage: 'zh-CN',
+  author: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+  publisher: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site ?? 'https://www.tossl.cn').href,
+}
+---
+<BaseLayout title={entry.data.title + ' - 更新日志'} description={entry.data.description ?? entry.data.title}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:46rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/changelog/">更新日志</a><span>/</span><span>{entry.data.version}</span>
+      </nav>
+      <div class="ver-badge" style="margin-top:1.5rem">{entry.data.version}</div>
+      <h1 style="margin-top:1rem;font-size:clamp(1.5rem,3vw,2.1rem)">{entry.data.title}</h1>
+      <p class="changelog-meta" style="margin-top:.9rem">
+        <span class="tag-chip">发布时间：{fmt(entry.data.date)}</span>
+      </p>
+
+      <div class="post-body" style="margin-top:2rem">
+        <Content />
+      </div>
+
+      <div class="prev-next" style="margin-top:3rem">
+        {prev ? (
+          <a class="prev-next-item" href={`/changelog/${prev.id}/`}>
+            <span class="prev-next-label">← 上一个版本</span>
+            <span>{prev.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <a class="prev-next-item" href={`/changelog/${next.id}/`} style="text-align:right">
+            <span class="prev-next-label">下一个版本 →</span>
+            <span>{next.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+      </div>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">下载最新版本</a>
+        <a class="btn btn-ghost" href="/changelog/">返回更新日志列表</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

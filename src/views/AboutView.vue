@@ -18,7 +18,7 @@ async function checkUpdate() {
 const faqs = [
   {
     q: '证书有效期多久？',
-    a: 'Let\u2019s Encrypt 证书有效期为 90 天。本应用会在到期前 30 天自动为您续期（需保持应用后台运行，已默认开启开机自启）。',
+    a: 'Let\u2019s Encrypt 证书有效期为 90 天。开启自动续期并保持应用运行时，会在到期前 30 天自动续期；即使错过，应用每次启动也会补检并提醒到期/过期证书，可一键续期。个人电脑建议开启「开机自启」与「到期提醒」。',
   },
   {
     q: '什么是测试证书（Staging）？',
@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     q: 'HTTP 验证和 DNS 验证有什么区别？',
-    a: 'HTTP 验证：自动在 80 端口临时开启验证服务，需要域名解析到本机公网 IP 且 80 端口公网可访问。DNS 验证：通过添加 TXT 解析记录验证，无需 80 端口，还支持通配符证书，但需要配置 DNS 服务商 API。',
+    a: 'HTTP 验证：自动在 80 端口临时开启验证服务，需要域名解析到本机公网 IP 且 80 端口公网可访问（家庭宽带通常被运营商封锁 80 端口，个人电脑建议直接用 DNS 验证）。DNS 验证：通过添加 TXT 解析记录验证，无需 80 端口，还支持通配符证书，但需要配置 DNS 服务商 API。',
   },
   {
     q: '通配符证书支持吗？',
@@ -34,7 +34,11 @@ const faqs = [
   },
   {
     q: '证书安装在哪里？',
-    a: '证书保存在应用数据目录下的 certs 文件夹中（可在证书详情页查看并打开）。您可以将证书路径配置到自己的 HTTPS 服务中，详情页提供 nginx / Apache 的引用示例。',
+    a: '证书保存在应用数据目录下的 certs 文件夹中（可在证书详情页查看并打开）。您可以将证书路径配置到自己的 HTTPS 服务中，详情页提供 nginx / Apache 的引用示例；也可以一键导出「部署包」（证书文件 + 各平台配置示例）拷贝到服务器使用，Windows 服务器还支持 IIS 一键部署。',
+  },
+  {
+    q: '证书怎么部署到我的服务器？',
+    a: '在证书详情页点击「导出部署包」，应用会生成一个包含 fullchain.pem、privkey.pem 与 nginx/Apache/IIS 配置示例的文件夹，拷贝到服务器按说明配置即可。Windows 服务器可直接使用「IIS 一键部署」（需以管理员身份运行 Tossl），自动导入证书并绑定 https。',
   },
   {
     q: '证书是 RSA 还是 ECC？某些平台只支持 RSA 怎么办？',
@@ -77,7 +81,7 @@ const faqs = [
           />
         </svg>
       </div>
-      <h2 class="mt-3 text-base font-bold text-slate-900">TopSSL 免费证书助手</h2>
+      <h2 class="mt-3 text-base font-bold text-slate-900">Tossl 免费SSL证书管理工具</h2>
       <p class="mt-0.5 text-xs text-slate-400">v{{ appStore.appInfo?.version ?? '—' }} · {{ appStore.appInfo?.platform ?? '' }} {{ appStore.appInfo?.arch ?? '' }}</p>
       <div class="mt-2.5 flex items-center justify-center gap-2 text-xs">
         <span v-if="updateStore.phase === 'checking'" class="text-slate-400">正在检查更新…</span>

@@ -66,7 +66,9 @@ async function saveAll() {
 
       <div class="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-slate-800">自动续期</h2>
-        <p class="mt-1 text-xs text-slate-400">证书有效期 90 天，开启后将在到期前 30 天自动续期（需应用保持后台运行）</p>
+        <p class="mt-1 text-xs text-slate-400">
+          证书有效期 90 天。开启后，应用运行时会在到期前 30 天自动续期；即使错过，应用每次启动也会补检并提醒到期/过期证书，可一键续期。个人电脑请同时开启「开机自动启动」和「证书到期提醒」。
+        </p>
         <label class="mt-3 flex cursor-pointer items-center justify-between">
           <span class="text-sm text-slate-700">开启自动续期</span>
           <input
@@ -142,7 +144,9 @@ async function saveAll() {
 
       <div class="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-slate-800">HTTP 验证端口</h2>
-        <p class="mt-1 text-xs text-slate-400">HTTP-01 验证需要监听 80 端口（一般无需修改）</p>
+        <p class="mt-1 text-xs text-slate-400">
+          本机监听端口（默认 80）。仅当服务器 80 端口被 Web 服务占用时，改为高位端口并配合 80→该端口的反向代理使用；家庭宽带通常被运营商封锁 80 端口，个人电脑请直接用 DNS 验证。
+        </p>
         <input
           v-model.number="settingsStore.settings.http01_port"
           type="number"

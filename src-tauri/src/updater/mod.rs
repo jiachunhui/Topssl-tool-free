@@ -20,9 +20,10 @@ use tauri::{AppHandle, Emitter, State};
 use crate::error::{AppError, AppResult, ErrorCode};
 use crate::state::AppState;
 
-/// 国内更新清单地址（宣传页同域）。域名确定后填写：
-/// `Some("https://你的域名/updates/latest.json")`；保持 None 时仅使用 GitHub 源。
-pub const UPDATE_MANIFEST_URL: Option<&str> = None;
+/// 国内更新清单地址（宣传页同域，国内可直连；清单请求失败自动回退 GitHub 源）。
+/// 清单由 scripts/gen-update-manifest.mjs 生成，随站点部署到 https://www.tossl.cn/updates/latest.json，
+/// 安装包放置于 https://www.tossl.cn/downloads/（与下载页直链同目录，见 site/src/config.ts DOWNLOAD_FILES）。
+pub const UPDATE_MANIFEST_URL: Option<&str> = Some("https://www.tossl.cn/updates/latest.json");
 
 pub const GITHUB_API_LATEST: &str =
     "https://api.github.com/repos/jiachunhui/Topssl-tool-free/releases/latest";
@@ -72,8 +73,9 @@ pub struct UpdateProgress {
     pub total: u64,
 }
 
-// 国内清单 JSON 结构（scripts/gen-update-manifest.mjs 生成）
+// 国内清单 JSON 结构（scripts/gen-update-manifest.mjs 生成，字段为 camelCase）
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct Manifest {
     version: String,
     #[serde(default)]

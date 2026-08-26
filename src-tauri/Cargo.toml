@@ -1,6 +1,6 @@
 [package]
 name = "topssl-free-cert-assistant"
-version = "0.1.7"
+version = "0.1.8"
 description = "TopSSL 免费证书助手 - Let's Encrypt 免费证书一键申请"
 authors = ["SSL Cert Desktop"]
 license = "MIT"

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+
+const title = 'HTTP验证失败怎么办：SSL证书申请80端口问题排查 - Tossl'
+const description =
+  'HTTP验证失败怎么办？SSL证书申请时HTTP-01验证失败的常见原因排查：域名解析未指向本机、80端口被占用或未放行、运营商封锁，以及改用DNS验证的解决方案。'
+
+const issues = [
+  { problem: '验证超时 / 一直失败', cause: '域名 A / AAAA 记录未指向本机公网 IP；确认解析后稍等 TTL 生效，或临时调低 TTL' },
+  { problem: '80 端口被占用', cause: 'Apache / nginx 占用了 80 端口；先停止占用进程，申请完成后再恢复' },
+  { problem: '80 端口不可公网访问', cause: '云服务器安全组 / 家庭宽带路由器未放行 80 端口；或运营商封锁 80 端口' },
+  { problem: 'Linux 权限不足', cause: '普通用户无法监听 1024 以下端口；执行 sudo setcap cap_net_bind_service=+ep 授权' },
+  { problem: 'CDN / 前置代理拦截', cause: '.well-known/acme-challenge 路径被 CDN 拦截或缓存；暂时关闭 CDN 或改用 DNS 验证' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>HTTP 验证失败</span>
+      </nav>
+      <span class="hero-badge">问题排查 · HTTP 验证</span>
+      <h1 style="margin-top:1rem">HTTP 验证失败怎么办</h1>
+      <p class="lead" style="margin-top:.8rem">
+        HTTP-01 验证要求 Let&rsquo;s Encrypt 服务器能通过公网 80 端口访问你域名下的
+        <code>.well-known/acme-challenge/</code> 路径。任何一环不通都会导致验证失败。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">排查顺序</span>
+        <h2>按下面顺序逐项检查</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">现象</th>
+              <th>原因与处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((i) => (
+              <tr>
+                <th class="col-feature">{i.problem}</th>
+                <td>{i.cause}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">替代方案</span>
+        <h2>80 端口用不了，直接换 DNS 验证</h2>
+      </div>
+      <p>
+        内网服务器、CDN 前置、运营商封锁等场景下 80 端口不可用，直接改用
+        <a href="/docs/dns-validation/">DNS 验证</a>即可：通过 DNS 服务商 API 自动添加 TXT 验证记录，
+        全程不依赖 80 端口，也不影响现有网站运行。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/docs/dns-validation/">改用 DNS 验证</a>
+        <a class="btn btn-ghost" href="/docs/quickstart/">返回：快速开始教程</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

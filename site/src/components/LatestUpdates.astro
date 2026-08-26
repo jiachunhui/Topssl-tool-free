@@ -1,0 +1,74 @@
+---
+// 首页「最新动态」模块：自动拉取更新日志与博客最新内容，
+// 发新版本 / 新文章后无需修改本组件即可更新首页。
+import { getCollection } from 'astro:content'
+
+const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+// 数值化版本比较：v0.1.10 > v0.1.9（字典序会出错）
+const verNums = (v: string) => v.replace(/^v/, '').split('.').map(Number)
+const byDateDesc = (a: { data: { date: Date; version: string } }, b: { data: { date: Date; version: string } }) =>
+  b.data.date.getTime() - a.data.date.getTime() || (() => {
+    const [a1, b1] = [verNums(a.data.version), verNums(b.data.version)]
+    for (let i = 0; i < Math.max(a1.length, b1.length); i++) {
+      const d = (b1[i] ?? 0) - (a1[i] ?? 0)
+      if (d !== 0) return d
+    }
+    return 0
+  })()
+
+const releases = (await getCollection('changelog')).sort(byDateDesc).slice(0, 3)
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3)
+---
+<section class="section latest-section" id="updates">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker">最新动态</span>
+      <h2>持续更新，保持活跃</h2>
+      <p>每个版本发布与每篇教程文章都会第一时间同步到这里</p>
+    </div>
+
+    <div class="latest-grid">
+      <div class="latest-col reveal">
+        <h3 class="latest-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg>
+          最近更新
+        </h3>
+        <div class="latest-list">
+          {releases.map((r) => (
+            <a class="latest-item reveal in" href={`/changelog/${r.id}/`}>
+              <span class="tag-chip tag-ver">{r.data.version}</span>
+              <div>
+                <p class="latest-item-title">{r.data.title}</p>
+                <p class="latest-item-meta">{fmt(r.data.date)}</p>
+              </div>
+            </a>
+          ))}
+          <a class="latest-more" href="/changelog/">查看全部更新日志 →</a>
+        </div>
+      </div>
+
+      <div class="latest-col reveal">
+        <h3 class="latest-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.25A3.75 3.75 0 0 0 8.25 10v2.25m0 0h7.5V10A3.75 3.75 0 0 0 12 6.25m-3.75 6H4.5A1.5 1.5 0 0 0 3 13.75v3A1.5 1.5 0 0 0 4.5 18.25h15a1.5 1.5 0 0 0 1.5-1.5v-3a1.5 1.5 0 0 0-1.5-1.5h-3.75"/></svg>
+          最新文章
+        </h3>
+        <div class="latest-list">
+          {posts.map((p) => (
+            <a class="latest-item reveal in" href={`/blog/${p.id}/`}>
+              <span class="tag-chip">{p.data.category}</span>
+              <div>
+                <p class="latest-item-title">{p.data.title}</p>
+                <p class="latest-item-meta">{fmt(p.data.pubDate)}</p>
+              </div>
+            </a>
+          ))}
+          <a class="latest-more" href="/blog/">进入 SSL 知识库 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

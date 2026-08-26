@@ -22,7 +22,9 @@ const description =
       </div>
       <p>
         从 <a href="/download/">下载页</a> 获取对应平台的安装包（当前版本 v{SITE.version}），
-        按向导完成安装。程序默认常驻系统托盘，支持开机自启，为后续自动续期做准备。
+        按向导完成安装。安装步骤见 <a href="/docs/install/windows/">Windows 安装教程</a>、
+        <a href="/docs/install/macos/">macOS 安装教程</a> 或 <a href="/docs/install/linux/">Linux 部署教程</a>。
+        程序默认常驻系统托盘，支持开机自启，为后续自动续期做准备。
       </p>
 
       <div class="section-head" style="padding-top:2.5rem">
@@ -33,7 +35,7 @@ const description =
       <ul style="line-height:2;padding-left:1.2rem">
         <li>填写<strong>主域名</strong>，如 <code>www.example.com</code> 或通配符 <code>*.example.com</code>；</li>
         <li>可添加多个<strong>其他域名</strong>，一张证书同时覆盖（多域名 SAN 证书）；</li>
-        <li>选择验证方式：<strong>HTTP 验证</strong>（推荐，零配置）或 <strong>DNS 验证</strong>（需配置 DNS 服务商 API，见<a href="/docs/dns-validation/">DNS 验证教程</a>）；</li>
+        <li>选择验证方式：<strong>DNS 验证</strong>（推荐，无需 80 端口，支持通配符，见<a href="/docs/dns-validation/">DNS 验证教程</a>）或 <strong>HTTP 验证</strong>（适用于云服务器等 80 端口公网可访问的环境）；</li>
         <li>选择环境：<strong>测试环境</strong>（Staging，不消耗正式额度，先验证流程）或<strong>正式环境</strong>（浏览器信任）。</li>
       </ul>
 
@@ -52,7 +54,7 @@ const description =
       </div>
       <ul style="line-height:2;padding-left:1.2rem">
         <li>域名的 A / AAAA 记录已指向<strong>本机公网 IP</strong>；</li>
-        <li>本机 <strong>80 端口</strong>可被公网访问（云服务器安全组、家庭宽带路由器需放行）；</li>
+        <li>本机 <strong>80 端口</strong>可被公网访问（云服务器安全组需放行；<strong>家庭宽带通常被运营商封锁 80 端口，个人电脑请优先使用 DNS 验证</strong>）；</li>
         <li>80 端口未被 Apache / nginx 占用（申请完成后再恢复即可）；</li>
         <li>Linux 普通用户无法监听 1024 以下端口，需一次性授权：<code>sudo setcap cap_net_bind_service=+ep /path/to/topssl-free-cert-assistant</code>。</li>
       </ul>

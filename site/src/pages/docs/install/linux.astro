@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { SITE } from '../../../config'
+
+const title = 'Linux部署Tossl教程：deb/AppImage/rpm安装与80端口授权 - Tossl'
+const description =
+  'Linux部署Tossl教程：免费SSL证书工具在Debian/Ubuntu、Fedora/CentOS等发行版的安装方法、80端口capabilities授权、开机自启与自动续期配置。'
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>Linux 部署</span>
+      </nav>
+      <span class="hero-badge">安装教程 · Linux</span>
+      <h1 style="margin-top:1rem">Linux 部署 Tossl 教程</h1>
+      <p class="lead" style="margin-top:.8rem">
+        支持主流 Linux 发行版：Debian / Ubuntu 用 deb 包，Fedora / CentOS 用 rpm 包，
+        其他发行版可用通用 AppImage。服务器无桌面环境时，建议在有图形界面的环境中部署。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 1 步</span>
+        <h2>选择安装包并安装</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">发行版</th>
+              <th>安装包</th>
+              <th>安装命令</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">Debian / Ubuntu</th>
+              <td><code>.deb</code></td>
+              <td><code>sudo dpkg -i TopSSL-Free-Cert-Assistant_{SITE.version}_amd64.deb</code></td>
+            </tr>
+            <tr>
+              <th class="col-feature">Fedora / CentOS</th>
+              <td><code>.rpm</code></td>
+              <td><code>sudo rpm -i TopSSL-Free-Cert-Assistant_{SITE.version}-1.x86_64.rpm</code></td>
+            </tr>
+            <tr>
+              <th class="col-feature">其他发行版</th>
+              <td><code>.AppImage</code></td>
+              <td><code>chmod +x TopSSL-Free-Cert-Assistant_{SITE.version}_amd64.AppImage &amp;&amp; ./TopSSL-Free-Cert-Assistant_{SITE.version}_amd64.AppImage</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem">安装包从<a href="/download/">下载页</a>获取，与 GitHub Release 同源同版本。</p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 2 步（HTTP 验证必做）</span>
+        <h2>授权监听 80 端口</h2>
+      </div>
+      <p>
+        Linux 普通用户无法监听 1024 以下端口。若使用 HTTP 验证申请证书，需一次性授权：
+      </p>
+      <pre class="code-block"><code>sudo setcap cap_net_bind_service=+ep /path/to/topssl-free-cert-assistant</code></pre>
+      <p>
+        使用 DNS 验证则无需此步骤。80 端口不可用时请改用
+        <a href="/docs/dns-validation/">DNS 验证</a>。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 3 步</span>
+        <h2>配置自动续期</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>在「设置」页开启<strong>自动续期</strong>与<strong>开机自启</strong>；</li>
+        <li>保持程序在托盘运行、不要退出——程序退出后不会执行自动续期；</li>
+        <li>续期结果通过系统通知提示，详见<a href="/docs/auto-renewal/">自动续期教程</a>。</li>
+      </ul>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">下载 Linux 版</a>
+        <a class="btn btn-ghost" href="/docs/quickstart/">下一步：申请第一张证书 →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

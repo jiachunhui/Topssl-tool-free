@@ -7,6 +7,7 @@ const seoItems = [
     body: [
       '免费SSL证书是一种用于启用HTTPS加密的网站数字证书。它与收费SSL证书一样，可以保护浏览器和服务器之间的数据传输安全。',
       "目前很多个人网站、博客、测试环境都会使用免费SSL证书，其中Let's Encrypt是应用较广的免费证书颁发机构，通过ACME协议实现自动化申请和续期。",
+      '想知道哪家免费证书更适合你？详见<a href="/blog/free-ssl-certificate-comparison/">免费SSL证书哪个好</a>，以及<a href="/blog/lets-encrypt-security/">Let’s Encrypt免费证书安全吗</a>。',
     ],
   },
   {
@@ -15,6 +16,7 @@ const seoItems = [
     body: [
       "SSL证书并不是永久有效。Let's Encrypt免费证书有效期通常为90天，如果到期没有及时更新，浏览器可能显示证书过期、安全警告等提示。",
       '自动续期工具可以定期检查证书状态，在证书到期前完成重新申请，避免网站HTTPS中断。',
+      '自动续期的实现方式与配置步骤见<a href="/blog/ssl-auto-renewal-guide/">SSL证书自动续期怎么实现</a>，证书过期后的处理方法见<a href="/blog/ssl-cert-expired/">SSL证书过期怎么办</a>。',
     ],
   },
 ]
@@ -49,7 +51,7 @@ const compareRows = [
             <span class="seo-item-arrow" aria-hidden="true">+</span>
           </summary>
           <div class="seo-item-body">
-            {it.body.map((p) => <p>{p}</p>)}
+            {it.body.map((p) => <p set:html={p} />)}
           </div>
         </details>
       ))}

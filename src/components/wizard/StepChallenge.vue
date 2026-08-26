@@ -104,12 +104,12 @@ function goProviderConfig() {
         @click="pick('http01')"
       >
         <div class="flex items-center justify-between">
-          <span class="text-sm font-bold text-slate-900">HTTP 验证（推荐）</span>
+          <span class="text-sm font-bold text-slate-900">HTTP 验证</span>
           <span v-if="challenge === 'http01'" class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
         </div>
         <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
-          自动在 80 端口临时开启验证服务，无需配置 API，最快。
-          <br />需要：域名解析到本机公网 IP 且 80 端口可访问。
+          自动在 80 端口临时开启验证服务，无需配置 API。
+          <br />适用于云服务器等 80 端口公网可访问的环境；家庭宽带通常被封 80，请用 DNS 验证。
         </p>
         <div v-if="probing" class="mt-2 text-xs text-slate-400">检测 80 端口…</div>
         <div v-else-if="portStatus" class="mt-2 text-xs" :class="portStatus.free ? 'text-brand-600' : 'text-amber-600'">
@@ -124,11 +124,11 @@ function goProviderConfig() {
         @click="pick('dns01')"
       >
         <div class="flex items-center justify-between">
-          <span class="text-sm font-bold text-slate-900">DNS 验证</span>
+          <span class="text-sm font-bold text-slate-900">DNS 验证（推荐）</span>
           <span v-if="challenge === 'dns01'" class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">已选</span>
         </div>
         <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
-          通过添加 TXT 解析记录验证，无需 80 端口，支持通配符。
+          通过添加 TXT 解析记录验证，无需 80 端口，支持通配符，国内通用。
           <br />可自动调用 DNS API，或手动添加记录。
         </p>
       </button>

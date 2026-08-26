@@ -3,6 +3,7 @@ import { invoke } from './ipc'
 import type {
   AppInfo,
   CertInfo,
+  IisStatus,
   IssueRequest,
   LogEntry,
   PlatformInfo,
@@ -40,8 +41,15 @@ export const api = {
   getCertificate: (id: number) => invoke<CertInfo | null>('get_certificate', { id }),
   deleteCertificate: (id: number) => invoke<void>('delete_certificate', { id }),
   getUsageGuide: (id: number) => invoke<string>('get_usage_guide', { id }),
+  /** 导出部署包（证书 + 各平台配置示例），返回部署包目录路径 */
+  exportDeployPackage: (id: number) => invoke<string>('export_deploy_package', { id }),
   renewNow: (id: number) => invoke<string>('renew_now', { id }),
   checkRenewals: (force?: boolean) => invoke<RenewalResult[]>('check_renewals', { force: force ?? false }),
+
+  // ---------- iis deployment ----------
+  iisStatus: () => invoke<IisStatus>('iis_status'),
+  iisDeployCert: (certId: number, siteName: string, host: string) =>
+    invoke<string>('iis_deploy_cert', { certId, siteName, host }),
 
   // ---------- providers ----------
   listProviders: () => invoke<ProviderInfo[]>('list_providers'),

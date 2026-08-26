@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { SITE, GITHUB, DOWNLOAD_FILES } from '../config'
 
-const title = '免费下载Tossl 免费SSL证书申请与自动续期工具 - Windows/macOS/Linux SSL证书工具 | Tossl'
+const title = '免费下载Tossl 免费SSL证书管理工具 - Windows/macOS/Linux SSL证书申请部署工具 | Tossl'
 const description =
-  '免费下载Tossl 免费SSL证书申请与自动续期工具：支持Windows、macOS、Linux的免费SSL证书申请工具，一键申请Let&rsquo;s Encrypt证书并自动续期，开源免费，即下即用。站内直链下载，无需访问GitHub。'
+  '免费下载Tossl 免费SSL证书管理工具：支持Windows、macOS、Linux，一键申请Let’s Encrypt证书并自动续期，支持导出部署包与IIS一键部署，开源免费，即下即用。站内直链下载，无需访问GitHub。'
 
 // 站内直链：统一使用 https://www.tossl.cn/downloads/<文件名>
 const downloadUrl = (file: string) => `${SITE.url}/downloads/${file}`
@@ -82,7 +82,8 @@ const buttons = [
           前往 GitHub 下载（备用）
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
         </a>
-        <a class="btn btn-ghost" href="/docs/quickstart/">查看使用教程</a>
+        <a class="btn btn-ghost" href="/docs/">查看使用教程</a>
+        <a class="btn btn-ghost" href="/blog/">阅读 SSL 知识库</a>
         <a class="btn btn-ghost" href="/changelog/">更新日志</a>
       </div>
 

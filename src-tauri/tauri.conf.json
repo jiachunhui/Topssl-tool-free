@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "TopSSL-Free-Cert-Assistant",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "identifier": "com.topsl.ssl-cert-desktop",
   "build": {
     "frontendDist": "../dist",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "TopSSL 免费证书助手",
+        "title": "Tossl 免费SSL证书管理工具",
         "width": 1040,
         "height": 720,
         "minWidth": 860,
@@ -37,8 +37,8 @@
       "icons/icon.ico"
     ],
     "category": "Utility",
-    "shortDescription": "TopSSL 出品的免费 SSL 证书一键申请工具",
-    "longDescription": "由 TopSSL（topssl.cn）出品的跨平台桌面程序：输入域名即可免费申请 Let's Encrypt 证书，自动安装到本机并到期自动续期。支持 HTTP/DNS 验证与通配符证书。",
+    "shortDescription": "Tossl：免费 SSL 证书申请、部署与续期管理工具",
+    "longDescription": "由 TopSSL（topssl.cn）出品的跨平台桌面程序：输入域名即可免费申请 Let's Encrypt 证书，支持 HTTP/DNS 验证与通配符证书；一键导出部署包，Windows 服务器可一键部署到 IIS；到期前提醒并自动续期。",
     "windows": {
       "nsis": {
         "installMode": "currentUser",

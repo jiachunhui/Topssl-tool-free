@@ -23,6 +23,19 @@ export interface PortStatus {
   detail: string | null
 }
 
+/** IIS 站点（iis_status 返回） */
+export interface IisSite {
+  name: string
+}
+
+/** IIS 状态（iis_status 返回） */
+export interface IisStatus {
+  supported: boolean
+  installed: boolean
+  elevated: boolean
+  sites: IisSite[]
+}
+
 /** 设置项 */
 export interface Settings {
   acme_directory: string // 'staging' | 'production'

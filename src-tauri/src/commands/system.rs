@@ -29,7 +29,7 @@ pub fn get_app_info() -> AppResult<AppInfo> {
         version: env!("CARGO_PKG_VERSION").to_string(),
         platform: std::env::consts::OS.to_string(),
         arch: std::env::consts::ARCH.to_string(),
-        name: "TopSSL 免费证书助手".to_string(),
+        name: "Tossl 免费SSL证书管理工具".to_string(),
     })
 }
 

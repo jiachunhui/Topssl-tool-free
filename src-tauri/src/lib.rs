@@ -81,8 +81,11 @@ pub fn run() {
             commands::certificates::get_certificate,
             commands::certificates::delete_certificate,
             commands::certificates::get_usage_guide,
+            commands::certificates::export_deploy_package,
             commands::certificates::check_duplicate,
             commands::certificates::renew_now,
+            commands::iis::iis_status,
+            commands::iis::iis_deploy_cert,
             commands::providers::list_providers,
             commands::providers::save_provider,
             commands::providers::test_provider,
@@ -138,7 +141,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
     use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
     use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
-    let show_i = MenuItem::with_id(app, "show", "打开 TopSSL 免费证书助手", true, None::<&str>)?;
+    let show_i = MenuItem::with_id(app, "show", "打开 Tossl 免费SSL证书管理工具", true, None::<&str>)?;
     let check_i = MenuItem::with_id(app, "check", "立即检查续期", true, None::<&str>)?;
     let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
     let sep = PredefinedMenuItem::separator(app)?;
@@ -150,7 +153,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
             tauri::image::Image::new_owned(vec![0u8; 4], 1, 1)
         }))
         .menu(&menu)
-        .tooltip("TopSSL 免费证书助手")
+        .tooltip("Tossl 免费SSL证书管理工具")
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "show" => {

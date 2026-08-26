@@ -5,10 +5,10 @@
 // 其余文件（astro.config.mjs、robots.txt 等）均自动引用此值。
 // ─────────────────────────────────────────────────────────────
 export const SITE = {
-  name: 'Tossl 免费SSL证书申请与自动续期工具',
-  tagline: '免费 SSL 证书一键申请，到期自动续期',
+  name: 'Tossl 免费SSL证书管理工具',
+  tagline: '免费 SSL 证书申请、部署与到期管理',
   description:
-    'Tossl是一款免费的SSL证书申请工具，支持Let’s Encrypt证书一键申请、自动安装和自动续期。无需命令行，支持HTTP验证、DNS验证、通配符证书和支持Windows、macOS、Linux安装多平台安装运行。',
+    'Tossl是一款免费的SSL证书管理工具：输入域名即可申请Let’s Encrypt证书，支持HTTP/DNS验证与通配符证书；一键导出部署包，Windows服务器可一键部署到IIS；到期前提醒并自动续期，支持Windows、macOS、Linux。',
   // 最终域名已确定：https://www.tossl.cn（sitemap / canonical / robots.txt / JSON-LD 均自动跟随此值）
   url: 'https://www.tossl.cn',
   lang: 'zh-CN',
@@ -17,7 +17,7 @@ export const SITE = {
   /** 品牌同源链接（sameAs） */
   sameAs: ['https://github.com/jiachunhui/Topssl-tool-free'],
   /** 当前版本（与 Cargo.toml 保持一致） */
-  version: '0.1.7',
+  version: '0.1.8',
   /** 软件下载入口（GitHub Releases 页） */
   downloadUrl: 'https://github.com/jiachunhui/Topssl-tool-free/releases',
   /** 更新日志页（站内） */
@@ -58,6 +58,53 @@ export const DOWNLOAD_FILES = {
 /** TopSSL 企业证书起售价（元/年），价格变动时只需修改此处 */
 export const ENTERPRISE_PRICE = 45
 
+/**
+ * 首页促销价目：多年期 SSL 证书优惠价（每年单价）。
+ * 价格/链接变动只需修改此处，版块内容自动跟随。
+ */
+export const PRICING = {
+  badge: '限时优惠',
+  heading: '多年期 SSL 证书，一次买多年更划算',
+  sub: '通配符与单域名证书多年期特惠价，买得越久单价越低，新购、续期均享',
+  note: '价格为每年单价 · 含税特惠价 · 活动解释权归 TopSSL 所有 · 企业批量采购可联系 TopSSL 商务',
+  plans: [
+    {
+      name: '通配符 SSL 证书',
+      desc: '一张证书覆盖主域名及全部一级子域名，适合子域名较多的业务',
+      tag: '热门',
+      highlight: true,
+      priceValue: 487.6,
+      priceTerm: '5 年',
+      terms: [
+        { term: '1 年', value: 540 },
+        { term: '2 年', value: 537 },
+        { term: '3 年', value: 523.33 },
+        { term: '4 年', value: 505.5 },
+        { term: '5 年', value: 487.6, hot: true },
+      ],
+      cta: '立即选购通配符证书',
+      url: 'https://www.topssl.cn/ssl/xinssl-dv-wildcard?utm_source=topssl-cert-assistant-site&utm_medium=referral&utm_campaign=landing-pricing-wildcard',
+    },
+    {
+      name: '单域名 SSL 证书',
+      desc: 'DV 级别企业证书，适合单站点 HTTPS 加密与基础信任展示',
+      tag: '经济',
+      highlight: false,
+      priceValue: 40.8,
+      priceTerm: '5 年',
+      terms: [
+        { term: '1 年', value: 45 },
+        { term: '2 年', value: 45 },
+        { term: '3 年', value: 43.67 },
+        { term: '4 年', value: 42.25 },
+        { term: '5 年', value: 40.8, hot: true },
+      ],
+      cta: '立即选购单域名证书',
+      url: 'https://www.topssl.cn/ssl/xinssl-dv-ssl?utm_source=topssl-cert-assistant-site&utm_medium=referral&utm_campaign=landing-pricing-single',
+    },
+  ],
+}
+
 export const FAQS = [
   {
     q:'Tossl申请的SSL证书安全吗？',
@@ -81,7 +128,7 @@ export const FAQS = [
   },
   {
     q: '证书有效期多久？会自动续期吗？',
-    a: 'Let’s Encrypt 证书有效期为 90 天。应用会在到期前 30 天自动续期（需保持应用后台运行，默认开启开机自启与托盘常驻）。',
+    a: 'Let’s Encrypt 证书有效期为 90 天。开启自动续期并保持应用运行（建议同时开启开机自启）时，应用会在到期前 30 天自动续期；即使错过续期窗口，应用每次启动也会检测到期风险并提醒您一键续期。',
   },
   {
     q: '支持通配符证书吗？',
@@ -102,6 +149,14 @@ export const FAQS = [
   {
     q: '和 certbot、acme.sh 相比有什么优势？',
     a: '本工具是中文图形化桌面应用，无需命令行与脚本配置：输入域名、选择验证方式即可完成申请，证书自动安装到本机并支持到期前自动续期，适合个人站长与运维新人；同时保持开源免费。',
+  },
+  {
+    q: '个人电脑上申请的证书，如何部署到服务器？',
+    a: 'Tossl 支持一键导出「部署包」：包含证书文件与 nginx / Apache / IIS 配置示例，把部署包拷贝到服务器按说明配置即可完成部署；Windows 服务器上还可直接使用 IIS 一键部署功能。',
+  },
+  {
+    q: '自动续期需要一直打开应用吗？',
+    a: '是。自动续期依赖应用在后台运行，建议在设置中开启「开机自启」；个人电脑如果无法保证常开，请保持到期提醒开启——应用每次启动都会检查并提醒即将到期或已过期的证书，可一键续期，避免证书静默过期。',
   },
   {
     q: '和 TopSSL 是什么关系？',

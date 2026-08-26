@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { SITE } from '../../../config'
+
+const title = 'Windows安装Tossl教程：免费SSL证书工具安装与首次申请 - Tossl'
+const description =
+  'Windows安装Tossl教程：免费SSL证书申请工具下载、安装向导步骤、SmartScreen提示处理、开机自启设置，以及安装后首次申请Let’s Encrypt证书的完整流程。'
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>Windows 安装</span>
+      </nav>
+      <span class="hero-badge">安装教程 · Windows</span>
+      <h1 style="margin-top:1rem">Windows 安装 Tossl 教程</h1>
+      <p class="lead" style="margin-top:.8rem">
+        支持 Windows 10 / 11 64 位系统。安装包无需管理员权限，双击按向导即可完成安装，
+        程序默认常驻系统托盘并开机自启，为自动续期做好准备。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 1 步</span>
+        <h2>下载安装包</h2>
+      </div>
+      <p>
+        从<a href="/download/">下载页</a>获取 Windows x64 安装包（当前版本 v{SITE.version}，
+        文件名 <code>TopSSL-Free-Cert-Assistant_{SITE.version}_x64-setup.exe</code>）。
+        站内直链与 GitHub Release 同源同版本。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 2 步</span>
+        <h2>按向导安装</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>双击安装包，按向导完成安装（默认安装到当前用户目录，<strong>无需管理员权限</strong>）；</li>
+        <li>若 SmartScreen 提示「未知发布者」，点击<strong>更多信息 → 仍要运行</strong>即可（安装包未做代码签名，属正常现象）；</li>
+        <li>安装完成后程序自动启动并驻留<strong>系统托盘</strong>。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 3 步</span>
+        <h2>确认自动续期设置</h2>
+      </div>
+      <p>
+        进入「设置」页确认两个开关均已开启：<strong>开启自动续期</strong>与<strong>开机自动启动</strong>。
+        两个开关缺一不可——程序需要在后台运行才能按时执行到期前 30 天的自动续期，详见
+        <a href="/docs/auto-renewal/">自动续期教程</a>。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 4 步</span>
+        <h2>申请第一张证书</h2>
+      </div>
+      <p>
+        打开「申请证书」页，输入域名并选择验证方式，等待签发即可，完整步骤见
+        <a href="/docs/quickstart/">快速开始教程</a>。若 80 端口不可用，改用
+        <a href="/docs/dns-validation/">DNS 验证</a>。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">下载 Windows 版</a>
+        <a class="btn btn-ghost" href="/docs/quickstart/">下一步：申请第一张证书 →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,100 @@
+---
+import { getCollection, render } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { SITE } from '../../config'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }))
+}
+
+const { post } = Astro.props
+const { Content } = await render(post)
+const { title, description, pubDate, updatedDate, category, tags, related } = post.data
+
+const all = await getCollection('blog')
+const relatedPosts = related
+  .map((slug: string) => all.find((p) => p.id === slug))
+  .flatMap((p) => (p ? [p] : []))
+  .slice(0, 3)
+
+const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+const pageUrl = new URL(Astro.url.pathname, SITE.url).href
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: fmt(pubDate),
+  dateModified: fmt(updatedDate ?? pubDate),
+  inLanguage: 'zh-CN',
+  author: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+  publisher: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+  mainEntityOfPage: pageUrl,
+  keywords: tags.join(','),
+}
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '首页', item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name: '博客', item: SITE.url + '/blog/' },
+    { '@type': 'ListItem', position: 3, name: title, item: pageUrl },
+  ],
+}
+---
+<BaseLayout title={title} description={description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:46rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/blog/">博客</a><span>/</span><span style="color:var(--ink-500)">{category}</span>
+      </nav>
+      <h1 style="margin-top:1.5rem;font-size:clamp(1.6rem,3.6vw,2.3rem);line-height:1.3">{title}</h1>
+      <div class="post-meta" style="margin-top:1.1rem">
+        <span class="tag-chip">{fmt(pubDate)}</span>
+        <a class="tag-chip tag-cat" href="/blog/">{category}</a>
+        {tags.map((t) => <span class="tag-chip tag-plain">{t}</span>)}
+      </div>
+
+      <div class="post-body" style="margin-top:2.2rem">
+        <Content />
+      </div>
+
+      <div class="article-cta">
+        <h3>需要申请免费 SSL 证书？</h3>
+        <p>
+          Tossl 是一款免费的SSL证书申请与自动续期工具：输入域名即可申请 Let’s Encrypt 证书，
+          支持 HTTP / DNS 验证与通配符证书，到期前 30 天自动续期，Windows / macOS / Linux 均可使用。
+        </p>
+        <div style="display:flex;gap:.9rem;flex-wrap:wrap;margin-top:1rem">
+          <a class="btn btn-primary" href="/download/">免费下载 Tossl</a>
+          <a class="btn btn-ghost" href="/docs/">查看使用教程</a>
+        </div>
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <div style="margin-top:3rem">
+          <h2 style="font-size:1.25rem">相关阅读</h2>
+          <div class="post-grid" style="margin-top:1rem">
+            {relatedPosts.map((p) => (
+              <a class="post-card reveal in" href={`/blog/${p.id}/`}>
+                <h3>{p.data.title}</h3>
+                <p>{p.data.description}</p>
+                <div class="post-meta">
+                  <span class="tag-chip">{fmt(p.data.pubDate)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

@@ -111,6 +111,35 @@ pub fn get_usage_guide(id: i64, state: tauri::State<'_, AppState>) -> AppResult<
     ))
 }
 
+/// 导出部署包：证书文件 + nginx/Apache/IIS 配置示例，输出到系统下载目录，返回目录路径
+#[tauri::command]
+pub fn export_deploy_package(
+    id: i64,
+    state: tauri::State<'_, AppState>,
+    app: tauri::AppHandle,
+) -> AppResult<String> {
+    use tauri::Manager;
+    let conn = state.db.lock();
+    let cert = crate::storage::certificates::get(&conn, id)?
+        .ok_or_else(|| AppError::new(crate::error::ErrorCode::Db, "证书不存在"))?;
+    drop(conn);
+
+    let download_dir = app.path().download_dir().map_err(|e| {
+        AppError::new(crate::error::ErrorCode::Deploy, "无法定位系统下载目录").detail(e.to_string())
+    })?;
+
+    let dir = crate::cert::deploy::export_deploy_package(
+        &cert.domain,
+        &cert.cert_chain_path,
+        &cert.private_key_path,
+        &download_dir,
+    )
+    .map_err(|msg| AppError::new(crate::error::ErrorCode::Deploy, msg))?;
+
+    log::info!("deploy package exported: domain={} dir={}", cert.domain, dir.display());
+    Ok(dir.to_string_lossy().into_owned())
+}
+
 /// 检查域名是否已有有效证书（前端向导用，按环境区分）
 #[tauri::command]
 pub fn check_duplicate(

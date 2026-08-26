@@ -41,8 +41,8 @@ const navs = [
       </div>
       <div>
         <div class="text-sm leading-tight font-bold text-slate-900">
-          <span class="block">TopSSL</span>
-          <span class="block">免费证书助手</span>
+          <span class="block">Tossl</span>
+          <span class="block">免费SSL证书管理工具</span>
         </div>
         <div class="mt-0.5 text-[11px] text-slate-400">Let's Encrypt 免费证书</div>
       </div>

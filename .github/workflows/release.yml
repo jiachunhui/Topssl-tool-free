@@ -156,6 +156,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
       - name: Download all build artifacts
         uses: actions/download-artifact@v8
         with:
@@ -165,10 +171,44 @@ jobs:
       - name: List artifacts
         run: ls -la artifacts
 
+      # 生成国内更新清单（www.tossl.cn/updates/latest.json 的内容），
+      # 安装包 URL 指向站点下载目录 https://www.tossl.cn/downloads/
+      - name: Generate domestic update manifest
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          node scripts/gen-update-manifest.mjs \
+            --version "$VER" \
+            --base-url "https://www.tossl.cn/downloads" \
+            --win "artifacts/TopSSL-Free-Cert-Assistant_${VER}_x64-setup.exe" \
+            --mac-aarch64 "artifacts/TopSSL-Free-Cert-Assistant_${VER}_aarch64.dmg" \
+            --mac-x64 "artifacts/TopSSL-Free-Cert-Assistant_${VER}_x64.dmg" \
+            --linux-appimage "artifacts/TopSSL-Free-Cert-Assistant_${VER}_amd64.AppImage"
+
+      # 站点发布物：部署 www.tossl.cn 时，把 site/dist 与 site-publish 合并上传
+      # （updates/latest.json → 站点 /updates/，安装包 → 站点 /downloads/）
+      - name: Prepare site publish assets
+        run: |
+          mkdir -p site-publish/updates site-publish/downloads
+          cp updates/latest.json site-publish/updates/
+          cp artifacts/TopSSL-Free-Cert-Assistant_*.exe \
+             artifacts/TopSSL-Free-Cert-Assistant_*.dmg \
+             artifacts/TopSSL-Free-Cert-Assistant_*.AppImage \
+             artifacts/TopSSL-Free-Cert-Assistant_*.deb \
+             artifacts/TopSSL-Free-Cert-Assistant_*.rpm \
+             site-publish/downloads/ || true
+          echo "== site-publish/updates =="; ls -la site-publish/updates
+          echo "== site-publish/downloads =="; ls -la site-publish/downloads
+
+      - name: Upload site publish assets
+        uses: actions/upload-artifact@v8
+        with:
+          name: site-publish
+          path: site-publish
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
-          name: "TopSSL 免费证书助手 ${{ github.ref_name }}"
+          name: "Tossl 免费SSL证书管理工具 ${{ github.ref_name }}"
           generate_release_notes: true
           files: artifacts/**
           fail_on_unmatched_files: true

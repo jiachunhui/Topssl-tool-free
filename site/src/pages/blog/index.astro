@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+
+const CATEGORIES = ['免费SSL证书', 'SSL自动续期', 'DNS验证', '技术动态'] as const
+const CATEGORY_DESC: Record<string, string> = {
+  '免费SSL证书': '免费证书选择、安全性与申请流程',
+  'SSL自动续期': '自动续期方案、续期教程与过期处理',
+  'DNS验证': 'DNS-01 验证、TXT 记录与通配符证书',
+  '技术动态': 'SSL/TLS 生态与 Let’s Encrypt 政策动态',
+}
+const groups = CATEGORIES.map((c) => ({ category: c, posts: posts.filter((p) => p.data.category === c) }))
+
+const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+const title = 'SSL证书知识库：免费SSL证书、自动续期与DNS验证教程 - Tossl'
+const description =
+  'Tossl SSL证书知识库：围绕免费SSL证书、Let’s Encrypt、SSL证书自动续期、DNS验证与通配符证书的实用教程与深度解析，解决网站HTTPS证书申请、续期与部署问题。'
+
+const blogJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Tossl SSL证书知识库',
+  url: 'https://www.tossl.cn/blog/',
+  inLanguage: 'zh-CN',
+  publisher: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
+}
+---
+<BaseLayout title={title} description={description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(blogJsonLd)} />
+  </Fragment>
+
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><span>博客</span>
+      </nav>
+      <span class="hero-badge">知识库 · Blog</span>
+      <h1 style="margin-top:1rem">SSL 证书知识库</h1>
+      <p class="lead" style="margin-top:.8rem">
+        围绕免费SSL证书、Let’s Encrypt、SSL证书自动续期、DNS验证与通配符证书，持续更新实用教程与深度解析。
+        所有文章均为原创内容，每月持续更新。
+      </p>
+
+      {groups.map((g) => (
+        <div style="margin-top:2.8rem">
+          <div class="section-head" style="text-align:left;margin:0 0 1.4rem">
+            <h2 style="font-size:1.45rem;display:flex;align-items:center;gap:.7rem">
+              {g.category}
+              <span class="tag-chip">{g.posts.length} 篇</span>
+            </h2>
+            <p style="margin-top:.4rem">{CATEGORY_DESC[g.category]}</p>
+          </div>
+          {g.posts.length > 0 ? (
+            <div class="post-grid">
+              {g.posts.map((p) => (
+                <a class="post-card reveal in" href={`/blog/${p.id}/`}>
+                  <h3>{p.data.title}</h3>
+                  <p>{p.data.description}</p>
+                  <div class="post-meta">
+                    <span class="tag-chip">{fmt(p.data.pubDate)}</span>
+                    {p.data.tags.slice(0, 2).map((t) => <span class="tag-chip tag-plain">{t}</span>)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="post-empty">该专题文章正在撰写中，敬请期待。也可以先阅读
+              <a href="/docs/">使用教程</a>解决具体操作问题。</p>
+          )}
+        </div>
+      ))}
+
+      <div style="margin-top:3rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">免费下载 Tossl</a>
+        <a class="btn btn-ghost" href="/docs/">查看使用教程</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -6,14 +6,16 @@ import Features from '../components/Features.astro'
 import HowItWorks from '../components/HowItWorks.astro'
 import SeoContent from '../components/SeoContent.astro'
 import CompareTable from '../components/CompareTable.astro'
+import PricingPromo from '../components/PricingPromo.astro'
 import TopsslBand from '../components/TopsslBand.astro'
 import Faq from '../components/Faq.astro'
 import CtaBand from '../components/CtaBand.astro'
+import LatestUpdates from '../components/LatestUpdates.astro'
 import { SITE, TOPSSL, FAQS } from '../config'
 
-const title = '免费SSL证书申请工具 - Let’s Encrypt证书自动续期 | Tossl'
+const title = '免费SSL证书管理工具 - Let’s Encrypt证书申请、部署与自动续期 | Tossl'
 const description =
-  'Tossl是一款免费的SSL证书申请工具，支持Let’s Encrypt证书一键申请、自动安装和自动续期。无需命令行，支持HTTP验证、DNS验证、通配符证书和支持Windows、macOS、Linux安装多平台安装运行。'
+  'Tossl是一款免费的SSL证书管理工具：输入域名即可申请Let’s Encrypt证书，支持HTTP/DNS验证与通配符证书；一键导出部署包，Windows服务器可自动部署到IIS；到期前提醒并自动续期，支持Windows、macOS、Linux。'
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -36,7 +38,9 @@ const faqJsonLd = {
   <HowItWorks />
   <SeoContent />
   <CompareTable />
+  <PricingPromo />
   <TopsslBand />
+  <LatestUpdates />
   <Faq />
   <CtaBand />
 </BaseLayout>

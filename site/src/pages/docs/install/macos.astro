@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { SITE } from '../../../config'
+
+const title = 'macOS安装Tossl教程：Apple Silicon/Intel安装与首次打开处理 - Tossl'
+const description =
+  'macOS安装Tossl教程：免费SSL证书工具dmg安装步骤、Apple Silicon与Intel版本选择、首次打开「无法验证开发者」的两种处理方法，以及安装后申请证书入口。'
+---
+<BaseLayout title={title} description={description}>
+  <section class="section" style="padding-top:5rem">
+    <div class="container" style="max-width:56rem">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="/">首页</a><span>/</span><a href="/docs/">使用教程</a><span>/</span><span>macOS 安装</span>
+      </nav>
+      <span class="hero-badge">安装教程 · macOS</span>
+      <h1 style="margin-top:1rem">macOS 安装 Tossl 教程</h1>
+      <p class="lead" style="margin-top:.8rem">
+        支持 macOS 12 及以上版本，Apple Silicon（M 系列芯片）与 Intel 均有对应安装包。
+        应用当前未做代码签名，首次打开需按下方方法处理。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 1 步</span>
+        <h2>下载并安装</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>从<a href="/download/">下载页</a>选择对应芯片的 dmg 安装包（当前版本 v{SITE.version}）；</li>
+        <li>打开 dmg 镜像，将应用拖入「应用程序」文件夹；</li>
+        <li>在「应用程序」中双击启动。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 2 步</span>
+        <h2>首次打开：处理「无法验证开发者」提示</h2>
+      </div>
+      <p>应用未做代码签名，首次打开时 macOS 会提示无法验证开发者，任选一种方式处理：</p>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">方式</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">图形界面</th>
+              <td>在「访达」中找到应用，<strong>按住 Control 点击（右键）→ 打开</strong>，再点击「打开」；或进入「系统设置 → 隐私与安全性」允许打开</td>
+            </tr>
+            <tr>
+              <th class="col-feature">终端命令</th>
+              <td>执行 <code>xattr -cr /Applications/TopSSL-Free-Cert-Assistant.app</code> 后重新打开</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem">处理一次即可，之后正常启动。</p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 3 步</span>
+        <h2>开始使用</h2>
+      </div>
+      <p>
+        应用启动后常驻菜单栏，在「设置」页确认开启<strong>自动续期</strong>与<strong>开机自启</strong>，
+        然后按<a href="/docs/quickstart/">快速开始教程</a>申请第一张证书。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="/download/">下载 macOS 版</a>
+        <a class="btn btn-ghost" href="/docs/quickstart/">下一步：申请第一张证书 →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

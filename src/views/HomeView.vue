@@ -91,7 +91,7 @@ const counts = {
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-xl font-bold text-slate-900">我的证书</h1>
-        <p class="mt-0.5 text-sm text-slate-500">管理您申请到的 SSL 证书，到期前会自动续期</p>
+        <p class="mt-0.5 text-sm text-slate-500">管理您的 SSL 证书；应用运行时自动续期，每次启动也会补检并提醒到期证书</p>
       </div>
       <button class="btn-brand" @click="router.push('/wizard')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">

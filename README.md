@@ -8,14 +8,14 @@
 
 > 详细使用说明见 [docs/用户手册.md](docs/用户手册.md)。
 >
-> **相关链接**：[TopSSL 官网](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [GitHub 仓库](https://github.com/jiachunhui/Topssl-tool-free) ｜ [项目宣传页]（部署地址待定）｜ [Let's Encrypt](https://letsencrypt.org/)
+> **相关链接**：[TopSSL 官网](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [GitHub 仓库](https://github.com/jiachunhui/Topssl-tool-free) ｜ [Tossl 官网（下载/教程/知识库）](https://www.tossl.cn) ｜ [Let's Encrypt](https://letsencrypt.org/)
 
 ## 功能特性
 
 - ✅ 一键申请：输入域名，几分钟内获得 Let's Encrypt 证书
 - ✅ 两种验证方式：
-  - **HTTP-01**：自动在 80 端口临时开启验证服务（推荐，无需配置）
-  - **DNS-01**：自动调用 DNS 服务商 API 添加 TXT 记录（支持通配符证书）
+  - **DNS-01**：自动调用 DNS 服务商 API 添加 TXT 记录，无需 80 端口（推荐，国内通用），支持通配符证书
+  - **HTTP-01**：自动在 80 端口临时开启验证服务，适用于云服务器等 80 端口公网可访问的环境
 - ✅ **通配符证书**（`*.example.com`）、多域名 SAN 证书
 - ✅ 证书安装到本机，提供 nginx / Apache 等使用指引
 - ✅ **自动续期**：证书 90 天有效期，到期前 30 天自动续期（开机自启 + 托盘常驻）
