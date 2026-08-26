@@ -182,7 +182,7 @@ async function doIisDeploy() {
                 <input
                   v-model="iisHost"
                   type="text"
-                  placeholder="主机名（可留空 = 所有主机名）"
+                  placeholder="主机名（留空使用证书域名）"
                   class="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none transition focus:border-brand-500"
                 />
                 <button
