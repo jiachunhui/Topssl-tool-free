@@ -170,14 +170,28 @@ jobs:
           fi
           echo "AppImage OK: $(basename "$APPIMAGE") ($(du -h "$APPIMAGE" | cut -f1))"
 
-      - name: Upload artifacts
+      # upload-artifact 对多行 path 会保留公共祖先目录结构（deb/ appimage/ rpm/ 子目录），
+      # 而 release 任务期望安装包平铺在 artifacts/ 下；拆成三个单 glob 上传即可平铺，
+      # 与 Windows/macOS 的上传行为保持一致
+      - name: Upload deb artifact
         uses: actions/upload-artifact@v7
         with:
-          name: linux-x64
-          path: |
-            src-tauri/target/release/bundle/deb/*.deb
-            src-tauri/target/release/bundle/appimage/*.AppImage
-            src-tauri/target/release/bundle/rpm/*.rpm
+          name: linux-deb
+          path: src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
+
+      - name: Upload rpm artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-rpm
+          path: src-tauri/target/release/bundle/rpm/*.rpm
+          if-no-files-found: error
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-appimage
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
           if-no-files-found: error
 
   release:
