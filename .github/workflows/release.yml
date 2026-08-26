@@ -105,6 +105,10 @@ jobs:
     name: Build Linux (x64)
     needs: [check-version]
     runs-on: ubuntu-22.04
+    # AppImage 打包需要执行 linuxdeploy/appimagetool（均为 AppImage 格式），
+    # APPIMAGE_EXTRACT_AND_RUN=1 让它们以解包方式运行，避免 CI 上 FUSE 不可用导致的失败
+    env:
+      APPIMAGE_EXTRACT_AND_RUN: "1"
     steps:
       - uses: actions/checkout@v6
 
@@ -135,8 +139,36 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build (deb + AppImage + rpm)
-        run: npm run tauri build -- --bundles deb,appimage,rpm
+      # deb/rpm 不依赖外部工具，稳定；AppImage 打包器需从 GitHub 下载
+      # linuxdeploy/appimagetool，在 CI 上偶发下载/运行失败，故拆开单独执行并自动重试，
+      # 失败时日志会直接暴露真实原因
+      - name: Build (deb + rpm)
+        run: npm run tauri build -- --bundles deb,rpm
+
+      - name: Build (AppImage, retry x3)
+        run: |
+          for i in 1 2 3; do
+            if npm run tauri build -- --bundles appimage; then
+              echo "AppImage bundling OK (attempt $i)"
+              exit 0
+            fi
+            echo "::warning::AppImage 打包第 $i/3 次失败，重试中..."
+          done
+          echo "::error::AppImage 连续 3 次打包失败，请查看上方完整日志（常见原因：linuxdeploy/appimagetool 下载失败或运行报错）"
+          exit 1
+
+      # v0.1.8 曾因 AppImage 缺失直到 release 阶段才暴露；这里就地校验，
+      # 缺文件立即失败并列出 appimage 目录实际内容
+      - name: Verify AppImage artifact
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          APPIMAGE="src-tauri/target/release/bundle/appimage/TopSSL-Free-Cert-Assistant_${VER}_amd64.AppImage"
+          if [ ! -f "$APPIMAGE" ]; then
+            echo "::error::AppImage 未生成，期望文件: $APPIMAGE"
+            ls -la src-tauri/target/release/bundle/appimage/ 2>/dev/null || echo "(appimage 目录不存在)"
+            exit 1
+          fi
+          echo "AppImage OK: $(basename "$APPIMAGE") ($(du -h "$APPIMAGE" | cut -f1))"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
@@ -170,6 +202,29 @@ jobs:
 
       - name: List artifacts
         run: ls -la artifacts
+
+      # 清单生成脚本硬依赖四个平台安装包，缺任何一个都会以 statSync ENOENT 崩溃；
+      # 这里提前校验并输出清晰错误（含 artifacts/ 实际内容）
+      - name: Verify required artifacts
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          missing=0
+          for f in \
+            "TopSSL-Free-Cert-Assistant_${VER}_x64-setup.exe" \
+            "TopSSL-Free-Cert-Assistant_${VER}_aarch64.dmg" \
+            "TopSSL-Free-Cert-Assistant_${VER}_x64.dmg" \
+            "TopSSL-Free-Cert-Assistant_${VER}_amd64.AppImage"; do
+            if [ ! -f "artifacts/$f" ]; then
+              echo "::error::缺少安装包: artifacts/$f"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::artifacts/ 目录实际内容："
+            ls -la artifacts || true
+            exit 1
+          fi
+          echo "四个平台安装包均已就绪"
 
       # 生成国内更新清单（www.tossl.cn/updates/latest.json 的内容），
       # 安装包 URL 指向站点下载目录 https://www.tossl.cn/downloads/
