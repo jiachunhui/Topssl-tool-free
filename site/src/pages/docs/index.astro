@@ -39,8 +39,8 @@ const groups = [
 ]
 ---
 <BaseLayout title={title} description={description}>
-  <section class="section" style="padding-top:5rem">
-    <div class="container" style="max-width:56rem">
+  <section class="section page" style="padding-top:5rem">
+    <div class="container">
       <nav class="crumb" aria-label="面包屑">
         <a href="/">首页</a><span>/</span><span>使用教程</span>
       </nav>
@@ -52,7 +52,7 @@ const groups = [
       </p>
 
       {groups.map((g) => (
-        <div style="margin-top:2.8rem">
+        <div class="sub-block">
           <div class="section-head" style="text-align:left;margin:0 0 1.4rem">
             <span class="kicker">{g.kicker}</span>
             <h2 style="font-size:1.45rem">{g.title}</h2>

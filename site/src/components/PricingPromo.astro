@@ -26,7 +26,7 @@ const fmt = (n: number) => '¥' + n.toFixed(2)
           <p class="pricing-desc">{p.desc}</p>
           <div class="pricing-price">
             <span class="pricing-cur">¥</span>
-            <span class="pricing-num">{fmt(p.priceValue)}</span>
+            <span class="pricing-num">{(p.priceValue)}</span>
             <span class="pricing-term">/ {p.priceTerm}</span>
             <span class="pricing-per">每年单价</span>
           </div>

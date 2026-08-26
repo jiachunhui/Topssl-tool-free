@@ -11,4 +11,10 @@ export default defineConfig({
   site: SITE.url,
   output: 'static',
   integrations: [sitemap()],
+  markdown: {
+    // 代码高亮采用 GitHub 风格（浅色主题）
+    shikiConfig: {
+      theme: 'github-light',
+    },
+  },
 })

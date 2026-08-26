@@ -35,13 +35,13 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 
-  <section class="section" style="padding-top:5rem">
-    <div class="container" style="max-width:46rem">
+  <section class="section page" style="padding-top:5rem">
+    <div class="container">
       <nav class="crumb" aria-label="面包屑">
         <a href="/">首页</a><span>/</span><a href="/changelog/">更新日志</a><span>/</span><span>{entry.data.version}</span>
       </nav>
       <div class="ver-badge" style="margin-top:1.5rem">{entry.data.version}</div>
-      <h1 style="margin-top:1rem;font-size:clamp(1.5rem,3vw,2.1rem)">{entry.data.title}</h1>
+      <h1 style="margin-top:1rem;font-size:clamp(1.45rem,3vw,1.95rem)">{entry.data.title}</h1>
       <p class="changelog-meta" style="margin-top:.9rem">
         <span class="tag-chip">发布时间：{fmt(entry.data.date)}</span>
       </p>

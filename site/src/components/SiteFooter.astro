@@ -6,7 +6,12 @@ const year = new Date().getFullYear()
   <div class="container">
     <div class="grid">
       <div>
-        <div class="brand-mark" style="color:#fff">{SITE.name}</div>
+        <div class="brand-mark" style="color:#fff">
+          <span class="brand-logo">
+            <img src="/logo.png" alt="Tossl Logo" width="34" height="34" />
+          </span>
+          {SITE.name}
+        </div>
         <p style="margin-top:.7rem;max-width:26rem">
           {SITE.description}
         </p>

@@ -62,7 +62,6 @@ const posts = (await getCollection('blog'))
               <span class="tag-chip">{p.data.category}</span>
               <div>
                 <p class="latest-item-title">{p.data.title}</p>
-                <p class="latest-item-meta">{fmt(p.data.pubDate)}</p>
               </div>
             </a>
           ))}

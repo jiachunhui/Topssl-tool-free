@@ -42,7 +42,7 @@
 
   --font: "Inter", system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "Noto Sans SC", sans-serif;
-  --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Consolas, "Courier New", monospace;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 * { box-sizing: border-box; }
@@ -123,6 +123,22 @@ img, svg { vertical-align: middle; }
 }
 .section-head.on-dark h2 { color: #fff; }
 .section-head.on-dark p { color: #9db8c3; }
+
+/* ══════════════════════════════════════════════════════════════
+   内页版式（下载 / 教程 / 博客 / 更新日志 / 关于）
+   版心与首页一致；标题比首页 Hero 小一档；子栏目用分隔线分区
+   ══════════════════════════════════════════════════════════════ */
+.page .container > h1 {
+  font-size: clamp(1.45rem, 3vw, 1.95rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.page .section-head h2 { font-size: clamp(1.2rem, 2.3vw, 1.6rem); }
+.sub-block {
+  padding-top: 2.5rem;
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
 
 /* ── 按钮 ── */
 .btn {
@@ -238,7 +254,14 @@ img, svg { vertical-align: middle; }
   place-items: center;
   color: #fff;
   flex: none;
+  overflow: hidden;
   box-shadow: 0 6px 18px -6px rgb(8 145 173 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .nav-links {
@@ -438,7 +461,7 @@ img, svg { vertical-align: middle; }
 .section:not(.topssl-band) .hero-badge svg { color: var(--brand-500); }
 .hero h1 {
   margin-top: 1.4rem;
-  font-size: clamp(2.4rem, 5.2vw, 3.7rem);
+  font-size: clamp(1.9rem, 3.6vw, 2.6rem);
   font-weight: 800;
   color: #fff;
   letter-spacing: -0.025em;
@@ -1301,12 +1324,11 @@ img, svg { vertical-align: middle; }
 .post-body a { text-decoration: underline; text-underline-offset: 3px; }
 .post-body code {
   font-family: var(--mono);
-  font-size: 0.88em;
-  background: var(--bg-soft);
-  border: 1px solid var(--line);
-  padding: 0.1rem 0.38rem;
+  font-size: 0.85em;
+  background: rgb(175 184 193 / 0.2);
   border-radius: 6px;
-  color: var(--brand-900);
+  padding: 0.2em 0.4em;
+  color: #1f2328;
   word-break: break-all;
 }
 .post-body blockquote {
@@ -1328,18 +1350,46 @@ img, svg { vertical-align: middle; }
 .post-body th { background: var(--bg-soft); color: var(--ink-900); font-weight: 700; }
 .post-body img { max-width: 100%; border-radius: var(--radius); }
 
+/* ── 代码块（GitHub 风格）：浅灰底、圆角、细描边、等宽字体 ── */
+pre {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 1.2rem 0;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  background: #f6f8fa;
+  color: #1f2328;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  tab-size: 4;
+}
+pre code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+/* Shiki 高亮块（markdown 代码围栏）：覆盖主题内联背景，统一为 GitHub 浅灰 */
+pre.astro-code {
+  background-color: #f6f8fa !important;
+}
 .code-block {
   font-family: var(--mono);
-  font-size: 0.88rem;
-  background: var(--bg-deep);
-  color: #bfe6ee;
-  padding: 1.1rem 1.3rem;
-  border-radius: var(--radius);
+  font-size: 0.85rem;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  color: #1f2328;
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
   overflow-x: auto;
-  line-height: 1.7;
+  line-height: 1.45;
   margin: 1.2rem 0;
 }
-.code-block code { background: none; border: 0; padding: 0; color: inherit; }
+.code-block code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
 
 /* ── 博客卡片 ── */
 .post-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
@@ -1641,7 +1691,7 @@ img, svg { vertical-align: middle; }
   .compare th, .compare td { padding: 0.8rem 0.9rem; }
   .float-chip.chip-1 { left: 0; }
   .float-chip.chip-2 { right: 0; }
-  .hero h1 { font-size: clamp(2rem, 8vw, 2.6rem); }
+  .hero h1 { font-size: clamp(1.7rem, 6.5vw, 2.2rem); }
   .stats .card { padding: 1.8rem 0.4rem; }
 }
 
