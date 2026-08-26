@@ -2,6 +2,7 @@
 import { useAppStore } from '../stores/app'
 import { useUpdateStore } from '../stores/update'
 import { topsslUrl, openExternal, GITHUB_REPO } from '../lib/promo'
+import tosslLogo from '../assets/tossl-logo.png'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
@@ -72,15 +73,11 @@ const faqs = [
     <h1 class="text-xl font-bold text-slate-900">关于</h1>
 
     <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 text-center">
-      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-          />
-        </svg>
-      </div>
+      <img
+        :src="tosslLogo"
+        alt="Tossl"
+        class="mx-auto h-12 w-12 rounded-xl border border-slate-200 bg-white object-cover"
+      />
       <h2 class="mt-3 text-base font-bold text-slate-900">Tossl 免费SSL证书管理工具</h2>
       <p class="mt-0.5 text-xs text-slate-400">v{{ appStore.appInfo?.version ?? '—' }} · {{ appStore.appInfo?.platform ?? '' }} {{ appStore.appInfo?.arch ?? '' }}</p>
       <div class="mt-2.5 flex items-center justify-center gap-2 text-xs">
