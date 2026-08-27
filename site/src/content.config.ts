@@ -33,7 +33,7 @@ const changelog = defineCollection({
   schema: z.object({
     version: z.string(),
     date: z.coerce.date(),
-    /** 完整标题，如「Tossl v0.1.7 发布：修复自动更新错误码与下载超时问题」 */
+    /** 完整标题，如「ToSSL v0.1.7 发布：修复自动更新错误码与下载超时问题」 */
     title: z.string(),
     /** 列表页摘要 */
     description: z.string().optional(),

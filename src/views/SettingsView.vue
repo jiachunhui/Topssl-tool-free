@@ -123,7 +123,7 @@ async function saveAll() {
 
       <div class="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-slate-800">证书密钥类型</h2>
-        <p class="mt-1 text-xs text-slate-400">RSA 兼容性最好；ECC 更快更安全，但个别老旧平台仅支持 RSA</p>
+        <p class="mt-1 text-xs text-slate-400">RSA 兼容性好；ECC 更快更安全，但个别老旧平台仅支持 RSA</p>
         <div class="mt-3 flex gap-2">
           <button
             class="rounded-lg px-3 py-1.5 text-sm font-medium transition"

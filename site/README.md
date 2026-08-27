@@ -1,4 +1,4 @@
-# Tossl 免费SSL证书管理工具 · 宣传站点
+# ToSSL 免费SSL证书管理工具 · 宣传站点
 
 基于 **Astro（SSG）** 的静态宣传页，主色为 TopSSL 品牌色 `#0085a1`，页面结构与氛围参考 DeepSeek Harness。
 独立于桌面端构建，部署于 https://www.tossl.cn。

@@ -16,9 +16,9 @@ const byDateDesc = (a: { data: { date: Date; version: string } }, b: { data: { d
 const entries = (await getCollection('changelog')).sort(byDateDesc)
 const latest = entries[0]
 
-const title = `更新日志：Tossl免费SSL证书工具版本记录 - 最新版本 ${SITE.version}`
+const title = `更新日志：ToSSL免费SSL证书工具版本记录 - 最新版本 ${SITE.version}`
 const description =
-  `Tossl免费SSL证书申请与自动续期工具更新日志：查看各版本新增功能与修复记录。当前最新版本 ${SITE.version}，每个版本独立页面，全部安装包见下载页。`
+  `ToSSL免费SSL证书申请与自动续期工具更新日志：查看各版本新增功能与修复记录。当前最新版本 ${SITE.version}，每个版本独立页面，全部安装包见下载页。`
 const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 ---
 <BaseLayout title={title} description={description}>

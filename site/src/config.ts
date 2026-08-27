@@ -5,10 +5,10 @@
 // 其余文件（astro.config.mjs、robots.txt 等）均自动引用此值。
 // ─────────────────────────────────────────────────────────────
 export const SITE = {
-  name: 'Tossl 免费SSL证书管理工具',
+  name: 'ToSSL 免费SSL证书管理工具',
   tagline: '免费 SSL 证书申请、部署与到期管理',
   description:
-    'Tossl是一款免费的SSL证书管理工具：输入域名即可申请Let’s Encrypt证书，支持HTTP/DNS验证与通配符证书；一键导出部署包，Windows服务器可一键部署到IIS；到期前提醒并自动续期，支持Windows、macOS、Linux。',
+    'ToSSL是一款免费的SSL证书管理工具：输入域名即可申请Let’s Encrypt证书，支持HTTP/DNS验证与通配符证书；一键导出部署包，Windows服务器可一键部署到IIS；到期前提醒并自动续期，支持Windows、macOS、Linux。',
   // 最终域名已确定：https://www.tossl.cn（sitemap / canonical / robots.txt / JSON-LD 均自动跟随此值）
   url: 'https://www.tossl.cn',
   lang: 'zh-CN',
@@ -17,7 +17,7 @@ export const SITE = {
   /** 品牌同源链接（sameAs） */
   sameAs: ['https://github.com/jiachunhui/Topssl-tool-free'],
   /** 当前版本（与 Cargo.toml 保持一致） */
-  version: '0.1.9',
+  version: '0.1.10',
   /** 软件下载入口（GitHub Releases 页） */
   downloadUrl: 'https://github.com/jiachunhui/Topssl-tool-free/releases',
   /** 更新日志页（站内） */
@@ -107,8 +107,8 @@ export const PRICING = {
 
 export const FAQS = [
   {
-    q:'Tossl申请的SSL证书安全吗？',
-    a:'安全。Tossl申请的是Let’s Encrypt签发的标准SSL证书，符合现代浏览器HTTPS安全要求。',
+    q:'ToSSL申请的SSL证书安全吗？',
+    a:'安全。ToSSL申请的是Let’s Encrypt签发的标准SSL证书，符合现代浏览器HTTPS安全要求。',
   },
   {
     q:'免费SSL证书可以用于企业网站吗？',
@@ -119,7 +119,7 @@ export const FAQS = [
     a:'免费SSL证书有效期较短，自动续期可以避免因忘记更新导致网站出现HTTPS错误。',
   },
   {
-    q:'Tossl支持哪些系统？',
+    q:'ToSSL支持哪些系统？',
     a:'支持Windows、macOS和Linux系统。',
   },
   {
@@ -152,7 +152,7 @@ export const FAQS = [
   },
   {
     q: '个人电脑上申请的证书，如何部署到服务器？',
-    a: 'Tossl 支持一键导出「部署包」：包含证书文件与 nginx / Apache / IIS 配置示例，把部署包拷贝到服务器按说明配置即可完成部署；Windows 服务器上还可直接使用 IIS 一键部署功能。',
+    a: 'ToSSL 支持一键导出「部署包」：包含证书文件与 nginx / Apache / IIS 配置示例，把部署包拷贝到服务器按说明配置即可完成部署；Windows 服务器上还可直接使用 IIS 一键部署功能。',
   },
   {
     q: '自动续期需要一直打开应用吗？',

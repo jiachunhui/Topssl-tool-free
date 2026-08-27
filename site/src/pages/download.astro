@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { SITE, GITHUB, DOWNLOAD_FILES } from '../config'
 
-const title = '免费下载Tossl 免费SSL证书管理工具 - Windows/macOS/Linux SSL证书申请部署工具 | Tossl'
+const title = '免费下载ToSSL 免费SSL证书管理工具 - Windows/macOS/Linux SSL证书申请部署工具 | ToSSL'
 const description =
-  '免费下载Tossl 免费SSL证书管理工具：支持Windows、macOS、Linux，一键申请Let’s Encrypt证书并自动续期，支持导出部署包与IIS一键部署，开源免费，即下即用。站内直链下载，无需访问GitHub。'
+  '免费下载ToSSL 免费SSL证书管理工具：支持Windows、macOS、Linux，一键申请Let’s Encrypt证书并自动续期，支持导出部署包与IIS一键部署，开源免费，即下即用。站内直链下载，无需访问GitHub。'
 
 // 站内直链：统一使用 https://www.tossl.cn/downloads/<文件名>
 const downloadUrl = (file: string) => `${SITE.url}/downloads/${file}`
@@ -28,7 +28,7 @@ const buttons = [
   <section class="section page" style="padding-top:5rem">
     <div class="container">
       <span class="hero-badge">免费 · 开源 · 跨平台</span>
-      <h1 style="margin-top:1rem">免费下载 Tossl 免费SSL证书申请与自动续期工具</h1>
+      <h1 style="margin-top:1rem">免费下载 ToSSL 免费SSL证书申请与自动续期工具</h1>
       <p class="lead" style="margin-top:.8rem">
         当前版本 <strong>v{SITE.version}</strong>：输入域名即可免费申请 Let's Encrypt SSL 证书，
         到期前 30 天自动续期，支持 HTTP / DNS 验证、通配符与多域名证书。

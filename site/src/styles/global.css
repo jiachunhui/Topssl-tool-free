@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Tossl 免费SSL证书申请与自动续期工具 · 宣传落地页设计系统
+   ToSSL 免费SSL证书申请与自动续期工具 · 宣传落地页设计系统
    风格基调：Proton.me（深色光晕 / 玻璃拟态 / 精致卡片）
    导航：DeepSeek.com（吸顶毛玻璃 / 胶囊 hover / 滚动渐变）
    ══════════════════════════════════════════════════════════════ */
@@ -882,7 +882,7 @@ img, svg { vertical-align: middle; }
   margin-top: 1rem;
 }
 
-/* Tossl 行高亮 */
+/* ToSSL 行高亮 */
 .compare .tossl-row th,
 .compare .tossl-row td {
   background: linear-gradient(90deg, #ddf1f5 0%, #eff9fb 100%);

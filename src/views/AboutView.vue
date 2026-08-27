@@ -39,11 +39,11 @@ const faqs = [
   },
   {
     q: '证书怎么部署到我的服务器？',
-    a: '在证书详情页点击「导出部署包」，应用会生成一个包含 fullchain.pem、privkey.pem 与 nginx/Apache/IIS 配置示例的文件夹，拷贝到服务器按说明配置即可。Windows 服务器可直接使用「IIS 一键部署」（需以管理员身份运行 Tossl），自动导入证书并绑定 https。',
+    a: '在证书详情页点击「导出部署包」，应用会生成一个包含 fullchain.pem、privkey.pem 与 nginx/Apache/IIS 配置示例的文件夹，拷贝到服务器按说明配置即可。Windows 服务器可直接使用「IIS 一键部署」（需以管理员身份运行 ToSSL），自动导入证书并绑定 https。',
   },
   {
     q: '证书是 RSA 还是 ECC？某些平台只支持 RSA 怎么办？',
-    a: '本应用默认签发 RSA 2048 证书（兼容性最好，几乎所有平台都支持）。可在「设置 → 证书密钥类型」切换为 ECC（P-384）：速度更快、更安全，但个别老旧平台（旧版 Java、部分 VPN 网关等）仅支持 RSA，请按目标平台选择。',
+    a: '本应用默认签发 RSA 2048 证书（兼容性好，几乎所有平台都支持）。可在「设置 → 证书密钥类型」切换为 ECC（P-384）：速度更快、更安全，但个别老旧平台（旧版 Java、部分 VPN 网关等）仅支持 RSA，请按目标平台选择。',
   },
   {
     q: '申请失败常见原因？',
@@ -75,10 +75,10 @@ const faqs = [
     <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 text-center">
       <img
         :src="tosslLogo"
-        alt="Tossl"
+        alt="ToSSL"
         class="mx-auto h-12 w-12 rounded-xl border border-slate-200 bg-white object-cover"
       />
-      <h2 class="mt-3 text-base font-bold text-slate-900">Tossl 免费SSL证书管理工具</h2>
+      <h2 class="mt-3 text-base font-bold text-slate-900">ToSSL 免费SSL证书管理工具</h2>
       <p class="mt-0.5 text-xs text-slate-400">v{{ appStore.appInfo?.version ?? '—' }} · {{ appStore.appInfo?.platform ?? '' }} {{ appStore.appInfo?.arch ?? '' }}</p>
       <div class="mt-2.5 flex items-center justify-center gap-2 text-xs">
         <span v-if="updateStore.phase === 'checking'" class="text-slate-400">正在检查更新…</span>

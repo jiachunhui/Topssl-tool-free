@@ -1,6 +1,6 @@
 ---
 title: '免费SSL证书哪个好？主流免费SSL证书对比（2026版）'
-description: "免费SSL证书哪个好？对比Let's Encrypt、ZeroSSL、Buypass等主流免费SSL证书的有效期、验证方式、通配符支持与自动续期能力，帮你选到最合适的免费证书。"
+description: "免费SSL证书哪个好？对比Let's Encrypt、ZeroSSL、Buypass等主流免费SSL证书的有效期、验证方式、通配符支持与自动续期能力，帮你选到合适的免费证书。"
 pubDate: 2026-08-20
 category: 免费SSL证书
 tags:
@@ -33,7 +33,7 @@ related:
 4. **自动化续期能力**：是否遵循 ACME 协议、能否被工具和脚本自动续期，这直接影响长期维护成本。
 5. **浏览器信任度**：证书链的根证书是否被 Chrome、Safari、Firefox、Edge 等主流浏览器内置信任。
 
-这五个维度里，「自动化续期能力」往往最容易被新手忽略，却最影响长期体验。
+这五个维度里，「自动化续期能力」往往很容易被新手忽略，却对长期体验影响很大。
 
 ## 主流免费 CA 对比
 
@@ -41,7 +41,7 @@ related:
 
 | 证书机构 | 有效期 | 通配符 | 验证方式 | 自动化续期 | 突出特点 |
 |---|---|---|---|---|---|
-| Let's Encrypt | 90 天 | 支持 | HTTP-01 / DNS-01 | ACME 生态成熟 | 免费、签发量大、工具支持最广 |
+| Let's Encrypt | 90 天 | 支持 | HTTP-01 / DNS-01 | ACME 生态成熟 | 免费、签发量大、工具支持广泛 |
 | ZeroSSL | 90 天 | 视方案而定 | HTTP-01 / DNS-01 | 支持 ACME | 提供可视化控制台与网页申请入口 |
 | Buypass | 180 天 | 不支持 | HTTP-01 / DNS-01 | 支持 ACME | 有效期长，减少续期频率 |
 | Google Trust Services | 视签发策略而定 | 支持 | HTTP-01 / DNS-01 | 支持 ACME API | 需申请加入/白名单后方可调用 |
@@ -60,9 +60,9 @@ related:
 
 ## 结论：个人站长推荐 Let's Encrypt + 自动化续期
 
-综合来看，个人站长和开发者优先推荐 Let's Encrypt：免费、支持通配符、ACME 生态最完善。唯一需要注意的是它 90 天的短有效期——这本身是一种安全设计（可参考 [《Let's Encrypt免费证书安全吗？90天有效期背后的安全设计》](/blog/lets-encrypt-security/)），只要配合 [自动续期](/docs/auto-renewal/) 就能彻底化解续期负担。
+综合来看，个人站长和开发者优先推荐 Let's Encrypt：免费、支持通配符、ACME 生态成熟完善。唯一需要注意的是它 90 天的短有效期——这本身是一种安全设计（可参考 [《Let's Encrypt免费证书安全吗？90天有效期背后的安全设计》](/blog/lets-encrypt-security/)），只要配合 [自动续期](/docs/auto-renewal/) 就能彻底化解续期负担。
 
-在国内申请 Let's Encrypt 证书，Tossl 这类图形化工具会省很多事：无需命令行，输入域名即可完成申请，并在到期前 30 天自动续期，Windows / macOS / Linux 都能用。具体上手流程见 [快速开始教程](/docs/quickstart/)。
+在国内申请 Let's Encrypt 证书，ToSSL 这类图形化工具会省很多事：无需命令行，输入域名即可完成申请，并在到期前 30 天自动续期，Windows / macOS / Linux 都能用。具体上手流程见 [快速开始教程](/docs/quickstart/)。
 
 ## 注意事项
 

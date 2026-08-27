@@ -143,7 +143,7 @@ pub fn iis_deploy_cert(
     }
     if !is_elevated() {
         return Err(AppError::new(ErrorCode::Deploy, "IIS 部署需要管理员权限")
-            .detail("请右键以管理员身份运行 Tossl 后重试"));
+            .detail("请右键以管理员身份运行 ToSSL 后重试"));
     }
     if site_name.trim().is_empty() {
         return Err(AppError::new(ErrorCode::Deploy, "未选择站点")

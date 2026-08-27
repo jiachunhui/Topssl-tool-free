@@ -82,7 +82,7 @@ async function openIisPanel() {
       return
     }
     if (!st.elevated) {
-      toast.error('需要管理员权限：请右键以管理员身份运行 Tossl 后重试')
+      toast.error('需要管理员权限：请右键以管理员身份运行 ToSSL 后重试')
       showIisPanel.value = false
       return
     }

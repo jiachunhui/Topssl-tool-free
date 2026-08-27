@@ -18,7 +18,7 @@ const fmt = (n: number) => '¥' + n.toFixed(2)
     <div class="pricing-grid">
       {PRICING.plans.map((p, i) => (
         <div class={'pricing-card reveal' + (p.highlight ? ' pricing-card-hot' : '')} style={"--reveal-delay:" + i * 0.1 + "s"}>
-          {p.highlight && <span class="pricing-flag">最受欢迎</span>}
+          {p.highlight && <span class="pricing-flag">特受欢迎</span>}
           <div class="pricing-head">
             <h3>{p.name}</h3>
             <span class="pricing-tag">{p.tag}</span>
@@ -37,7 +37,7 @@ const fmt = (n: number) => '¥' + n.toFixed(2)
                 <span class="term-price">
                   {fmt(t.value)}<em>/年</em>
                 </span>
-                {t.hot && <span class="term-hot">最划算</span>}
+                {t.hot && <span class="term-hot">特划算</span>}
               </div>
             ))}
           </div>

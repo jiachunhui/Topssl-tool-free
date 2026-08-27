@@ -13,14 +13,14 @@ const CATEGORY_DESC: Record<string, string> = {
 }
 const groups = CATEGORIES.map((c) => ({ category: c, posts: posts.filter((p) => p.data.category === c) }))
 
-const title = 'SSL证书知识库：免费SSL证书、自动续期与DNS验证教程 - Tossl'
+const title = 'SSL证书知识库：免费SSL证书、自动续期与DNS验证教程 - ToSSL'
 const description =
-  'Tossl SSL证书知识库：围绕免费SSL证书、Let’s Encrypt、SSL证书自动续期、DNS验证与通配符证书的实用教程与深度解析，解决网站HTTPS证书申请、续期与部署问题。'
+  'ToSSL SSL证书知识库：围绕免费SSL证书、Let’s Encrypt、SSL证书自动续期、DNS验证与通配符证书的实用教程与深度解析，解决网站HTTPS证书申请、续期与部署问题。'
 
 const blogJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
-  name: 'Tossl SSL证书知识库',
+  name: 'ToSSL SSL证书知识库',
   url: 'https://www.tossl.cn/blog/',
   inLanguage: 'zh-CN',
   publisher: { '@type': 'Organization', name: 'TopSSL', url: 'https://www.topssl.cn' },
@@ -72,7 +72,7 @@ const blogJsonLd = {
       ))}
 
       <div style="margin-top:3rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
-        <a class="btn btn-primary" href="/download/">免费下载 Tossl</a>
+        <a class="btn btn-primary" href="/download/">免费下载 ToSSL</a>
         <a class="btn btn-ghost" href="/docs/">查看使用教程</a>
       </div>
     </div>

@@ -31,10 +31,10 @@ const navs = [
 <template>
   <aside class="flex w-52 shrink-0 flex-col border-r border-slate-200 bg-white">
     <div class="flex items-center gap-2.5 px-5 pt-5 pb-4">
-      <img :src="tosslLogo" alt="Tossl" class="h-9 w-9 rounded-lg border border-slate-200 bg-white object-cover" />
+      <img :src="tosslLogo" alt="ToSSL" class="h-9 w-9 rounded-lg border border-slate-200 bg-white object-cover" />
       <div>
         <div class="text-sm leading-tight font-bold text-slate-900">
-          <span class="block">Tossl</span>
+          <span class="block">ToSSL</span>
           <span class="block">免费SSL证书管理工具</span>
         </div>
         <div class="mt-0.5 text-[11px] text-slate-400">Let's Encrypt 免费证书</div>

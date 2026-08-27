@@ -14,7 +14,7 @@ related:
   - lets-encrypt-6day-certs
 ---
 
-## 45 天有效期：SSL 证书行业最大的政策拐点
+## 45 天有效期：SSL 证书行业的重大政策拐点
 
 2025 年 12 月 2 日，Let's Encrypt 在[官方博客](https://letsencrypt.org/2025/12/02/from-90-to-45.html)正式宣布：将逐步把免费证书的有效期从现行的 90 天缩短至 45 天，并计划在 2028 年前全面落地。与此同时，CA/Browser Forum（浏览器 CA 论坛）已通过决议，把全球 TLS 证书的最长有效期上限设定为 47 天，2029 年前强制执行，苹果、谷歌、微软等浏览器与操作系统厂商均表态支持。
 
@@ -58,14 +58,14 @@ Let's Encrypt 的[速率限制](https://letsencrypt.org/docs/rate-limits/)以"�
 
 ## 站长现在就该做的 4 件事
 
-1. **把续期交给自动化**：使用支持自动续期的工具或脚本，如 Tossl（到期前 30 天自动续期）、certbot 配合 systemd timer、acme.sh 的 cron。方案对比可看[三种自动续期方案](/blog/ssl-auto-renewal-guide/)。
+1. **把续期交给自动化**：使用支持自动续期的工具或脚本，如 ToSSL（到期前 30 天自动续期）、certbot 配合 systemd timer、acme.sh 的 cron。方案对比可看[三种自动续期方案](/blog/ssl-auto-renewal-guide/)。
 2. **升级 ACME 客户端**：确认 certbot / acme.sh / 图形化工具均为支持 ARI 的新版本，并验证续期日志中出现 renewalInfo 相关输出。
 3. **检查部署链路**：证书更换频率翻倍后，确保 nginx / Apache / IIS 重载动作也是自动的，别让"证书已换、服务没重载"成为新故障点。
-4. **建立监控告警**：即使有自动续期，也要保留到期前提醒（如 Tossl 的系统通知），防止客户端进程意外退出导致静默过期。
+4. **建立监控告警**：即使有自动续期，也要保留到期前提醒（如 ToSSL 的系统通知），防止客户端进程意外退出导致静默过期。
 
-## Tossl 如何帮你平滑过渡到 45 天
+## ToSSL 如何帮你平滑过渡到 45 天
 
-Tossl 是专为"短有效期时代"设计的免费证书管理工具：输入域名即可申请 Let's Encrypt 证书，到期前 30 天自动续期并替换证书，续期失败会通过系统通知提醒你；同时支持 HTTP/DNS 验证与通配符证书，Windows / macOS / Linux 全覆盖。证书有效期政策无论怎么变，你只需保持 Tossl 在后台运行。
+ToSSL 是专为"短有效期时代"设计的免费证书管理工具：输入域名即可申请 Let's Encrypt 证书，到期前 30 天自动续期并替换证书，续期失败会通过系统通知提醒你；同时支持 HTTP/DNS 验证与通配符证书，Windows / macOS / Linux 全覆盖。证书有效期政策无论怎么变，你只需保持 ToSSL 在后台运行。
 
 ## 常见问题
 

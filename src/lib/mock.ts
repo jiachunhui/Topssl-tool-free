@@ -254,7 +254,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
   switch (cmd) {
     case 'get_app_info':
-      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'Tossl 免费SSL证书管理工具' } as T
+      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'ToSSL 免费SSL证书管理工具' } as T
 
     case 'get_platform_info':
       return {
@@ -440,7 +440,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     // localStorage.setItem('mock:update-simulate', JSON.stringify({ version: '9.9.9', notes: '测试更新说明' }))
     case 'check_update': {
       const simulated = lsGetJSON<{ version: string; notes?: string } | null>('update-simulate', null)
-      const current = '0.1.9'
+      const current = '0.1.10'
       if (a.force) await new Promise((r) => setTimeout(r, 500)) // 模拟网络延迟
       if (simulated) {
         const asset = {

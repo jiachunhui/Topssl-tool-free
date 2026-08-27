@@ -1,6 +1,6 @@
 ---
 title: "Let's Encrypt IP地址证书全面开放：没有域名也能部署HTTPS"
-description: "Let's Encrypt IP地址证书（IP SAN）正式GA：公网IP无需域名即可申请免费SSL证书。详解申请条件、验证方式、适用场景与浏览器兼容性，附Tossl申请指引。"
+description: "Let's Encrypt IP地址证书（IP SAN）正式GA：公网IP无需域名即可申请免费SSL证书。详解申请条件、验证方式、适用场景与浏览器兼容性，附ToSSL申请指引。"
 pubDate: 2026-09-08
 category: 技术动态
 tags:
@@ -45,9 +45,9 @@ IP 地址证书（IP SAN 证书）是把**公网 IP 地址**作为证书主体�
 
 IP 地址证书能否被浏览器信任，取决于两点：证书本身由受信 CA 签发，且浏览器支持 IP SAN 校验。现代 Chrome、Edge、Firefox、Safari 均支持公网 IP 证书的校验；个别旧版本浏览器或部分移动端 WebView 对 IP 证书支持不完整，建议在目标用户环境实测。Let's Encrypt 官方建议将 IP 证书主要用于自动化程度高的服务场景，浏览器兼容以官方文档为准。
 
-## 用 Tossl 申请 IP 地址证书
+## 用 ToSSL 申请 IP 地址证书
 
-Tossl 已适配 Let's Encrypt 的 IP 证书签发能力：在应用内选择"IP 证书"类型，填入公网 IP，按提示完成 HTTP 或 DNS 验证即可申请，到期前同样自动续期。配合 Tossl 的部署包导出功能，可以把证书文件与 nginx / Apache 配置示例直接带到服务器完成部署。
+ToSSL 已适配 Let's Encrypt 的 IP 证书签发能力：在应用内选择"IP 证书"类型，填入公网 IP，按提示完成 HTTP 或 DNS 验证即可申请，到期前同样自动续期。配合 ToSSL 的部署包导出功能，可以把证书文件与 nginx / Apache 配置示例直接带到服务器完成部署。
 
 ## 常见问题
 

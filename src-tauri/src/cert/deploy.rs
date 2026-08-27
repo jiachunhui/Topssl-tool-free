@@ -32,13 +32,13 @@ fn apache_conf(domain: &str) -> String {
 
 fn iis_steps(domain: &str) -> String {
     format!(
-        "IIS 部署步骤（{domain}）\n══════════════════════════\n\n方式一：Tossl 一键部署（推荐）\n  1. 右键以管理员身份运行 Tossl；\n  2. 在证书详情页点击「IIS 一键部署」，选择目标站点并确认；\n  3. 应用会自动导入证书并绑定 https（443 端口）。\n\n方式二：手动部署\n  1. 打开 IIS 管理器 → 服务器证书 → 导入 cert.pfx（密码：123456）；\n  2. 选择目标站点 → 绑定 → 添加 https 类型绑定，端口 443，主机名 {domain}；\n  3. 在「SSL 证书」下拉中选择刚导入的证书 → 确定；\n  4. 浏览器访问 https://{domain} 验证。\n\n说明：cert.pfx 仅用于 IIS；nginx / Apache 使用 fullchain.pem + privkey.pem。\n"
+        "IIS 部署步骤（{domain}）\n══════════════════════════\n\n方式一：ToSSL 一键部署（推荐）\n  1. 右键以管理员身份运行 ToSSL；\n  2. 在证书详情页点击「IIS 一键部署」，选择目标站点并确认；\n  3. 应用会自动导入证书并绑定 https（443 端口）。\n\n方式二：手动部署\n  1. 打开 IIS 管理器 → 服务器证书 → 导入 cert.pfx（密码：123456）；\n  2. 选择目标站点 → 绑定 → 添加 https 类型绑定，端口 443，主机名 {domain}；\n  3. 在「SSL 证书」下拉中选择刚导入的证书 → 确定；\n  4. 浏览器访问 https://{domain} 验证。\n\n说明：cert.pfx 仅用于 IIS；nginx / Apache 使用 fullchain.pem + privkey.pem。\n"
     )
 }
 
 fn readme(domain: &str) -> String {
     format!(
-        "{domain} 证书部署包\n════════════════════════════════════════\n生成时间：{}\n\n文件清单\n  fullchain.pem       完整证书链（nginx / Apache 等所有服务使用）\n  privkey.pem         私钥（请妥善保管，勿公开；Linux 建议权限 600）\n  cert.pem            仅叶子证书（个别服务需要）\n  cert.pfx            IIS 导入用证书包（密码：123456）\n  nginx.conf.example  nginx 配置示例\n  apache.conf.example Apache 配置示例\n  IIS-部署步骤.txt     IIS 部署步骤\n\n部署方法\n  1. 将本目录拷贝到目标服务器（私钥建议通过 scp / 加密通道传输）；\n  2. 按服务器类型使用对应配置示例，把证书路径改为实际路径；\n  3. nginx 执行 nginx -s reload；Apache 执行 systemctl reload apache2；\n  4. Windows 服务器 + IIS：见「IIS-部署步骤.txt」，或在 Tossl 中一键部署。\n\n注意：证书每 90 天到期。续期后可重新导出部署包替换服务器上的文件；\n建议在服务器上同时配置到期监控，避免证书过期导致 HTTPS 中断。\n",
+        "{domain} 证书部署包\n════════════════════════════════════════\n生成时间：{}\n\n文件清单\n  fullchain.pem       完整证书链（nginx / Apache 等所有服务使用）\n  privkey.pem         私钥（请妥善保管，勿公开；Linux 建议权限 600）\n  cert.pem            仅叶子证书（个别服务需要）\n  cert.pfx            IIS 导入用证书包（密码：123456）\n  nginx.conf.example  nginx 配置示例\n  apache.conf.example Apache 配置示例\n  IIS-部署步骤.txt     IIS 部署步骤\n\n部署方法\n  1. 将本目录拷贝到目标服务器（私钥建议通过 scp / 加密通道传输）；\n  2. 按服务器类型使用对应配置示例，把证书路径改为实际路径；\n  3. nginx 执行 nginx -s reload；Apache 执行 systemctl reload apache2；\n  4. Windows 服务器 + IIS：见「IIS-部署步骤.txt」，或在 ToSSL 中一键部署。\n\n注意：证书每 90 天到期。续期后可重新导出部署包替换服务器上的文件；\n建议在服务器上同时配置到期监控，避免证书过期导致 HTTPS 中断。\n",
         chrono::Utc::now().format("%Y-%m-%d %H:%M")
     )
 }

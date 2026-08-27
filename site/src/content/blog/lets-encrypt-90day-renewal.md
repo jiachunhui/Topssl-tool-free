@@ -29,7 +29,7 @@ echo | openssl s_client -connect example.com:443 -servername example.com 2>/dev/
 
 ## 自动续期配置
 
-要避免过期，最稳妥的是自动续期。图形化工具的做法很直接：Tossl 会在证书到期前 30 天自动发起续期，续期成功后自动替换证书并给出系统通知，站长几乎无需干预。脚本方案的思路则是把 ACME 客户端的续期命令交给定时任务周期执行，如 certbot 的 renew 配合 systemd timer、acme.sh 安装时自动写入的 cron。两者的共同点是：一旦配置成功，续期就是后台动作，人只在失败时被提醒。更完整的方案对比可看 [SSL 证书自动续期三种方案对比](/blog/ssl-auto-renewal-guide/)。
+要避免过期，更稳妥的是自动续期。图形化工具的做法很直接：ToSSL 会在证书到期前 30 天自动发起续期，续期成功后自动替换证书并给出系统通知，站长几乎无需干预。脚本方案的思路则是把 ACME 客户端的续期命令交给定时任务周期执行，如 certbot 的 renew 配合 systemd timer、acme.sh 安装时自动写入的 cron。两者的共同点是：一旦配置成功，续期就是后台动作，人只在失败时被提醒。更完整的方案对比可看 [SSL 证书自动续期三种方案对比](/blog/ssl-auto-renewal-guide/)。
 
 ## 续期后重载服务
 

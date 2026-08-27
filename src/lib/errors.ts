@@ -143,7 +143,7 @@ const ERROR_MAP: Record<string, Omit<ErrorInfo, 'code'>> = {
   ERR_DEPLOY: {
     title: '部署失败',
     message: '证书部署过程中出现错误',
-    suggestion: '按错误提示排查；如提示需要管理员权限，请以管理员身份运行 Tossl',
+    suggestion: '按错误提示排查；如提示需要管理员权限，请以管理员身份运行 ToSSL',
     level: 'error',
   },
   ERR_DB: {

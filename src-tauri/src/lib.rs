@@ -141,7 +141,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
     use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
     use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
-    let show_i = MenuItem::with_id(app, "show", "打开 Tossl 免费SSL证书管理工具", true, None::<&str>)?;
+    let show_i = MenuItem::with_id(app, "show", "打开 ToSSL 免费SSL证书管理工具", true, None::<&str>)?;
     let check_i = MenuItem::with_id(app, "check", "立即检查续期", true, None::<&str>)?;
     let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
     let sep = PredefinedMenuItem::separator(app)?;
@@ -153,7 +153,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
             tauri::image::Image::new_owned(vec![0u8; 4], 1, 1)
         }))
         .menu(&menu)
-        .tooltip("Tossl 免费SSL证书管理工具")
+        .tooltip("ToSSL 免费SSL证书管理工具")
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "show" => {

@@ -277,7 +277,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
-          name: "Tossl 免费SSL证书管理工具 ${{ github.ref_name }}"
+          name: "ToSSL 免费SSL证书管理工具 ${{ github.ref_name }}"
           generate_release_notes: true
           files: artifacts/**
           fail_on_unmatched_files: true
