@@ -58,7 +58,12 @@ onMounted(async () => {
 
   // 更新：启动静默检查（6 小时节流 + 「稍后」版本不弹窗）；失败静默不打扰
   updateStore.init().catch(() => {})
-  updateStore.check(false).catch(() => {})
+  if (appStore.appInfo?.launchedByAutostart) {
+    // 开机自启启动时窗口是隐藏的：等用户真正打开窗口再检查，避免开机弹出更新模态框
+    updateStore.checkWhenVisible()
+  } else {
+    updateStore.check(false).catch(() => {})
+  }
 })
 </script>
 

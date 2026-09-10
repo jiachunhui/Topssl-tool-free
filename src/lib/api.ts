@@ -2,6 +2,7 @@
 import { invoke } from './ipc'
 import type {
   AppInfo,
+  BackupImportResult,
   CertInfo,
   IisStatus,
   IssueRequest,
@@ -76,4 +77,12 @@ export const api = {
   cancelUpdateDownload: () => invoke<void>('cancel_update_download'),
   installUpdate: (path: string) => invoke<void>('install_update', { path }),
   openReleasePage: () => invoke<void>('open_release_page'),
+
+  // ---------- backup（换机迁移）----------
+  /** 导出加密备份包到系统下载目录，返回备份文件路径 */
+  exportBackupPackage: (password: string) =>
+    invoke<string>('export_backup_package', { password }),
+  /** 导入备份包（data 为备份文件内容的 base64） */
+  importBackupPackage: (password: string, data: string) =>
+    invoke<BackupImportResult>('import_backup_package', { password, data }),
 }

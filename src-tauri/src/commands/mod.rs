@@ -1,4 +1,5 @@
 //! Tauri IPC commands
+pub mod backup;
 pub mod certificates;
 pub mod iis;
 pub mod issue;

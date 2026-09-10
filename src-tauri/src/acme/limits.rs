@@ -130,13 +130,15 @@ mod tests {
         // HTTP-01 监听失败（无权限/端口被占用）不消耗 LE 验证配额，
         // 修正或改用 DNS 验证后应能立即重试，不进入冷却
         let (db, path) = test_db();
-        let conn = db.lock();
         for code in ["ERR_HTTP01_PRIVILEGE", "ERR_HTTP01_PORT_BUSY"] {
+            let conn = db.lock();
             let id = crate::storage::logs::start(&conn, "issue", Some("example.com")).unwrap();
             crate::storage::logs::finish(&conn, id, "failed", Some(code), Some("bind failed")).unwrap();
+            drop(conn);
+
+            // check_cooldown 内部会自己加锁：必须先释放上面的 guard，否则自死锁
             assert!(check_cooldown(&db, "example.com").is_ok(), "{code} 不应触发冷却");
         }
-        drop(conn);
 
         drop(db);
         let _ = std::fs::remove_file(&path);

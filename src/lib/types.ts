@@ -6,6 +6,8 @@ export interface AppInfo {
   platform: string
   arch: string
   name: string
+  /** 本次是否为开机自启启动（自启时窗口隐藏，只驻留托盘） */
+  launchedByAutostart: boolean
 }
 
 /** 平台信息（含端口权限提示等） */
@@ -241,6 +243,20 @@ export interface UpdateInfo {
 export interface UpdateProgress {
   received: number
   total: number
+}
+
+/** 导入备份包的结果 */
+export interface BackupImportResult {
+  certCount: number
+  providerCount: number
+  secretCount: number
+  /** 数据库里有记录、但备份包中缺少证书文件的数量 */
+  missingFiles: number
+  /** 备份包的导出时间与来源机器（仅用于提示） */
+  createdAt: string
+  sourceHost: string
+  /** 导入前的数据备份目录（导入错了可人工回退） */
+  safetyDir: string
 }
 
 /** 错误码映射项 */

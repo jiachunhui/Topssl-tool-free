@@ -146,6 +146,18 @@ const ERROR_MAP: Record<string, Omit<ErrorInfo, 'code'>> = {
     suggestion: '按错误提示排查；如提示需要管理员权限，请以管理员身份运行 ToSSL',
     level: 'error',
   },
+  ERR_BACKUP: {
+    title: '备份操作失败',
+    message: '导出或导入备份包时出现错误',
+    suggestion: '检查目标目录是否可写、磁盘空间是否充足，或重新导出备份包后再试',
+    level: 'error',
+  },
+  ERR_BACKUP_PASSWORD: {
+    title: '备份口令错误',
+    message: '无法解密备份文件，口令不正确或文件已损坏',
+    suggestion: '确认输入的是导出时设置的口令（口令无法找回，遗失只能重新导出）',
+    level: 'warn',
+  },
   ERR_DB: {
     title: '数据存储错误',
     message: '应用数据库读写异常',

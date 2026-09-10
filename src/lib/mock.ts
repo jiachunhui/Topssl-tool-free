@@ -254,7 +254,13 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
   switch (cmd) {
     case 'get_app_info':
-      return { version: '0.1.0', platform: 'browser', arch: 'x64', name: 'ToSSL 免费SSL证书管理工具' } as T
+      return {
+        version: '0.1.0',
+        platform: 'browser',
+        arch: 'x64',
+        name: 'ToSSL 免费SSL证书管理工具',
+        launchedByAutostart: false,
+      } as T
 
     case 'get_platform_info':
       return {
@@ -440,7 +446,7 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     // localStorage.setItem('mock:update-simulate', JSON.stringify({ version: '9.9.9', notes: '测试更新说明' }))
     case 'check_update': {
       const simulated = lsGetJSON<{ version: string; notes?: string } | null>('update-simulate', null)
-      const current = '0.1.10'
+      const current = '0.1.11'
       if (a.force) await new Promise((r) => setTimeout(r, 500)) // 模拟网络延迟
       if (simulated) {
         const asset = {
@@ -506,6 +512,31 @@ export async function mockInvoke<T>(cmd: string, args?: Record<string, unknown>)
     case 'open_release_page':
       console.log('[mock] open_release_page')
       return undefined as T
+
+    // ---------- backup（换机迁移）----------
+    case 'export_backup_package': {
+      const pw = String(a.password ?? '')
+      if (pw.length < 8) throw new Error('ERR_BACKUP')
+      await new Promise((r) => setTimeout(r, 600)) // 模拟打包耗时
+      return 'mock/downloads/ToSSL-backup-20260910-153000.tosslbak' as T
+    }
+
+    case 'import_backup_package': {
+      const pw = String(a.password ?? '')
+      // 口令太短一律按「口令错误」处理，方便在浏览器里验证错误分支
+      if (pw.length < 8) throw new Error('ERR_BACKUP_PASSWORD')
+      await new Promise((r) => setTimeout(r, 600))
+      const certs = lsGetJSON<unknown[]>('certs', [])
+      return {
+        certCount: certs.length,
+        providerCount: lsGetJSON<unknown[]>('providers', []).length,
+        secretCount: 1,
+        missingFiles: 0,
+        createdAt: new Date().toISOString(),
+        sourceHost: 'MOCK-PC',
+        safetyDir: 'mock/appdata/pre-import-20260910-153000',
+      } as T
+    }
 
     default:
       // 命令未实现时显式抛错，避免返回 undefined 导致 UI 静默崩溃（难以排查）

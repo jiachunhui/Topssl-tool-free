@@ -1,6 +1,7 @@
 //! 应用装配：插件注册、状态初始化、IPC 命令、托盘、调度器
 
 pub mod acme;
+pub mod backup;
 pub mod cert;
 pub mod commands;
 pub mod dns;
@@ -15,19 +16,19 @@ pub mod storage;
 pub mod updater;
 pub mod util;
 
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 use tauri_plugin_autostart::MacosLauncher;
+
+/// 开机自启启动时由注册表命令行写入的标记（见下方 autostart 插件初始化参数）
+const AUTOSTART_FLAG: &str = "--autostart";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri::Builder::default()
         // 单实例
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            if let Some(window) = app.get_webview_window("main") {
-                let _ = window.show();
-                let _ = window.unminimize();
-                let _ = window.set_focus();
-            }
+            // 应用已驻留托盘时用户再次启动：把窗口显示出来
+            show_main_window(app);
         }))
         // 打开路径 / 外部链接
         .plugin(tauri_plugin_opener::init())
@@ -35,10 +36,10 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         // 剪贴板
         .plugin(tauri_plugin_clipboard_manager::init())
-        // 开机自启
+        // 开机自启（带 --autostart 标记，供启动时区分「自启」与「用户双击」）
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
-            Some(vec![]),
+            Some(vec![AUTOSTART_FLAG]),
         ))
         // 初始化应用状态
         .setup(|app| {
@@ -49,7 +50,8 @@ pub fn run() {
             // 日志文件写入应用数据目录
             logs::set_file(&app_data_dir);
             let platform = std::env::consts::OS.to_string();
-            let state = state::AppState::new(app_data_dir, platform)
+            let by_autostart = launched_by_autostart();
+            let state = state::AppState::new(app_data_dir, platform, by_autostart)
                 .map_err(|e| {
                     log::error!("failed to init app state: {e}");
                     std::io::Error::other(e.to_string())
@@ -64,6 +66,12 @@ pub fn run() {
 
             // 续期调度器
             scheduler::spawn_scheduler(app.handle().clone());
+
+            // 主窗口在 tauri.conf.json 中默认隐藏（visible=false）：
+            // 开机自启时保持静默、只驻留托盘，用户手动启动才显示窗口
+            if !by_autostart {
+                show_main_window(app.handle());
+            }
 
             Ok(())
         })
@@ -84,6 +92,8 @@ pub fn run() {
             commands::certificates::export_deploy_package,
             commands::certificates::check_duplicate,
             commands::certificates::renew_now,
+            commands::backup::export_backup_package,
+            commands::backup::import_backup_package,
             commands::iis::iis_status,
             commands::iis::iis_deploy_cert,
             commands::providers::list_providers,
@@ -124,17 +134,50 @@ pub fn run() {
 }
 
 fn setup_autostart(app: &tauri::App) {
-    use tauri_plugin_autostart::ManagerExt;
-    let auto = app.autolaunch();
     let enabled = crate::storage::settings::get_bool(
         &app.state::<state::AppState>().db.lock(),
         "run_at_login",
         true,
     );
-    let _ = auto.enable();
-    if !enabled {
-        let _ = auto.disable();
+    sync_autostart(app.handle(), enabled);
+}
+
+/// 把「开机自启」设置同步到系统注册表项
+///
+/// 开发构建只允许关闭：把 target/debug 下的临时可执行文件注册成开机自启，
+/// 会每次开机弹出一个控制台窗口；但仍允许关闭，便于清理历史误注册。
+pub(crate) fn sync_autostart(app: &tauri::AppHandle, enabled: bool) {
+    use tauri_plugin_autostart::ManagerExt;
+
+    if enabled && cfg!(debug_assertions) {
+        log::warn!("autostart: 开发构建跳过注册，避免把 target/debug 可执行文件写入开机自启");
+        return;
     }
+    let autolaunch = app.autolaunch();
+    let result = if enabled { autolaunch.enable() } else { autolaunch.disable() };
+    match result {
+        Ok(()) => log::info!("autostart: {}", if enabled { "enabled" } else { "disabled" }),
+        Err(e) => log::warn!(
+            "autostart: {} failed: {e}",
+            if enabled { "enable" } else { "disable" }
+        ),
+    }
+}
+
+/// 本次启动是否来自开机自启（注册表命令行带 --autostart 标记）
+fn launched_by_autostart() -> bool {
+    std::env::args().any(|arg| arg == AUTOSTART_FLAG)
+}
+
+/// 显示主窗口：托盘「打开」、图标左键、用户再次启动统一走这里
+fn show_main_window(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.show();
+        let _ = window.unminimize();
+        let _ = window.set_focus();
+    }
+    // 前端据此补上「开机自启时推迟的更新检查」（见 src/stores/update.ts）
+    let _ = app.emit("window://shown", ());
 }
 
 fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
@@ -156,13 +199,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
         .tooltip("ToSSL 免费SSL证书管理工具")
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
-            "show" => {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.show();
-                    let _ = window.unminimize();
-                    let _ = window.set_focus();
-                }
-            }
+            "show" => show_main_window(app),
             "check" => {
                 // 立即检查续期：窗口可见 → 前端 toast；窗口隐藏 → 系统通知
                 let visible = app
@@ -189,11 +226,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
             } = event
             {
                 let app = tray.app_handle();
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.show();
-                    let _ = window.unminimize();
-                    let _ = window.set_focus();
-                }
+                show_main_window(app);
             }
         });
 

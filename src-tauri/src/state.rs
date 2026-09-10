@@ -26,10 +26,16 @@ pub struct AppState {
     pub certs_root: PathBuf,
     /// 平台标识
     pub platform: String,
+    /// 本次是否为开机自启启动（自启时窗口保持隐藏，只驻留托盘）
+    pub launched_by_autostart: bool,
 }
 
 impl AppState {
-    pub fn new(app_data_dir: PathBuf, platform: String) -> Result<Self, crate::error::AppError> {
+    pub fn new(
+        app_data_dir: PathBuf,
+        platform: String,
+        launched_by_autostart: bool,
+    ) -> Result<Self, crate::error::AppError> {
         let db_path = app_data_dir.join("ssl_cert.db");
         let db = Db::open(&db_path)?;
         // 启动恢复：上次运行中断的续期任务（内存态已丢失）回滚，交给调度器重试
@@ -50,6 +56,7 @@ impl AppState {
             app_data_dir,
             certs_root,
             platform,
+            launched_by_autostart,
         })
     }
 }

@@ -71,3 +71,8 @@ export function onRenewalCheckDone(cb: (p: RenewalCheckDonePayload) => void): Pr
 export function onUpdateProgress(cb: (p: UpdateProgress) => void): Promise<EventSubscription> {
   return subscribe<UpdateProgress>('update://progress', cb)
 }
+
+/** 订阅主窗口被显示（开机自启时窗口隐藏，用户打开窗口后由后端发出） */
+export function onWindowShown(cb: () => void): Promise<EventSubscription> {
+  return subscribe<null>('window://shown', cb)
+}

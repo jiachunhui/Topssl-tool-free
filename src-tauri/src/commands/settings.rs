@@ -115,13 +115,7 @@ pub fn set_setting(
 
     // 开机自启开关即时生效（无需重启应用）
     if key == "run_at_login" {
-        use tauri_plugin_autostart::ManagerExt;
-        let autolaunch = app.autolaunch();
-        if value == "true" {
-            let _ = autolaunch.enable();
-        } else {
-            let _ = autolaunch.disable();
-        }
+        crate::sync_autostart(&app, value == "true");
     }
     Ok(())
 }
@@ -178,13 +172,7 @@ pub fn set_settings(
     );
 
     // 开机自启即时生效
-    use tauri_plugin_autostart::ManagerExt;
-    let autolaunch = app.autolaunch();
-    if settings.run_at_login {
-        let _ = autolaunch.enable();
-    } else {
-        let _ = autolaunch.disable();
-    }
+    crate::sync_autostart(&app, settings.run_at_login);
     Ok(())
 }
 

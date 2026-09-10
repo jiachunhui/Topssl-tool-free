@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "TopSSL-Free-Cert-Assistant",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "identifier": "com.topsl.ssl-cert-desktop",
   "build": {
     "frontendDist": "../dist",
@@ -19,7 +19,8 @@
         "minHeight": 600,
         "center": true,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "visible": false
       }
     ],
     "security": {

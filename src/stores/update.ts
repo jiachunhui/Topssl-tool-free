@@ -3,7 +3,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { api } from '../lib/api'
-import { onUpdateProgress } from '../lib/events'
+import { onUpdateProgress, onWindowShown } from '../lib/events'
 import type { UpdateInfo, UpdateProgress } from '../lib/types'
 
 export type UpdatePhase =
@@ -73,6 +73,36 @@ export const useUpdateStore = defineStore('update', () => {
       errorMessage.value = e instanceof Error ? e.message : String(e)
       throw e
     }
+  }
+
+  /**
+   * 窗口隐藏启动（开机自启）时使用：推迟到窗口首次可见再检查更新。
+   * 否则「发现新版本」的模态框会在用户还没打开界面时突然弹出来。
+   */
+  function checkWhenVisible(): void {
+    let done = false
+    const cleanups: Array<() => void> = []
+    const run = (): void => {
+      if (done) return
+      done = true
+      cleanups.forEach((off) => off())
+      void check(false).catch(() => {})
+    }
+
+    // 主路径：后端显示窗口时发出 window://shown（托盘「打开」/ 用户再次启动）
+    void onWindowShown(run).then((sub) => {
+      if (done) sub.unlisten()
+      else cleanups.push(sub.unlisten)
+    })
+    // 兜底：窗口获得焦点或被切回可见时，防止漏掉那一次事件
+    const onFocus = (): void => run()
+    const onVisibilityChange = (): void => {
+      if (!document.hidden) run()
+    }
+    window.addEventListener('focus', onFocus)
+    cleanups.push(() => window.removeEventListener('focus', onFocus))
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    cleanups.push(() => document.removeEventListener('visibilitychange', onVisibilityChange))
   }
 
   /** 「稍后提醒」：忽略当前版本（后端持久化），关闭弹窗 */
@@ -149,6 +179,7 @@ export const useUpdateStore = defineStore('update', () => {
     promptVisible,
     init,
     check,
+    checkWhenVisible,
     dismiss,
     closePrompt,
     download,

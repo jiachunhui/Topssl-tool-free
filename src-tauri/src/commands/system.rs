@@ -12,6 +12,8 @@ pub struct AppInfo {
     pub platform: String,
     pub arch: String,
     pub name: String,
+    /// 本次是否为开机自启启动：前端据此推迟更新弹窗，避免开机打扰
+    pub launched_by_autostart: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -24,12 +26,13 @@ pub struct PlatformInfo {
 }
 
 #[tauri::command]
-pub fn get_app_info() -> AppResult<AppInfo> {
+pub fn get_app_info(state: tauri::State<'_, AppState>) -> AppResult<AppInfo> {
     Ok(AppInfo {
         version: env!("CARGO_PKG_VERSION").to_string(),
         platform: std::env::consts::OS.to_string(),
         arch: std::env::consts::ARCH.to_string(),
         name: "ToSSL 免费SSL证书管理工具".to_string(),
+        launched_by_autostart: state.launched_by_autostart,
     })
 }
 
