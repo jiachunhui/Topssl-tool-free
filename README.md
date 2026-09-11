@@ -8,7 +8,7 @@
 
 > 详细使用说明见 [docs/用户手册.md](docs/用户手册.md)。
 >
-> **相关链接**：[TopSSL 官网](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [GitHub 仓库](https://github.com/jiachunhui/Topssl-tool-free) ｜ [ToSSL 官网（下载/教程/知识库）](https://www.tossl.cn) ｜ [Let's Encrypt](https://letsencrypt.org/)
+> **相关链接**：[官网（下载 / 教程 / 知识库）](https://www.tossl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [免费下载 Windows / macOS / Linux](https://www.tossl.cn/download/?utm_source=github&utm_medium=readme&utm_campaign=download) ｜ [TopSSL 官网（企业证书 DV/OV/EV）](https://www.topssl.cn/?utm_source=github&utm_medium=readme&utm_campaign=top) ｜ [Let's Encrypt](https://letsencrypt.org/)
 
 ## 功能特性
 

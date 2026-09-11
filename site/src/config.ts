@@ -26,6 +26,8 @@ export const SITE = {
   screenshots: ['/screenshots/certs-view.png'],
   /** 百度搜索资源平台验证（可选）：填入站点验证 meta 的 content 值 */
   baiduSiteVerification: '',
+  /** ICP 备案号（大陆主机需在页脚展示并链接到工信部备案系统） */
+  icp: '京ICP备05019839号-16',
   /** 站点统计（可选）：百度统计等，留空则不注入任何脚本 */
   analytics: { baiduTongjiId: '' },
 }
