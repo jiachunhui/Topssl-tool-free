@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const title = '换电脑迁移证书教程：数据备份导出与导入 - ToSSL'
+const description =
+  '换电脑后不用重新申请证书：ToSSL 支持把证书、设置、DNS 凭据与 ACME 账户密钥打包成一个口令加密的备份文件，在新电脑导入即可继续使用。含导出导入步骤、口令与安全说明、双机续期注意事项。'
+
+const issues = [
+  { problem: '备份口令忘了怎么办', cause: '口令无法找回，只能回到原电脑重新导出一份备份包' },
+  { problem: '导入后发现导错了', cause: '应用数据目录下的 pre-import-&lt;时间戳&gt;/ 保存了导入前的数据库、证书目录与密钥，可手工覆盖回去' },
+  { problem: '用旧版本导入新版本的备份包', cause: '会被明确拒绝：备份包记录了格式与数据库版本，请先升级应用再导入' },
+  { problem: '导入后证书还需要重新部署吗', cause: '需要。IIS 绑定、nginx 配置属于机器上的既有状态，导入的是证书与配置，装到新电脑后要重新部署一次' },
+  { problem: '两台电脑都开着会怎样', cause: '两台都会为同一域名续期（浪费 Let’s Encrypt 配额），还可能互相干扰 DNS 校验；导入后请只在一台常开的电脑上开启自动续期' },
+]
+---
+<BaseLayout title={title} description={description}>
+  <section class="section page" style="padding-top:5rem">
+    <div class="container">
+      <span class="hero-badge">使用教程 · 换机迁移</span>
+      <h1 style="margin-top:1rem">换电脑迁移：把证书和数据带到新电脑</h1>
+      <p class="lead" style="margin-top:.8rem">
+        换了新电脑，不用重新申请证书、也不用重新配置 DNS 服务商。ToSSL 可以把当前全部数据
+        <strong>打包成一个口令加密的备份文件</strong>，在新电脑导入即可继续使用。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">适用场景</span>
+        <h2>什么时候需要迁移</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>换了新电脑，旧电脑上已经申请并配置好的证书、DNS 服务商密钥不想重新填一遍；</li>
+        <li>旧电脑要重装系统，想先把数据整体备份出来；</li>
+        <li>想把个人电脑上的证书与配置整体复制到另一台常开的电脑上，由它负责自动续期。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">备份内容</span>
+        <h2>备份包里有什么</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">内容</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">全部证书</th>
+              <td>证书链 <code>fullchain.pem</code>、私钥 <code>privkey.pem</code>、IIS 用的 <code>cert.pfx</code> 与说明文件</td>
+            </tr>
+            <tr>
+              <th class="col-feature">全部设置项</th>
+              <td>申请环境、验证端口、邮箱、密钥类型、通知开关等</td>
+            </tr>
+            <tr>
+              <th class="col-feature">DNS 服务商凭据</th>
+              <td>阿里云 / DNSPod / Cloudflare 的 API 密钥，导入后无需重新配置</td>
+            </tr>
+            <tr>
+              <th class="col-feature">ACME 账户密钥</th>
+              <td>续期时复用同一个 Let’s Encrypt 账户，不影响已申请的证书</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 1 步</span>
+        <h2>在旧电脑导出备份包</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>打开 ToSSL →「设置」→ 页面最下方的<strong>「数据备份与迁移」</strong>；</li>
+        <li>点「导出备份包」，设置一个<strong>至少 8 位</strong>的口令并输入两次；</li>
+        <li>生成的备份文件保存在系统「下载」文件夹，文件名形如 <code>ToSSL-backup-20260911-153000.tosslbak</code>。</li>
+      </ul>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">第 2 步</span>
+        <h2>在新电脑导入</h2>
+      </div>
+      <ul style="line-height:2;padding-left:1.2rem">
+        <li>把备份文件拷贝到新电脑，安装并打开 ToSSL；</li>
+        <li>「设置」→「数据备份与迁移」→「导入备份包」，选择备份文件；</li>
+        <li>输入导出时设置的口令，确认覆盖后即完成导入。</li>
+      </ul>
+      <p style="margin-top:1rem">
+        导入前，应用会<strong>自动把当前数据备份</strong>到应用数据目录下的
+        <code>pre-import-&lt;时间戳&gt;/</code>，万一导错可以手工回退。导入过程在数据库事务中完成，
+        并自动把证书路径改写为新电脑上的目录，因此导入后可以直接导出部署包或部署到 IIS。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">导入之后</span>
+        <h2>三件需要注意的事</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">注意项</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="col-feature">自动续期会被自动关闭</th>
+              <td>请只在一台常开的电脑上重新开启（原因见下）</td>
+            </tr>
+            <tr>
+              <th class="col-feature">部署需要在新电脑上重做一次</th>
+              <td>IIS 绑定、nginx 配置属于机器上的既有状态，导入的是证书与配置，不包含已部署结果</td>
+            </tr>
+            <tr>
+              <th class="col-feature">本机专属设置不会被覆盖</th>
+              <td>开机自启开关、自动续期开关、更新检查状态保留新电脑自己的值</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">为什么</span>
+        <h2>为什么只让一台电脑负责续期</h2>
+      </div>
+      <p style="line-height:2">
+        自动续期依赖应用在后台常驻运行。如果两台电脑都开着自动续期，它们会各自为同一个域名签发一次证书
+        ——这不影响证书本身可用，但会<strong>浪费 Let’s Encrypt 的签发配额</strong>；
+        更麻烦的是，两台几乎同时操作 <code>_acme-challenge</code> 的 DNS 验证记录时可能互相误删，
+        导致其中一台随机续期失败。
+      </p>
+      <p style="margin-top:.8rem;line-height:2">
+        因此备份包定位为<strong>「迁移快照」而不是实时同步</strong>：导入得到的是导出那一刻的副本，
+        之后两台电脑各自独立。建议只把一台常开的电脑作为「续期主机」，其他电脑保持自动续期关闭。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">安全说明</span>
+        <h2>备份包是怎么加密的</h2>
+      </div>
+      <p style="line-height:2">
+        备份包使用你设置的口令加密，算法为 <strong>AES-256-GCM + PBKDF2-HMAC-SHA256（60 万次迭代）</strong>，
+        口令与文件内容均不会上传到任何服务器。
+      </p>
+      <p style="margin-top:.8rem;line-height:2">
+        <strong>请务必注意：口令无法找回</strong>。备份文件里含证书私钥与 DNS API 密钥，
+        请把备份文件与口令一起妥善保管，不要通过不可信的渠道传输；迁移完成后建议删除临时留下的备份文件。
+      </p>
+
+      <div class="section-head" style="padding-top:2.5rem">
+        <span class="kicker">排错指南</span>
+        <h2>迁移常见问题</h2>
+      </div>
+      <div class="compare-wrap reveal in">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="col-feature">现象</th>
+              <th>原因与处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((i) => (
+              <tr>
+                <th class="col-feature">{i.problem}</th>
+                <td set:html={i.cause} />
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:1rem">
+        其他部署与续期问题见
+        <a href="/docs/troubleshooting/cert-install/">证书安装失败怎么办</a> 与
+        <a href="/docs/auto-renewal/">自动续期教程</a>。
+      </p>
+
+      <div style="margin-top:2.5rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-ghost" href="/docs/auto-renewal/">← 上一篇：自动续期</a>
+        <a class="btn btn-primary" href="/download/">免费下载 ToSSL</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

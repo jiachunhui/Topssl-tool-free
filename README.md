@@ -18,7 +18,8 @@
   - **HTTP-01**：自动在 80 端口临时开启验证服务，适用于云服务器等 80 端口公网可访问的环境
 - ✅ **通配符证书**（`*.example.com`）、多域名 SAN 证书
 - ✅ 证书安装到本机，提供 nginx / Apache 等使用指引
-- ✅ **自动续期**：证书 90 天有效期，到期前 30 天自动续期（开机自启 + 托盘常驻）
+- ✅ **自动续期**：证书 90 天有效期，到期前 30 天自动续期（开机自启后静默驻留托盘，不弹主窗口）
+- ✅ **数据备份与迁移**：证书、设置、DNS 凭据与 ACME 账户密钥打包为一个口令加密的备份文件，换电脑导入即可继续使用（导入前自动备份当前数据，导入后自动关闭自动续期，避免双机重复续期）
 - ✅ 测试环境（Staging）与正式环境切换，规避速率限制
 - ✅ 跨平台：Windows / macOS / Linux
 - ✅ 密钥安全存储：Windows DPAPI / macOS Keychain / Linux Secret Service
@@ -89,7 +90,7 @@ npm run tauri build      # 产出 NSIS（Windows）、dmg（macOS）、deb/rpm/A
 
 ### 发版流程（版本号与 GitHub Releases 同步）
 
-版本号统一由脚本同步（`package.json` / `tauri.conf.json` / `Cargo.toml` / `Cargo.lock` / 宣传页配置 / 用户手册六处），**不要手工修改**：
+版本号统一由脚本同步（`package.json` / `tauri.conf.json` / `Cargo.toml` / `Cargo.lock` / `docs/用户手册.md` / `site/src/config.ts` / `src/lib/mock.ts` 共 7 处），**不要手工修改**：
 
 ```bash
 # 1. 一键同步版本号（如 0.1.4）
@@ -99,11 +100,15 @@ npm run version:set -- 0.1.4
 git tag v0.1.4 && git push origin v0.1.4
 
 # 3. 构建产物下载后，生成国内更新清单（应用内「检查更新」的数据源）
+#    更新说明从站点更新日志 site/src/content/changelog/v<版本>.md 抽取为纯文本，
+#    会显示在应用内「发现新版本」弹窗里；没写更新日志时脚本会给出兜底说明，不会中断发版
+node scripts/extract-changelog-notes.mjs 0.1.4 updates/release-notes.md
 npm run update:manifest -- --base-url https://你的域名/download \
   --win src-tauri/target/release/bundle/nsis/TopSSL-Free-Cert-Assistant_0.1.4_x64-setup.exe \
-  --notes-file CHANGELOG.md
+  --notes-file updates/release-notes.md
 
 # 4. 把 updates/latest.json 上传到虚拟主机 /updates/，安装包上传到 /download/；
+#    站点按 site/README.md 构建部署（site/dist 与 CI 的 site-publish 产物合并上传）；
 #    域名确定后在 src-tauri/src/updater/mod.rs 填入 UPDATE_MANIFEST_URL 即可启用国内源
 ```
 
@@ -174,6 +179,7 @@ docs/                   # 用户手册
 
 - ACME 账户私钥、DNS API 密钥存入操作系统安全存储（DPAPI / Keychain / Secret Service），数据库仅存引用标识
 - 证书私钥文件权限 0600
+- 换机迁移用的数据备份包使用 **AES-256-GCM + PBKDF2-HMAC-SHA256（60 万次迭代）** 口令加密，本地生成、不上传任何服务器；口令无法找回，文件内含证书私钥与 DNS 密钥，需妥善保管
 - 默认使用 Let's Encrypt **测试环境（Staging）**，正式证书需在向导中显式确认
 
 ## 许可证

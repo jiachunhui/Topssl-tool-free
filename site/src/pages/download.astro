@@ -31,7 +31,8 @@ const buttons = [
       <h1 style="margin-top:1rem">免费下载 ToSSL 免费SSL证书申请与自动续期工具</h1>
       <p class="lead" style="margin-top:.8rem">
         当前版本 <strong>v{SITE.version}</strong>：输入域名即可免费申请 Let's Encrypt SSL 证书，
-        到期前 30 天自动续期，支持 HTTP / DNS 验证、通配符与多域名证书。
+        到期前 30 天自动续期，支持 HTTP / DNS 验证、通配符与多域名证书；
+        新版支持换电脑一键迁移证书与配置，升级只需下载安装包覆盖安装。
       </p>
 
       <div class="sub-block">
@@ -117,6 +118,12 @@ const buttons = [
             <summary>申请证书需要付费吗？</summary>
             <div class="answer">
               完全免费。工具调用 Let's Encrypt 免费证书签发服务，申请与自动续期全程不产生任何费用。
+            </div>
+          </details>
+          <details class="faq-item reveal in" style="--reveal-delay:.2s">
+            <summary>换电脑后需要重新申请证书吗？</summary>
+            <div class="answer">
+              不需要。v0.1.11 起支持「数据备份与迁移」：把证书、设置、DNS 凭据与 ACME 账户密钥导出为一个口令加密的备份文件，在新电脑导入即可继续使用。步骤见<a href="/docs/migration/">换电脑迁移教程</a>。
             </div>
           </details>
         </div>

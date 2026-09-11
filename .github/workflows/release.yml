@@ -242,16 +242,20 @@ jobs:
 
       # 生成国内更新清单（www.tossl.cn/updates/latest.json 的内容），
       # 安装包 URL 指向站点下载目录 https://www.tossl.cn/downloads/
+      # 更新说明（notes）从站点更新日志 site/src/content/changelog/v<版本>.md 抽取为纯文本，
+      # 这样应用内「发现新版本」弹窗里能显示本次更新了什么。
       - name: Generate domestic update manifest
         run: |
           VER="${GITHUB_REF_NAME#v}"
+          node scripts/extract-changelog-notes.mjs "$VER" updates/release-notes.md
           node scripts/gen-update-manifest.mjs \
             --version "$VER" \
             --base-url "https://www.tossl.cn/downloads" \
             --win "artifacts/TopSSL-Free-Cert-Assistant_${VER}_x64-setup.exe" \
             --mac-aarch64 "artifacts/TopSSL-Free-Cert-Assistant_${VER}_aarch64.dmg" \
             --mac-x64 "artifacts/TopSSL-Free-Cert-Assistant_${VER}_x64.dmg" \
-            --linux-appimage "artifacts/TopSSL-Free-Cert-Assistant_${VER}_amd64.AppImage"
+            --linux-appimage "artifacts/TopSSL-Free-Cert-Assistant_${VER}_amd64.AppImage" \
+            --notes-file updates/release-notes.md
 
       # 站点发布物：部署 www.tossl.cn 时，把 site/dist 与 site-publish 合并上传
       # （updates/latest.json → 站点 /updates/，安装包 → 站点 /downloads/）
